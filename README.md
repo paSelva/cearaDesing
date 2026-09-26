@@ -30,3 +30,7 @@ Convenção: **(§x)** = regra do edital · **(P#, confirmado)** = decisão do r
 
 - Site de referência: <https://www.premiobornancini.com.br/>, com o portal de inscrição separado em <https://www.inscricaopremiobornancini.com.br/>
 - Edital: `anexos/EDITAL FINAL_PREMIO CEARA TEM DESIGN.pdf` (não versionado: fica fora do repositório, na pasta local `anexos/`)
+
+## Skills do Claude Code
+
+A pasta [`skills/`](skills/) tem skills adaptadas a este projeto (Laravel, MySQL, HostGator): `code-best-practices`, `testing`, `github-security`, `security-audit`, `security-backend`, `security-database` e `security-frontend`. O link `.claude/skills → ../skills` faz o Claude Code carregá-las ao abrir o repositório.
