@@ -1,22 +1,17 @@
 ---
 name: testing
 description: >
-  Gera e mantém testes automatizados com Pest para o sistema do Prêmio Ceará Tem Design
-  (Laravel 13, PHP 8.4, MySQL, Fortify, Filament 5, Livewire 4). Cobre Actions de negócio,
-  Policies, Enums, rotas HTTP, fluxos do Fortify, componentes Livewire e Resources do
-  Filament, sempre amarrando os testes às regras do edital (§x) e decisões confirmadas (P#).
-  Use este skill SEMPRE que o usuário mencionar: "cria os testes", "adiciona testes",
-  "quero cobertura", "testa essa Action", "testa essa rota", "testa essa Policy",
-  "testa esse componente Livewire", "testa o painel do jurado", "testa essa função",
-  "escreve o teste para", "Pest", "php artisan test", "coverage desse módulo",
-  "preciso de testes", "antes de commitar quero testar", "vamos testar isso", "faz os testes",
-  "suíte de testes", "testes unitários", "testes de feature", "testes de integração",
-  "testa isso aqui", "verifica se quebrou", "como saber se quebrou", "garante que não quebra",
-  ou qualquer variação. Acione também quando o usuário mostrar uma Action/Policy/componente
-  novo e não mencionar testes, quando uma regra do edital não tiver cobertura, ao revisar
-  um PR sem testes, ou quando disser "antes de ir pra produção".
-  Esta skill é OBRIGATÓRIA: toda Action e toda regra do edital implementada deve ter teste.
-  Nunca deixe código sem cobertura passar sem ao menos alertar e oferecer gerar os testes.
+  Gera e mantém testes Pest do Prêmio Ceará Tem Design (Laravel 13, MySQL, Fortify,
+  Filament 5, Livewire 4): Actions, Policies, Enums, rotas, Livewire e Filament, amarrando
+  cada teste às regras do edital (§x) e decisões (P#). Use SEMPRE que o usuário mencionar:
+  "cria os testes", "adiciona testes", "quero cobertura", "testa essa Action", "testa essa
+  Policy", "testa essa rota", "testa esse componente Livewire", "testa o painel do
+  jurado", "Pest", "php artisan test", "coverage", "preciso de testes", "antes de commitar
+  quero testar", "testes unitários", "testes de feature", "verifica se quebrou", "garante
+  que não quebra", ou variações. Acione também quando aparecer Action/Policy/componente
+  novo sem teste, regra do edital sem cobertura, PR sem testes, ou "antes de ir pra
+  produção". Obrigatória: toda Action e regra do edital precisa de teste; nunca deixe
+  código sem cobertura passar sem alertar e oferecer os testes.
 ---
 
 # Skill — Testes Automatizados com Pest (Prêmio Ceará Tem Design)

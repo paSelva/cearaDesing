@@ -72,7 +72,7 @@ Registrar em `bootstrap/app.php`:
 
 **CSP:** Livewire/Alpine e Filament usam scripts e estilos inline; o Turnstile carrega de
 `challenges.cloudflare.com`. Comece com `Content-Security-Policy-Report-Only`, observe
-o console e só depois ative. Ver `security-frontend/references/patterns.md`.
+o console e só depois ative. Ver `../security-frontend/references/patterns.md`.
 
 **`includeSubDomains`:** o sistema fica em subdomínio de um domínio existente (P29). HSTS com
 `includeSubDomains` no subdomínio afeta só os sub-subdomínios dele — ok. **Não** configurar HSTS

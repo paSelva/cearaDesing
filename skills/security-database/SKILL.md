@@ -1,19 +1,16 @@
 ---
 name: security-database
 description: >
-  Auditoria e hardening de segurança da camada de dados do Prêmio Ceará Tem Design:
-  MySQL na HostGator compartilhada (via cPanel/phpMyAdmin, sem SSH), Eloquent e Query
-  Builder do Laravel 13, migrations, índices únicos que garantem regras do edital,
-  backups e LGPD. Identifica vulnerabilidades reais, gera correções prontas e pesquisa
-  referências quando encontrar padrão desconhecido. Use este skill sempre que o usuário
-  mencionar: "segurança do banco", "banco seguro?", "MySQL hardening", "SQL injection",
-  "whereRaw", "DB::raw", "orderBy dinâmico", "mass assignment", "$fillable",
-  "migration", "índice único", "CHECK constraint", "usuário do MySQL", "privilégios",
-  "MySQL remoto", "phpMyAdmin", "backup seguro", "dump do banco", "dados sensíveis no banco",
-  "CPF no banco", "LGPD banco de dados", "criptografia de coluna", "encrypted cast",
-  "DB_PASSWORD", "vazamento de dados", "activity log", "histórico de notas", ou qualquer
-  variação. Acione também quando o usuário mostrar migrations, models, queries, seeders,
-  arquivo .env com DB_*, ou disser "antes de ir pra produção".
+  Auditoria e hardening da camada de dados do Prêmio Ceará Tem Design: MySQL na HostGator
+  (cPanel/phpMyAdmin, sem SSH), Eloquent/Query Builder do Laravel 13, migrations, índices
+  únicos que garantem regras do edital, backups e LGPD. Gera correções prontas e pesquisa
+  padrões desconhecidos. Use sempre que o usuário mencionar: "segurança do banco", "MySQL
+  hardening", "SQL injection", "whereRaw", "DB::raw", "orderBy dinâmico", "mass
+  assignment", "migration", "índice único", "CHECK constraint", "usuário do MySQL",
+  "privilégios", "MySQL remoto", "phpMyAdmin", "backup", "dump do banco", "CPF no banco",
+  "cpf_hash", "LGPD", "encrypted cast", "DB_PASSWORD", "vazamento de dados", "histórico de
+  notas", ou variações. Acione também quando o usuário mostrar migrations, models,
+  queries, seeders ou .env com DB_*, ou disser "antes de ir pra produção".
 ---
 
 # Security:Database — MySQL + Eloquent (Prêmio Ceará Tem Design)
@@ -47,7 +44,7 @@ ou padrão desconhecido, pesquisa referências antes de opinar.
 grep -rnE "Raw\(|DB::raw|DB::(select|statement|unprepared)" app/ database/ routes/
 ```
 
-> Exemplos completos: `references/patterns.md` e `security-audit/references/eloquent-injection.md`.
+> Exemplos completos: `references/patterns.md` e `../security-audit/references/eloquent-injection.md`.
 
 ### 1.2 Mass assignment
 

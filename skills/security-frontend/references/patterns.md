@@ -135,7 +135,7 @@ Content-Security-Policy-Report-Only:
 ```
 
 A **site key** é pública; a **secret key** fica só no servidor. Validação no servidor:
-`security-backend/references/patterns.md`.
+`../security-backend/references/patterns.md`.
 
 ---
 

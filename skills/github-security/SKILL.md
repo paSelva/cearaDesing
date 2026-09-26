@@ -1,21 +1,16 @@
 ---
 name: github-security
 description: >
-  Auditoria completa e configuração segura do repositório GitHub do Prêmio Ceará Tem
-  Design (Laravel 13 · PHP 8.4 · MySQL · deploy por FTP na HostGator, sem SSH).
-  Verifica secrets expostos (.env, APP_KEY, senha do MySQL, credenciais de FTP/cPanel),
-  configura proteções, gera arquivos de segurança prontos para uso (.gitignore Laravel,
-  .env.example, gitleaks, GitHub Actions com composer audit + Pest) e mantém o estado
-  do repositório entre sessões (docs/ do repositório e, se existir, vault Obsidian).
-  Use este skill SEMPRE que o usuário mencionar: "setup github", "configurar repositório",
-  "segurança do repo", "branch protection", "commit seguro", "gitleaks", "pre-commit hook",
-  "gitignore", "secret vazou", "histórico git limpo", "auditoria git", "workflow github",
-  "proteção de branch", "boas práticas git", "organizar repositório", "CI seguro",
-  "GitHub Actions seguro", "secrets no git", "env no git", "antes de subir pro github",
-  "iniciar repositório", "configurar git no projeto", ou qualquer variação.
-  Acione também quando o usuário mostrar um .gitignore, mencionar .env commitado,
-  falar de um novo projeto que vai usar git, ou disser "como devo organizar meu git",
-  "APP_KEY vazou", "composer audit", "deploy por FTP", "credencial do cPanel".
+  Auditoria e configuração segura do repositório GitHub do Prêmio Ceará Tem Design
+  (Laravel 13, MySQL, deploy por FTP na HostGator sem SSH). Verifica secrets expostos
+  (.env, APP_KEY, senha do MySQL, FTP/cPanel), gera .gitignore Laravel, .env.example,
+  gitleaks e GitHub Actions com composer audit + Pest, e mantém o estado em docs/ (e vault
+  Obsidian, se houver). Use SEMPRE que o usuário mencionar: "setup github", "segurança do
+  repo", "branch protection", "commit seguro", "gitleaks", "pre-commit hook", "gitignore",
+  "secret vazou", "APP_KEY vazou", "auditoria git", "GitHub Actions", "CI seguro",
+  "composer audit", "secrets no git", "env no git", "antes de subir pro github", "deploy
+  por FTP", "credencial do cPanel", "como organizar meu git", ou variações. Acione também
+  quando o usuário mostrar um .gitignore ou mencionar .env commitado.
 ---
 
 # github-security — Boas Práticas GitHub (Prêmio Ceará Tem Design)

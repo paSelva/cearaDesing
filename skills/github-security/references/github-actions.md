@@ -204,14 +204,15 @@ jobs:
             **/node_modules/**
             .env
             tests/**
-            storage/**
+            storage/app/**
+            storage/logs/**
 ```
 
 Regras:
 - **Nunca** enviar `.env` pelo pipeline — ele é criado uma vez no servidor, fora do repositório.
-- **Nunca** sobrescrever `storage/` (uploads dos participantes e logs ficam lá).
+- **Nunca** sobrescrever `storage/app` (uploads dos participantes) nem `storage/logs`; `storage/framework/` precisa existir no servidor.
 - Usar **FTPS**, nunca FTP puro (credencial trafega em texto claro).
-- Migrations continuam pelo cron temporário (ver `security-audit/references/hostgator-shared.md`).
+- Migrations continuam pelo cron temporário (ver `../security-audit/references/hostgator-shared.md`).
 
 ---
 

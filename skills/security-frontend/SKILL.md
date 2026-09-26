@@ -138,7 +138,7 @@ Livewire, Alpine e Filament usam scripts/estilos inline; o Turnstile carrega de
 
 ## Passo 6 — Clickjacking e iframes
 
-- [ ] `X-Frame-Options: SAMEORIGIN` ou `frame-ancestors 'self'` (middleware — `security-audit/references/laravel-hardening.md`)
+- [ ] `X-Frame-Options: SAMEORIGIN` ou `frame-ancestors 'self'` (middleware — `../security-audit/references/laravel-hardening.md`)
 - [ ] Páginas de login, voto e painéis nunca embutíveis por outros domínios
 - [ ] Embeds de terceiros (vídeo de projeto, se houver) com `sandbox` quando possível
 

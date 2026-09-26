@@ -1,21 +1,17 @@
 ---
 name: security-backend
 description: >
-  Auditoria e hardening de segurança do backend Laravel 13 (PHP 8.4) do Prêmio Ceará Tem
-  Design: rotas, controllers, Actions, Form Requests, Policies/Gates, Fortify, Filament,
-  Livewire, uploads com Spatie Media Library, filas por cron e configuração de produção
-  na HostGator. Identifica vulnerabilidades reais, gera correções prontas e pesquisa
-  online quando encontrar pacote ou padrão desconhecido. Use este skill sempre que o
-  usuário mencionar: "segurança do backend", "rota segura?", "Laravel hardening",
-  "Fortify", "rate limiting", "RateLimiter", "autenticação", "autorização", "Policy",
-  "Gate", "RBAC", "papel/role", "IDOR", "middleware de auth", "validação de input",
-  "Form Request", "mass assignment", "$fillable", "injeção", "SSRF", "upload de
-  arquivo seguro", "media library", "APP_DEBUG", "erro expõe stack trace", "log com
-  dados sensíveis", "variáveis de ambiente", "bcrypt", "argon2", "reset de senha",
-  "rota sem auth", "Turnstile", "captcha", "fraude no voto", "auditoria de API",
-  "OWASP backend", ou qualquer variação. Acione também quando o usuário mostrar rotas,
-  controllers, Actions, Policies, Form Requests, providers, arquivos de config/ ou .env,
-  ou disser "antes de ir pra produção" com código PHP visível.
+  Auditoria e hardening do backend Laravel 13 (PHP 8.4) do Prêmio Ceará Tem Design: rotas,
+  Actions, Form Requests, Policies, Fortify, Filament, Livewire, uploads (Media Library) e
+  configuração de produção na HostGator. Gera correções prontas e pesquisa pacotes
+  desconhecidos. Use sempre que o usuário mencionar: "segurança do backend", "Laravel
+  hardening", "Fortify", "rate limiting", "RateLimiter", "autenticação", "autorização",
+  "Policy", "Gate", "papel/role", "IDOR", "Form Request", "mass assignment", "$fillable",
+  "injeção", "SSRF", "upload seguro", "media library", "APP_DEBUG", "stack trace exposto",
+  "log com dados sensíveis", "reset de senha", "rota sem auth", "Turnstile", "fraude no
+  voto", "OWASP backend", ou variações. Acione também quando o usuário mostrar rotas,
+  controllers, Actions, Policies, providers, config/ ou .env, ou disser "antes de ir pra
+  produção".
 ---
 
 # Security:Backend — Laravel (Prêmio Ceará Tem Design)
@@ -133,7 +129,7 @@ class SubmitEvaluationRequest extends FormRequest
 }
 ```
 
-> Mais vetores (raw SQL, orderBy dinâmico, `Rule::unique()->ignore`): `security-audit/references/eloquent-injection.md`.
+> Mais vetores (raw SQL, orderBy dinâmico, `Rule::unique()->ignore`): `../security-audit/references/eloquent-injection.md`.
 
 ---
 
@@ -158,7 +154,7 @@ Route::post('/eleitor/cadastro', ...)->middleware('throttle:voter-register');
 ## Passo 5 — Headers HTTP
 
 O Laravel não adiciona headers de segurança por padrão → middleware próprio.
-Código pronto: `security-audit/references/laravel-hardening.md` (seção 2).
+Código pronto: `../security-audit/references/laravel-hardening.md` (seção 2).
 
 ---
 

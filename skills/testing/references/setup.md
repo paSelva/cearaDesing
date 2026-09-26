@@ -50,7 +50,7 @@ mysql -u root -e "CREATE DATABASE IF NOT EXISTS cearadesign_testing CHARACTER SE
 ```
 
 > Se precisar de velocidade no dia a dia, SQLite pode ser usado localmente, mas o **CI**
-> deve rodar em MySQL (ver `github-security/references/github-actions.md`).
+> deve rodar em MySQL (ver `../github-security/references/github-actions.md`).
 
 ---
 

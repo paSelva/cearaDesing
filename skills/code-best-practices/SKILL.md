@@ -1,18 +1,16 @@
 ---
 name: code-best-practices
 description: >
-  Guia de boas práticas para desenvolver o sistema do Prêmio Ceará Tem Design com Claude Code:
-  monólito Laravel 13 (PHP 8.4, MySQL) com regra de negócio em Actions, Policies, Enums,
-  Filament 5 para admin/jurado, Blade + Livewire 4 para site, participante e voto popular,
-  Fortify, Pest e deploy sem SSH na HostGator. Inclui o protocolo de sessão usando a pasta
-  docs/ do repositório como memória do projeto (e, opcionalmente, um vault Obsidian).
-  Use este skill sempre que estiver criando módulo, Action, Policy, migration, componente
-  Livewire, Resource do Filament, revisando arquitetura, refatorando, ou quando o usuário
-  pedir para "seguir boas práticas", "revisar o código", "como organizar", "estrutura do
-  projeto", "padrões de desenvolvimento", "onde coloco essa regra", "Action ou controller?",
-  "segundo cérebro", "memória do projeto", "configurar Obsidian", ou qualquer variação.
-  Acione também em revisões de PR, code review, ou quando o usuário disser "como deveria
-  estar", "está certo assim?", "como retomar o projeto" ou "onde deixei".
+  Boas práticas para desenvolver o Prêmio Ceará Tem Design com Claude Code: monólito
+  Laravel 13 (PHP 8.4, MySQL) com regra de negócio em Actions, Policies e Enums, Filament
+  5 (admin/jurado), Blade + Livewire 4, Fortify, Pest e deploy sem SSH na HostGator,
+  usando docs/ do repositório como memória do projeto (vault Obsidian opcional). Use
+  sempre ao criar Action, Policy, migration, componente Livewire ou Resource do Filament,
+  revisar arquitetura, refatorar, ou quando o usuário pedir "seguir boas práticas",
+  "revisar o código", "como organizar", "estrutura do projeto", "onde coloco essa regra",
+  "Action ou controller?", "segundo cérebro", "memória do projeto", "configurar Obsidian",
+  ou variações. Acione também em code review/PR, ou quando o usuário disser "está certo
+  assim?", "como retomar o projeto" ou "onde deixei".
 ---
 
 # Boas Práticas de Código — Prêmio Ceará Tem Design
