@@ -14,9 +14,9 @@ As inscrições abrem em **28/09/2026** (§7). A documentação foi escrita em *
 - [ ] Montar o deploy sem SSH: build local + upload + cron para migrations (P63, P66) · ⚠️ P68
 - [ ] Fazer um deploy de teste ("hello world" Laravel 13 + PHP 8.4) na HostGator **antes** de desenvolver as funcionalidades
 - [x] Criar o repositório git
-- [ ] Criar o projeto Laravel 13 e instalar o Filament 5
-- [ ] Criar migrations e seeders com os dados do edital (edição 2026, 9 categorias, critérios)
-- [ ] Papéis por campo `role` + Policies (T2)
+- [x] Fundação Laravel 13 com Filament 5 no painel `/admin` (SPEC-001; validação local)
+- [x] Migrations e seed idempotente: edição 2026, 9 categorias e 36 critérios (SPEC-001)
+- [x] Papéis por campo `role` + Policies para painel e catálogo (SPEC-001)
 
 ## Fase 1 — Site público e inscrição
 **Prazo do edital:** inscrições de 28/09 a 28/10/2026 (§7).

@@ -65,7 +65,7 @@ Tem **um único registro**, porque o sistema atende só 2026 (P32). A tabela exi
 | band_gold_min / band_silver_min / band_bronze_min / band_honorable_min | tinyint unsigned | não | 54 / 48 / 42 / 36 (§6) |
 | results_published_at | datetime | sim | Preenchido pelo botão **Publicar resultado** (P69) |
 
-> **Horário de término das inscrições:** 23:59:59 de 28/10, horário de Fortaleza (P77). A data continua editável no admin (§7).
+> **Convenção técnica aplicada na SPEC-001 (não é regra adicional do edital):** os seis campos datetime dos períodos de inscrição, avaliação e votação usam o fuso `America/Fortaleza`; cada início fica às 00:00:00 e cada término às 23:59:59 da data configurada. O término das inscrições em 28/10 às 23:59:59 também corresponde a P77. Datas informativas e de elegibilidade continuam em colunas `date`, sem horário.
 
 ### `categories`
 | Coluna | Tipo | Nulo | Observação |

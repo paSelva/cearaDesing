@@ -14,20 +14,41 @@ Sistema web do **1º Prêmio Ceará Tem Design 2026** (Associação Ceará Desig
 
 Os detalhes estão em [docs/02-stack.md](docs/02-stack.md).
 
+## Painel da organização (SPEC-001)
+
+O painel Filament fica em `/admin`; somente usuários com o papel `admin` podem
+autenticar. Crie o primeiro administrador pelo CLI local, com senha em prompt
+oculto (não passe credenciais como argumentos nem as registre em logs):
+
+```bash
+docker compose -p ceara_spec001_dev exec laravel.test php artisan app:create-admin
+```
+
+Depois, acesse `http://localhost:18081/admin`. O catálogo e a configuração são
+semeados com `php artisan db:seed`; a repetição preserva alterações feitas pela
+organização. Consulte o [handoff da SPEC-001](docs/qa/SPEC-001-handoff.md) antes
+de executar comandos que alterem bancos ou volumes.
+
 ## Bootstrap local
 
 Pré-requisitos no host: Docker com Compose e Node/npm compatível com o `package-lock.json`.
-PHP e Composer nativos não são necessários: o bootstrap usa a imagem travada
-`composer:2.8.12`, independente dos containers da aplicação.
+PHP e Composer nativos não são necessários: o bootstrap usa a imagem
+`ceara-spec-composer:2.8.12-php84-intl`, independente dos containers da aplicação.
+Ela contém PHP 8.4, Composer 2.8.12 e as extensões intl, mbstring, pdo_mysql e zip.
 
 ```bash
 cp .env.example .env
+# Ajuste APP_URL/APP_PORT, DB_DATABASE/DB_TEST_DATABASE e FORWARD_DB_PORT
+# para valores livres e exclusivos antes de iniciar o projeto Compose.
 bash scripts/bootstrap-local.sh
-docker compose -p ceara_local up -d --build
-docker compose -p ceara_local exec -T laravel.test php artisan key:generate --force
-docker compose -p ceara_local exec -T laravel.test php artisan migrate --force
+docker compose -p ceara_spec001_dev up -d --build
+docker compose -p ceara_spec001_dev exec -T laravel.test php artisan key:generate --force
+docker compose -p ceara_spec001_dev exec -T laravel.test php artisan migrate --force
+docker compose -p ceara_spec001_dev exec -T laravel.test php artisan db:seed --force
 npm ci --ignore-scripts
 npm run build
+docker compose -p ceara_spec001_dev exec -T laravel.test php artisan test
+docker compose -p ceara_spec001_dev exec -T laravel.test vendor/bin/pint --test app bootstrap database tests
 ```
 
 O script de bootstrap instala as dependências do `composer.lock`, verifica os arquivos
@@ -35,6 +56,12 @@ necessários e valida a configuração Compose antes da primeira subida. O build
 fonte Instrument Sans de `fonts.bunny.net` e, portanto, requer conectividade com esse host.
 Use somente banco, volume, portas e `.env` isolados; nunca execute `migrate:fresh` ou
 `db:wipe` em ambiente compartilhado ou de produção.
+
+Variáveis locais relevantes: `APP_URL`, `APP_PORT`, `APP_KEY`, `DB_CONNECTION`,
+`DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_TEST_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`,
+`FORWARD_DB_PORT`, `SESSION_DRIVER` e `MAIL_MAILER`. O fuso é configurado em
+`config/app.php` (`America/Fortaleza`), não por variável de cliente. Nunca coloque
+segredos em `VITE_*` nem versione `.env`.
 
 ## Documentação
 
@@ -45,13 +72,15 @@ Use somente banco, volume, portas e `.env` isolados; nunca execute `migrate:fres
 5. [Roadmap e cronograma](docs/05-roadmap.md)
 6. [Perguntas em aberto](docs/06-perguntas-em-aberto.md) ← **o que ainda precisa ser respondido**
 7. [Actions (casos de uso)](docs/07-actions.md)
+8. [SPEC-001 — catálogo e painel administrativo](docs/specs/SPEC-001-catalogo-admin.md)
+9. [Handoff reproduzível para QA](docs/qa/SPEC-001-handoff.md)
 
 Convenção: **(§x)** = regra do edital · **(P#, confirmado)** = decisão do responsável que não está no edital · **Recomendação** = proposta técnica · **⚠️ A definir (P#)** = pergunta em aberto.
 
 ## Referência
 
 - Site de referência: <https://www.premiobornancini.com.br/>, com o portal de inscrição separado em <https://www.inscricaopremiobornancini.com.br/>
-- Edital: `anexos/EDITAL FINAL_PREMIO CEARA TEM DESIGN.pdf` (não versionado: fica fora do repositório, na pasta local `anexos/`)
+- Edital fornecido pelo responsável: `docs/EDITAL FINAL_PREMIO CEARA TEM DESIGN.pdf` (arquivo local não versionado; disponibilizar ao QA por canal autorizado se necessário)
 
 ## Skills do Claude Code
 
