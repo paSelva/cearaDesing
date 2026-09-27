@@ -20,7 +20,7 @@ O arquivo preexistente `docs/workflow-ceara-design.md` não faz parte do diff e 
 
 ## Pré-requisitos e ambiente
 
-- Docker Desktop ativo; PHP/Composer nativos não são necessários. A instalação inicial usa `composer:2.8.12`, antes dos containers da aplicação.
+- Docker Desktop ativo; PHP/Composer nativos não são necessários. A instalação inicial usa `composer:2.8.12` (PHP 8.4 com `mbstring` e `zip`), antes dos containers da aplicação. O container da aplicação instala PHP 8.4 com `pdo_mysql`, `mbstring` e `zip`.
 - Node/npm compatíveis com `package-lock.json` (a prova local usou Node 26.8.2/npm 11.19.1).
 - Nenhum `.env` de DEV/produção deve ser copiado.
 - Use somente dados sintéticos, e-mail `log`/`array`, storage local e banco novo.

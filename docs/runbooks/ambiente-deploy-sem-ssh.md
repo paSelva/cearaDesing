@@ -37,7 +37,7 @@ Não criar variável secreta `VITE_*`. `.env.example` contém somente vazios e e
 ## 3. Preparação local reproduzível
 
 1. Confirmar por decisão registrada a major do Laravel e obter P65.
-2. No host, instalar Docker com Compose e Node/npm compatível com o lockfile. PHP e Composer nativos são opcionais: `scripts/bootstrap-local.sh` usa `composer:2.8.12` com PHP 8.4 e instala o `composer.lock` antes de iniciar os containers da aplicação.
+2. No host, instalar Docker com Compose e Node/npm compatível com o lockfile. PHP e Composer nativos são opcionais: `scripts/bootstrap-local.sh` usa `composer:2.8.12` (validado com PHP 8.4.14, `mbstring` e `zip`) e instala o `composer.lock` antes de iniciar os containers da aplicação. O container `laravel.test` foi validado com PHP 8.4.26 e `pdo_mysql`, `mbstring` e `zip`.
 3. Em checkout limpo, executar literalmente:
 
    ```bash
@@ -71,8 +71,18 @@ docker compose -p <PROJETO_ANTERIOR> up -d --build --force-recreate
 
 Não use `down -v`, não remova o diretório legado e não apague `vendor/`. O comando `down`
 sem `-v` recria containers e rede, mas preserva o volume MySQL. Se o Composer acusar o
-diretório legado, interrompa e copie/mova esse diretório para custódia antes de reparar a
-instalação; não force com `--ignore-platform-reqs`.
+diretório legado, interrompa e preserve-o no storage privado antes de repetir:
+
+```bash
+mkdir -p storage/app/private/bootstrap-recovery
+test ! -e storage/app/private/bootstrap-recovery/create-testing-database.sh.bind-mount-directory
+mv vendor/laravel/sail/database/mysql/create-testing-database.sh \
+  storage/app/private/bootstrap-recovery/create-testing-database.sh.bind-mount-directory
+bash scripts/bootstrap-local.sh
+```
+
+Não force a instalação com `--ignore-platform-reqs`. A custódia acima fica fora da
+superfície pública e pode ser inspecionada antes de ser descartada por decisão explícita.
 
 ### Contrato de rede do build
 
