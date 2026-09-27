@@ -1,5 +1,7 @@
 # SPEC-000 — Auditoria da execução (seções 4, 8 e 9)
 
+> Auditoria histórica do snapshot sem aplicação. A complementação executada após o PR #1 está em [SPEC-000-complementacao-local.md](SPEC-000-complementacao-local.md), que contém a matriz vigente de evidências locais e o parecer atualizado.
+
 **Auditoria:** 26/09/2026, ambiente local macOS/zsh e GitHub Actions `ubuntu-latest`.
 
 **Base do diff:** `e05177f` (`develop`). **Branch:** `chore/spec-000-viabilidade`. **PR:** `#1` para `develop`.
