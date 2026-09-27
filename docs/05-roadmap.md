@@ -8,11 +8,12 @@ As inscrições abrem em **28/09/2026** (§7). A documentação foi escrita em *
 **Possibilidade (condicionada a P2):** a organização recebe as inscrições por um formulário provisório e depois elas são importadas para o sistema. Só será implementado se P2 confirmar esse caminho, e o formato do formulário ainda não está definido.
 
 ## Fase 0 — Setup
+- [x] SPEC-000: diagnóstico do repositório, matriz de aderência, CI mínimo e runbook sem SSH (prova remota pendente)
 - [ ] Atualizar para PHP 8.4 (T3) e instalar Composer ou Herd
 - [ ] Banco MySQL local na mesma versão do servidor (P33, P65)
 - [ ] Montar o deploy sem SSH: build local + upload + cron para migrations (P63, P66) · ⚠️ P68
 - [ ] Fazer um deploy de teste ("hello world" Laravel 13 + PHP 8.4) na HostGator **antes** de desenvolver as funcionalidades
-- [ ] Criar o repositório git
+- [x] Criar o repositório git
 - [ ] Criar o projeto Laravel 13 e instalar o Filament 5
 - [ ] Criar migrations e seeders com os dados do edital (edição 2026, 9 categorias, critérios)
 - [ ] Papéis por campo `role` + Policies (T2)
