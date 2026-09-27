@@ -42,6 +42,7 @@ Situações usadas nesta matriz são exclusivamente as solicitadas. Documentaç�
 |---|---|---|---|
 | Instalação reproduzível por dependências travadas | Bloqueado. | E2: `composer.json`, `composer.lock`, `package.json` e lock npm ausentes; E3: Composer ausente. | Criar app após decisões e commitar lockfiles; provar instalação limpa. |
 | Aplicação Laravel mínima | Bloqueado. | E2: `artisan`, `app/`, `routes/`, `config/` e `public/` ausentes. | Confirmar major e criar fundação. |
+| Aplicação executando localmente | Bloqueado. | E2/E3: não há aplicação, PHP nem Composer; nenhum servidor Laravel foi iniciado ou testado. | Após a fundação, iniciar localmente e verificar resposta/health check sem expor configuração. |
 | Assets compilados | Bloqueado. | E2: sem `package.json`, lockfile, `resources/` ou `public/`. | `npm ci && npm run build` após fundação. |
 | Conexão com banco descartável | Bloqueado. | E3: cliente MySQL ausente; P65 aberta; nenhum banco foi criado ou acessado. | Provisionar banco isolado na versão confirmada e registrar nome/host sem segredo. |
 | Migration de teste segura no banco descartável | Bloqueado. | E2: sem `database/`, migrations ou Artisan; nenhum comando destrutivo foi executado. | Confirmar banco exclusivamente descartável, executar migrate/rollback e registrar. |
