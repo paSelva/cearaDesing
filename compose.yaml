@@ -3,7 +3,7 @@ services:
         build:
             context: ./.docker/php
             dockerfile: Dockerfile
-        image: ceara-spec000/php84
+        image: ceara-spec001/php84
         ports:
             - '${APP_PORT:-80}:80'
         volumes:
@@ -21,7 +21,7 @@ services:
             MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
             MYSQL_ROOT_HOST: '%'
             MYSQL_DATABASE: '${DB_DATABASE}'
-            MYSQL_TEST_DATABASE: '${DB_TEST_DATABASE:-ceara_spec000_testing}'
+            MYSQL_TEST_DATABASE: '${DB_TEST_DATABASE:-ceara_spec001_testing}'
             MYSQL_USER: '${DB_USERNAME}'
             MYSQL_PASSWORD: '${DB_PASSWORD}'
             MYSQL_ALLOW_EMPTY_PASSWORD: 1

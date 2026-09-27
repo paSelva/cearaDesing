@@ -3,6 +3,7 @@ set -euo pipefail
 
 required_files=(
     '.env'
+    '.docker/composer/Dockerfile'
     '.docker/php/Dockerfile'
     '.docker/mysql/create-testing-database.sh'
     'artisan'
@@ -26,12 +27,17 @@ command -v docker >/dev/null 2>&1 || {
 docker info >/dev/null
 docker compose version >/dev/null
 
+docker build \
+    --file .docker/composer/Dockerfile \
+    --tag ceara-spec-composer:2.8.12-php84-intl \
+    .docker/composer
+
 docker run --rm \
     --user "$(id -u):$(id -g)" \
     --env COMPOSER_HOME=/tmp/composer \
     --volume "$PWD:/app" \
     --workdir /app \
-    composer:2.8.12 \
+    ceara-spec-composer:2.8.12-php84-intl \
     composer install --no-interaction --prefer-dist --no-progress
 
 if [ ! -f vendor/autoload.php ]; then

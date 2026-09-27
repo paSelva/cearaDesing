@@ -17,6 +17,8 @@ Legenda: **(§x)** edital · **(P#)** decisão confirmada · **Recomendação** 
 
 | Área | Action | Quem chama | Superfície |
 |---|---|---|---|
+| Administração | `CreateAdminUser` | operador autorizado | CLI `app:create-admin` |
+| Administração | `UpdateEditionSettings` | admin autorizado | Filament `/admin` |
 | Conta | `RegisterParticipant` | visitante | site (Fortify) |
 | Conta | `UpdateParticipantProfile` | participante | área do participante |
 | Conta | `RegisterVoter` | visitante | site (Fortify) |
@@ -43,6 +45,19 @@ Legenda: **(§x)** edital · **(P#)** decisão confirmada · **Recomendação** 
 | Importação | `ImportEntries` | admin | ⚠️ só se P2 confirmar |
 
 Apoio (não são Actions): regras de validação `Cpf` e `Cnpj` (dígito verificador, P4, P42) e `Turnstile` (P52).
+
+### Administração (SPEC-001)
+
+- `CreateAdminUser`: validada e invocada pelo comando `php artisan app:create-admin`;
+  solicita senha e confirmação em prompts ocultos, cria o papel `admin` no servidor,
+  aplica hash pelo cast `hashed` e não recebe papel pela entrada.
+- `UpdateEditionSettings`: chamada somente após autorização da `EditionPolicy` no
+  recurso Filament. Valida períodos, quantidade positiva de jurados e limites de
+  distinção em ordem decrescente, respeitando a pontuação máxima configurada
+  (quatro critérios × cinco pontos × jurados por inscrição). Não altera ano nem
+  `results_published_at`.
+- Categorias e critérios são somente leitura nesta etapa; as Policies negam
+  criação, edição e exclusão mesmo se operações forem tentadas diretamente.
 
 ---
 
