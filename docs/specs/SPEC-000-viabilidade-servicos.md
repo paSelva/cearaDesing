@@ -112,7 +112,7 @@ A prova viável é o pipeline da fundação documental:
 - verifica entradas mínimas do `.gitignore`;
 - impede segredo aparente em variável `VITE_*` no exemplo;
 - passa a validar `composer.lock`/manifest e `package-lock.json` automaticamente quando a aplicação existir;
-- executa Gitleaks no histórico no GitHub Actions.
+- executa Gitleaks no histórico no GitHub Actions; os dois checks do workflow passaram no PR #1 após a correção mínima de permissão em `940c082`.
 
 A prova Laravel, build de assets, migration e separação real de storage **não foi executada**: não existe aplicação, a major ainda é recomendação, faltam PHP/Composer/MySQL e P65. Isso bloqueia a próxima fundação técnica, mas não a documentação, Git, CI e preparação de QA desta SPEC.
 

@@ -22,7 +22,7 @@ Situações: **verificado** = comando/evidência nesta execução; **documentado
 | Turnstile backend | P52 | inexistente | docs oficiais consultados | documentado | Siteverify; falhar fechado; hostname/action; testes falsos |
 | Storage público/privado | workflow §8; P54/P55 | inexistente | nenhum filesystem da aplicação | bloqueado | prova local e QA após fundação; downloads com Policy |
 | `.env` e artefatos sensíveis fora do Git | skills Git | ignore endurecido e exemplo sanitizado | script de fundação | verificado no snapshot | executar Gitleaks no CI e revisar artefato de deploy |
-| CI mínima | tarefa §9; skill GitHub | workflow de fundação | YAML + script local | implementado, execução remota pendente | observar checks do PR |
+| CI mínima | tarefa §9; skill GitHub | workflow de fundação | script local + checks `Repository foundation` e `Secret detection` aprovados no PR #1 | verificado | manter checks obrigatórios na integração |
 | Testes Pest | recomendação em `docs/02`; skill testes | inexistentes | PHP/Composer e app ausentes | bloqueado | introduzir com fundação aprovada e MySQL isolado |
 | Build assets | recomendação em `docs/02` | inexistente | sem manifest | bloqueado | `npm ci && npm run build` após lockfile |
 | Deploy sem SSH | P66/P67 | runbook; nenhum deploy | sem acesso QA/cPanel | documentado | executar prova somente no QA autorizado |

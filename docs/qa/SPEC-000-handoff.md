@@ -1,6 +1,6 @@
 # Handoff QA — SPEC-000
 
-Preencher o SHA alvo após o commit final. A base do diff é `e05177f` (`develop` inicial) e a branch é `chore/spec-000-viabilidade`.
+O SHA alvo imutável será publicado no PR #1 após o commit final. A base do diff é `e05177f` (`develop` inicial) e a branch é `chore/spec-000-viabilidade`.
 
 ## Preparação isolada
 
@@ -12,6 +12,23 @@ bash scripts/validate-foundation.sh
 ```
 
 Não executar `<SHA_ALVO>` literalmente. O QA deve substituir pelo SHA entregue, usar dados sintéticos e não acessar produção.
+
+Confirme o snapshot antes dos testes:
+
+```bash
+test "$(git rev-parse HEAD)" = "<SHA_ALVO>"
+git status --short --branch
+```
+
+## Isolamento do ambiente
+
+- Criar `.env` próprio do worktree, nunca copiar o de DEV ou produção.
+- Quando a aplicação existir, usar banco exclusivo como `ceara_qa_spec000`; confirmar a conexão antes de qualquer reset.
+- Manter o `storage/` do worktree e uploads sintéticos separados; não apontar para storage compartilhado.
+- Usar cache/fila próprios ou drivers efêmeros; nenhum worker DEV/produção pode consumir a fila de QA.
+- Usar porta local exclusiva (por exemplo, `8081`) e `APP_URL` correspondente.
+- Usar transporte de e-mail falso/local (`array`/`log`) e nunca remetentes ou destinatários reais.
+- Turnstile e demais integrações devem usar mocks/chaves oficiais de teste, nunca credenciais de produção.
 
 ## Casos mínimos
 

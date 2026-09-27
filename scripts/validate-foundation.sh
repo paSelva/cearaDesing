@@ -10,6 +10,7 @@ required_files=(
   "docs/05-roadmap.md"
   "docs/06-perguntas-em-aberto.md"
   "docs/07-actions.md"
+  "docs/specs/SPEC-000-auditoria-execucao.md"
   "docs/specs/SPEC-000-viabilidade-servicos.md"
   "docs/specs/SPEC-000-matriz-aderencia.md"
   "docs/runbooks/ambiente-deploy-sem-ssh.md"
@@ -19,6 +20,9 @@ required_files=(
 for path in "${required_files[@]}"; do
   test -f "$path" || { printf 'Arquivo obrigatório ausente: %s\n' "$path" >&2; exit 1; }
 done
+
+grep -Eq '^[[:space:]]+pull-requests:[[:space:]]+read$' .github/workflows/foundation.yml \
+  || { printf 'Permissão mínima de leitura de PR ausente no workflow.\n' >&2; exit 1; }
 
 required_ignores=(
   '.env'
