@@ -19,9 +19,9 @@ A viabilidade remota na HostGator ainda não foi comprovada. Não houve alteraç
 | Último SHA de implementação | `14c43be6bda6f8296a4f877bf2dfc4967ca9f23c` |
 | SHA final do relatório/PR | Confirmado no PR após este commit documental |
 | Pull Request | [PR #2](https://github.com/paSelva/cearaDesing/pull/2) |
-| Estado do PR | Aberto, sem merge |
+| Estado do PR | PR #2 mergeado; correção BUG-QA-001 em PR complementar |
 | Checks remotos | 3/3 aprovados |
-| QA independente | Ainda não executado |
+| QA independente | SHA `14c43be` reprovado por BUG-QA-001; correção aguarda reteste |
 
 ## Estado inicial
 
@@ -129,6 +129,17 @@ Commits da complementação:
 
 O workflow agora executa PHP 8.4, MySQL 8.0, Composer, npm, auditorias, build, Pint, migrations e Pest. As Actions foram fixadas por SHA.
 
+## Correção BUG-QA-001
+
+O QA identificou que o Compose montava um script dentro de `vendor/` antes da instalação
+das dependências. Em checkout limpo, Docker criava o caminho ausente como diretório e o
+MySQL encerrava com código 126. A correção moveu o script de inicialização do banco de
+teste para `.docker/mysql/`, adicionou preflight e tornou explícita a instalação do
+`composer.lock` por `composer:2.8.12` antes da primeira subida.
+
+O parecer reprovado foi preservado em `docs/qa/SPEC-000-14c43be.md`. A correção feita pelo
+DEV não substitui o reteste independente.
+
 ## Deploy e viabilidade remota
 
 O deploy remoto não foi executado por ausência de ambiente QA HostGator autorizado. Permanecem pendentes:
@@ -169,6 +180,7 @@ git fetch origin
 git worktree add --detach ../ceara-qa-spec-000 <SHA_FINAL_DO_PR>
 cd ../ceara-qa-spec-000
 cp .env.example .env
+bash scripts/bootstrap-local.sh
 docker compose -p ceara_qa_spec000 up -d --build
 docker compose -p ceara_qa_spec000 exec -T laravel.test php artisan key:generate --force
 docker compose -p ceara_qa_spec000 exec -T laravel.test php artisan migrate --force

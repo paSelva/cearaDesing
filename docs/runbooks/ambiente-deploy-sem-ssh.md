@@ -26,7 +26,7 @@ Cloudflare Tunnel, R2, Workers, migração de DNS, Redis e VPS não são requisi
 | Grupo | Nomes | Regra |
 |---|---|---|
 | aplicação | `APP_NAME`, `APP_ENV`, `APP_URL`, `APP_DEBUG`, `APP_KEY` | `APP_KEY` é secret; produção usa debug falso |
-| banco | `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | credenciais só no backend/cPanel |
+| banco | `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_TEST_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | credenciais só no backend/cPanel; banco de teste exclusivo por ambiente |
 | sessão/cache/fila | `SESSION_DRIVER`, `SESSION_SECURE_COOKIE`, `SESSION_ENCRYPT`, `CACHE_STORE`, `QUEUE_CONNECTION` | drivers precisam ser comprovados na hospedagem |
 | e-mail | `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS`, `MAIL_FROM_NAME` | credenciais privadas; P31 |
 | Turnstile | `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | sitekey pública; secret nunca no bundle/resposta |
@@ -37,11 +37,49 @@ Não criar variável secreta `VITE_*`. `.env.example` contém somente vazios e e
 ## 3. Preparação local reproduzível
 
 1. Confirmar por decisão registrada a major do Laravel e obter P65.
-2. Instalar PHP 8.4 e extensões exigidas pelo lockfile; instalar Composer. Não usar o PHP 8.3 ou uma imagem MySQL arbitrária para declarar compatibilidade.
-3. Criar a fundação e commitar `composer.lock` e `package-lock.json`. Instalar com `composer install` e `npm ci`.
-4. Criar banco exclusivamente descartável, nomeado para a SPEC/QA, e conferir host/nome antes de qualquer `migrate:fresh`.
-5. Executar `composer validate --strict`, auditorias de dependência, estilo adotado, testes, migration/rollback e `npm run build`.
-6. Demonstrar discos separados: mídia elegível pública; rascunhos, PDFs e comprovações privados e servidos com Policy.
+2. No host, instalar Docker com Compose e Node/npm compatível com o lockfile. PHP e Composer nativos são opcionais: `scripts/bootstrap-local.sh` usa `composer:2.8.12` com PHP 8.4 e instala o `composer.lock` antes de iniciar os containers da aplicação.
+3. Em checkout limpo, executar literalmente:
+
+   ```bash
+   cp .env.example .env
+   bash scripts/bootstrap-local.sh
+   docker compose -p ceara_local up -d --build
+   docker compose -p ceara_local exec -T laravel.test php artisan key:generate --force
+   docker compose -p ceara_local exec -T laravel.test php artisan migrate --force
+   npm ci --ignore-scripts
+   npm run build
+   ```
+
+4. O preflight exige `.env`, lockfile, Dockerfile, `artisan`, o script MySQL versionado em `.docker/mysql/` e, depois do Composer, `vendor/autoload.php` como arquivos regulares. Ele também executa `docker compose config --quiet`. O Compose não monta arquivos de `vendor/` durante a inicialização do MySQL.
+5. Criar bancos exclusivamente descartáveis em `DB_DATABASE` e `DB_TEST_DATABASE`, nomeados para a SPEC/QA, e conferir projeto Compose, volume e portas antes de qualquer operação. Não usar `migrate:fresh` ou `db:wipe`.
+6. Executar `composer validate --strict`, auditorias de dependência, estilo adotado, testes, migrations e `npm run build`.
+7. Demonstrar discos separados: mídia elegível pública; rascunhos, PDFs e comprovações privados e servidos com Policy.
+
+### Recuperação do BUG-QA-001
+
+Uma tentativa anterior podia criar
+`vendor/laravel/sail/database/mysql/create-testing-database.sh` como diretório. A correção
+não depende mais desse caminho. Preserve o volume e quaisquer arquivos existentes:
+
+```bash
+docker compose -p <PROJETO_ANTERIOR> down
+test -d vendor/laravel/sail/database/mysql/create-testing-database.sh \
+  && printf 'Diretório legado preservado; ele não é mais montado pelo Compose.\n'
+bash scripts/bootstrap-local.sh
+docker compose -p <PROJETO_ANTERIOR> up -d --build --force-recreate
+```
+
+Não use `down -v`, não remova o diretório legado e não apague `vendor/`. O comando `down`
+sem `-v` recria containers e rede, mas preserva o volume MySQL. Se o Composer acusar o
+diretório legado, interrompa e copie/mova esse diretório para custódia antes de reparar a
+instalação; não force com `--ignore-platform-reqs`.
+
+### Contrato de rede do build
+
+`npm run build` usa o plugin de fontes do Vite para obter Instrument Sans em
+`fonts.bunny.net`. O build requer DNS e HTTPS de saída para esse host. Essa dependência
+remota é uma limitação conhecida, não uma autorização para trocar fontes ou dependências
+nesta SPEC.
 
 ## 4. Pacote de deploy
 

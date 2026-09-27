@@ -14,6 +14,28 @@ Sistema web do **1º Prêmio Ceará Tem Design 2026** (Associação Ceará Desig
 
 Os detalhes estão em [docs/02-stack.md](docs/02-stack.md).
 
+## Bootstrap local
+
+Pré-requisitos no host: Docker com Compose e Node/npm compatível com o `package-lock.json`.
+PHP e Composer nativos não são necessários: o bootstrap usa a imagem travada
+`composer:2.8.12`, independente dos containers da aplicação.
+
+```bash
+cp .env.example .env
+bash scripts/bootstrap-local.sh
+docker compose -p ceara_local up -d --build
+docker compose -p ceara_local exec -T laravel.test php artisan key:generate --force
+docker compose -p ceara_local exec -T laravel.test php artisan migrate --force
+npm ci --ignore-scripts
+npm run build
+```
+
+O script de bootstrap instala as dependências do `composer.lock`, verifica os arquivos
+necessários e valida a configuração Compose antes da primeira subida. O build baixa a
+fonte Instrument Sans de `fonts.bunny.net` e, portanto, requer conectividade com esse host.
+Use somente banco, volume, portas e `.env` isolados; nunca execute `migrate:fresh` ou
+`db:wipe` em ambiente compartilhado ou de produção.
+
 ## Documentação
 
 1. [Escopo e regras do edital](docs/01-escopo-edital.md)
