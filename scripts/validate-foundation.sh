@@ -49,9 +49,15 @@ if grep -Eq '^VITE_.*(SECRET|PASSWORD|TOKEN|KEY)=' .env.example; then
 fi
 
 if test -f composer.json; then
-  command -v composer >/dev/null || { printf 'composer.json existe, mas Composer não está disponível.\n' >&2; exit 1; }
   test -f composer.lock || { printf 'composer.lock ausente.\n' >&2; exit 1; }
-  composer validate --strict --no-check-publish
+  if command -v composer >/dev/null; then
+    composer validate --strict --no-check-publish
+  elif command -v docker >/dev/null; then
+    docker run --rm -v "$PWD":/app -w /app composer:2.8.12 composer validate --strict --no-check-publish
+  else
+    printf 'composer.json existe, mas Composer e Docker não estão disponíveis.\n' >&2
+    exit 1
+  fi
 fi
 
 if test -f package.json; then
