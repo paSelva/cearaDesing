@@ -2,3 +2,59 @@
 .idea/
 # Edital mantido fora do repositório (decisão do responsável)
 anexos/
+
+# Ambiente e credenciais
+.env
+.env.local
+.env.development
+.env.production
+.env.staging
+.env.*.local
+.env.test
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+secrets/
+credentials/
+private/
+
+# Laravel e frontend
+/vendor/
+/node_modules/
+/public/build/
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail/
+/.phpunit.cache/
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+
+# Dados, artefatos e logs
+*.sql
+*.sql.gz
+backups/
+*.log
+coverage/
+.nyc_output/
+.tmp/
+tmp/
+
+# Sistema e IDE
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.iml
+.vscode/settings.json
+.vscode/launch.json
+*.swp
+*.swo
