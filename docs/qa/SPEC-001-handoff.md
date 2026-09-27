@@ -6,7 +6,7 @@
 
 **Base planejada:** `09659c8a2ace8b43d6f7e7855674b6a28a092614` (`origin/develop`, inclui BUG-QA-001).
 
-**SHA da implementação exercitada:** `f3352053b47cbd6af008639087e64236cc0103f4` (o commit seguinte desta entrega altera somente documentação/handoff).
+**SHA da implementação exercitada:** `44b0d335f55d1d1f4a2509498de19911d324b5d0` (último commit funcional; os próximos commits desta entrega alteram somente documentação/handoff).
 
 **QA deve revisar:** o HEAD remoto mais recente desta branch, informado no relatório final.
 **Worktree DEV:** isolado em `/private/tmp/ceara-spec001-worktree`; o worktree original e seus arquivos alheios não foram alterados.
@@ -59,7 +59,7 @@ Entre em `http://localhost:18081/admin`. Confira dashboard com 9 categorias/36 c
 | Query `information_schema.schemata` | versão 8.0.46 e banco `ceara_spec001_testing` presente (contagem 1) | MySQL isolado; database de testes criado pelo script existente |
 | `npm ci --ignore-scripts` | exit 0, 97 pacotes adicionados | Host Node v24.12.0/npm 11.6.2 |
 | `npm run build` | exit 0, `public/build/manifest.json` e assets emitidos; fonte Instrument Sans baixada | Host, conectividade Bunny disponível; aviso opcional de `fontaine` |
-| `php artisan test --compact` (após build; execução final) | 29 testes, 80 assertions, todos passaram | Pest contra MySQL 8.0.46, DB de teste isolado |
+| `php artisan test --compact` (após build; execução final) | 29 testes, 82 assertions, todos passaram | Pest contra MySQL 8.0.46, DB de teste isolado; inclui autorização por edição 2026 nas Policies |
 | `vendor/bin/pint --test app bootstrap database tests` | passou após formatter `pint app bootstrap database tests` | Container PHP; formatter restrito ao código da aplicação/testes, sem modificar skills |
 | navegador local | login e logout exercitados; painel mostra contagens 9/36; tabelas mostram 9 e 36 registros; configuração foi alterada, recarregada (persistiu) e restaurada | Navegador Playwright em `localhost:18081`; conta somente sintética neste banco local |
 | HTTP `GET /`, `GET /up` | antes do build: 500 em `/` por falta do manifest; após `npm run build`, suíte HTTP passou para `/` e `/up`; `/up` respondeu 200 no servidor local | App no Docker; falha foi corrigida pela etapa de build esperada |

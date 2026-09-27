@@ -1,6 +1,6 @@
 # SPEC-001 — Catálogo do prêmio e fundação administrativa
 
-Status: implementação DEV em `f3352053b47cbd6af008639087e64236cc0103f4`, aguardando revisão independente do QA. Base: `09659c8a2ace8b43d6f7e7855674b6a28a092614` (`origin/develop`). Escopo exclusivo desta branch: `feature/spec-001-catalogo-admin`.
+Status: implementação DEV em `44b0d335f55d1d1f4a2509498de19911d324b5d0`, aguardando revisão independente do QA. Base: `09659c8a2ace8b43d6f7e7855674b6a28a092614` (`origin/develop`). Escopo exclusivo desta branch: `feature/spec-001-catalogo-admin`.
 
 ## Objetivo e escopo
 
