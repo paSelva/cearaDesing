@@ -32,3 +32,54 @@ jobs:
         uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  application:
+    name: Laravel application
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: ceara_spec000_testing
+          MYSQL_USER: sail
+          MYSQL_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Set up PHP
+        uses: shivammathur/setup-php@b604ade2a87db23f8871b7182e69ec5e75effb45 # v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo_mysql, zip
+          coverage: none
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Validate Composer metadata
+        run: composer validate --strict --no-check-publish && composer audit
+      - name: Install frontend dependencies
+        run: npm ci --ignore-scripts
+      - name: Audit and build assets
+        run: npm audit --audit-level=high && npm run build
+      - name: Configure isolated application
+        run: cp .env.example .env && sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' .env && php artisan key:generate --force
+      - name: Migrate and test
+        env:
+          DB_HOST: 127.0.0.1
+          DB_DATABASE: ceara_spec000_testing
+          DB_USERNAME: sail
+          DB_PASSWORD: password
+        run: php artisan migrate --force && vendor/bin/pint --test app config routes tests bootstrap/app.php && php artisan test

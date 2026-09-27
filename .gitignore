@@ -29,6 +29,7 @@ private/
 /public/storage
 /storage/*.key
 /storage/pail/
+!/storage/app/private/.gitignore
 /.phpunit.cache/
 .phpunit.result.cache
 Homestead.json

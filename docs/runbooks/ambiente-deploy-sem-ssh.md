@@ -7,15 +7,15 @@ Este runbook prepara a prova em QA. Não autoriza produção, DNS, compra de ser
 | Recurso | Finalidade | Obrigatório | Configuração | Responsável | Dependência | Teste de aceite | Situação |
 |---|---|---:|---|---|---|---|---|
 | GitHub + CI | código, PR e checks | sim | proteção de `main`/`develop`, Actions, secret scanning | mantenedor do repo | permissões GitHub | PR exige checks e bloqueia push direto | CI adicionada; proteção não verificada |
-| DEV local | desenvolvimento | sim | PHP 8.4, Composer, Node travado, MySQL compatível | desenvolvimento | major Laravel e P65 | instalação limpa, testes e build | bloqueado |
+| DEV local | desenvolvimento | sim | PHP 8.4, Composer, Node travado, MySQL compatível | desenvolvimento | major Laravel e P65 | instalação limpa, testes e build | verificado em Docker; host sem PHP/Composer nativos |
 | QA isolado | prova e revisão | sim | banco/storage/e-mail/portas próprios | DEV + QA | acesso e credenciais QA | fluxo reproduzível sem dados reais | não disponível |
 | HostGator/cPanel | hospedagem | sim | plano, quotas, PHP web/CLI, cron, FTPS | organização/operador | acesso cPanel | app mínima servida com raiz segura | plano genérico confirmado; conta não verificada |
-| MySQL | persistência | sim | P65, InnoDB, utf8mb4, banco/usuário por ambiente | operador | cPanel | migration/rollback em QA | bloqueado P65 |
+| MySQL | persistência | sim | P65, InnoDB, utf8mb4, banco/usuário por ambiente | operador | cPanel | migration/rollback em QA | local 8.0 verificado; P65 HostGator pendente |
 | Domínio/DNS/HTTPS | acesso público | sim | P62, P68, certificado, redirecionamento | organização/operador | DNS/cPanel | HTTPS e arquivos sensíveis 403/404 | bloqueado P62/P68 |
 | E-mail transacional | reset e avisos aprovados | sim para reset | P31, remetente e autenticação DNS | organização | provedor | reset chega e link funciona | bloqueado P31 |
 | Turnstile | antifraude de eleitor | sim para votação | sitekey pública; secret backend; hosts QA/prod | organização + DEV | P62 | sucesso/falha/reuso/hostname testados | não implementado |
 | Cron/filas | CLI, filas e scheduler | sim | PHP CLI e mínimo do plano | operador | cPanel/PHP CLI | job idempotente sem sobreposição | limite público 15 min; plano não verificado |
-| Storage | mídia pública e documentos privados | sim | discos, quota, permissões, backup | operador + DEV | P6/P45/P68 | usuário B não baixa arquivo de A | não implementado |
+| Storage | mídia pública e documentos privados | sim | discos, quota, permissões, backup | operador + DEV | P6/P45/P68 | usuário B não baixa arquivo de A | separação local verificada; módulos/QA pendentes |
 | Backup/restore | recuperação | sim | banco, storage e custódia das chaves | organização/operador | storage seguro | restore completo em QA | não executado |
 | Logs/monitoramento | diagnóstico operacional | sim | retenção, redação, alerta, contato | operador | P28/responsável | falha detectada sem PII/secrets | bloqueado |
 

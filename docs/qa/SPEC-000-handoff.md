@@ -1,45 +1,60 @@
-# Handoff QA — SPEC-000
+# Handoff QA — SPEC-000 complementar
 
-O SHA alvo imutável será publicado no PR #1 após o commit final. A base do diff é `e05177f` (`develop` inicial) e a branch é `chore/spec-000-viabilidade`.
+Branch: `chore/spec-000-fundacao-local`
+Base do diff: `a3dd6df` (`develop`)
+SHA alvo: preencher após o commit final desta complementação
+PR: complementar ao PR #1 mergeado; não fazer merge durante a revisão
 
-## Preparação isolada
+## Worktree isolado
 
 ```bash
 git fetch origin
 git worktree add --detach ../ceara-qa-spec-000 <SHA_ALVO>
 cd ../ceara-qa-spec-000
-bash scripts/validate-foundation.sh
-```
-
-Não executar `<SHA_ALVO>` literalmente. O QA deve substituir pelo SHA entregue, usar dados sintéticos e não acessar produção.
-
-Confirme o snapshot antes dos testes:
-
-```bash
 test "$(git rev-parse HEAD)" = "<SHA_ALVO>"
 git status --short --branch
 ```
 
-## Isolamento do ambiente
+O arquivo preexistente `docs/workflow-ceara-design.md` não faz parte do diff e deve permanecer fora da revisão.
 
-- Criar `.env` próprio do worktree, nunca copiar o de DEV ou produção.
-- Quando a aplicação existir, usar banco exclusivo como `ceara_qa_spec000`; confirmar a conexão antes de qualquer reset.
-- Manter o `storage/` do worktree e uploads sintéticos separados; não apontar para storage compartilhado.
-- Usar cache/fila próprios ou drivers efêmeros; nenhum worker DEV/produção pode consumir a fila de QA.
-- Usar porta local exclusiva (por exemplo, `8081`) e `APP_URL` correspondente.
-- Usar transporte de e-mail falso/local (`array`/`log`) e nunca remetentes ou destinatários reais.
-- Turnstile e demais integrações devem usar mocks/chaves oficiais de teste, nunca credenciais de produção.
+## Pré-requisitos e ambiente
 
-## Casos mínimos
+- Docker Desktop ativo; PHP/Composer nativos não são necessários.
+- Node/npm compatíveis com `package-lock.json` (a prova local usou Node 26.8.2/npm 11.19.1).
+- Nenhum `.env` de DEV/produção deve ser copiado.
+- Use somente dados sintéticos, e-mail `log`/`array`, storage local e banco novo.
 
-1. Confirmar que o diff parte de `e05177f` e não inclui `docs/workflow-ceara-design.md`.
-2. Executar `bash -n scripts/validate-foundation.sh` e o script.
-3. Confirmar que `.env`, chaves, dumps, logs e backups não estão rastreados nem no artefato.
-4. Revisar se `.env.example` possui somente vazios/fictícios e nenhum segredo `VITE_*`.
-5. Validar sintaxe do workflow e conferir os checks do PR, especialmente Gitleaks.
-6. Conferir que requisitos documentados não foram classificados como implementados.
-7. Conferir a tensão §2/P9/P41 e a natureza extraedital do voto popular P1/P34/P41.
-8. Conferir que cron por minuto, rota de artisan/migration e publicação da raiz do projeto não são prescritos.
-9. Marcar provas Laravel, MySQL, storage, e-mail, Turnstile, backup/restore e HostGator como bloqueadas, não aprovadas.
+```bash
+cp .env.example .env
+docker compose -p ceara_qa_spec000 up -d --build
+docker compose -p ceara_qa_spec000 exec -T laravel.test php artisan key:generate --force
+docker compose -p ceara_qa_spec000 exec -T laravel.test php artisan migrate --force
+```
 
-O QA deve registrar parecer para o SHA exato. Mudança posterior exige novo teste e novo parecer.
+Se a porta 8081 estiver ocupada, escolha outra porta local e ajuste `APP_URL`/`APP_PORT` somente no `.env` ignorado. O banco padrão do Compose é isolado no volume/projeto `ceara_qa_spec000`; confirme o nome antes de qualquer reset. Não usar `migrate:fresh` ou `db:wipe`.
+
+## Comandos de validação
+
+```bash
+bash -n scripts/validate-foundation.sh
+bash scripts/validate-foundation.sh
+npm ci --ignore-scripts
+npm audit --audit-level=high
+npm run build
+docker compose -p ceara_qa_spec000 exec -T laravel.test vendor/bin/pint --test app config routes tests bootstrap/app.php
+docker compose -p ceara_qa_spec000 exec -T laravel.test php artisan test
+curl -I http://127.0.0.1:8081/
+curl -I http://127.0.0.1:8081/up
+```
+
+Critérios mínimos: `/` e `/up` 200; `/.env`, `/composer.json` e `/.git/HEAD` 404; arquivo privado não é servido; headers de segurança presentes; migrations concluídas; assets do manifest respondem 200; sem secrets no diff/artefato.
+
+## Variáveis por nome
+
+`APP_NAME`, `APP_ENV`, `APP_KEY`, `APP_URL`, `APP_PORT`, `APP_DEBUG`, `APP_LOCALE`, `APP_FALLBACK_LOCALE`, `APP_FAKER_LOCALE`, `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, `FORWARD_DB_PORT`, `SESSION_DRIVER`, `SESSION_SECURE_COOKIE`, `SESSION_ENCRYPT`, `CACHE_STORE`, `QUEUE_CONNECTION`, `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS`, `MAIL_FROM_NAME`, `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`, `CPF_HMAC_KEY`.
+
+Não colar valores no PR ou relatório. `TURNSTILE_SECRET_KEY`, `CPF_HMAC_KEY`, `APP_KEY` e credenciais de banco são somente backend.
+
+## Escopo e pendências
+
+Esta prova não implementa inscrição, júri, votação, premiação, Fortify, Livewire ou Filament. O QA não deve aprovar produção: HostGator/P62/P65/P68, transporte, e-mail, cron real, backup/restore e storage remoto continuam sem prova. Registrar o parecer para o SHA exato; qualquer mudança exige novo SHA e novo teste.
