@@ -15,11 +15,26 @@ required_files=(
   "docs/specs/SPEC-000-matriz-aderencia.md"
   "docs/runbooks/ambiente-deploy-sem-ssh.md"
   "docs/qa/SPEC-000-handoff.md"
+  ".docker/mysql/create-testing-database.sh"
+  "scripts/bootstrap-local.sh"
 )
 
 for path in "${required_files[@]}"; do
   test -f "$path" || { printf 'Arquivo obrigatório ausente: %s\n' "$path" >&2; exit 1; }
 done
+
+test -x .docker/mysql/create-testing-database.sh \
+  || { printf 'Script de inicialização do MySQL não é executável.\n' >&2; exit 1; }
+test -x scripts/bootstrap-local.sh \
+  || { printf 'Script de bootstrap local não é executável.\n' >&2; exit 1; }
+
+if grep -Fq './vendor/' compose.yaml; then
+  printf 'Compose não pode montar arquivos de vendor antes do bootstrap.\n' >&2
+  exit 1
+fi
+
+bash -n .docker/mysql/create-testing-database.sh
+bash -n scripts/bootstrap-local.sh
 
 grep -Eq '^[[:space:]]+pull-requests:[[:space:]]+read$' .github/workflows/foundation.yml \
   || { printf 'Permissão mínima de leitura de PR ausente no workflow.\n' >&2; exit 1; }
