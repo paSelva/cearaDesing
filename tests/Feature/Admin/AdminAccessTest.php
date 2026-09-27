@@ -39,12 +39,17 @@ it('allows admins to consult catalog and edition settings but does not expose ca
     Livewire::test(EditEdition::class, ['record' => $edition->getRouteKey()])->assertOk();
 
     $participant = User::factory()->create();
+    $edition->forceFill(['year' => 2025])->save();
+    $outsideCategory = Category::factory()->for($edition)->create();
+    $outsideCriterion = Criterion::factory()->for($outsideCategory)->create();
 
     expect($admin->can('create', Category::class))->toBeFalse()
         ->and($admin->can('update', $category))->toBeFalse()
         ->and($admin->can('delete', $category))->toBeFalse()
         ->and($admin->can('create', Edition::class))->toBeFalse()
         ->and($admin->can('delete', $edition))->toBeFalse()
+        ->and($admin->can('view', $outsideCategory))->toBeFalse()
+        ->and($admin->can('view', $outsideCriterion))->toBeFalse()
         ->and($participant->can('viewAny', Category::class))->toBeFalse()
         ->and($participant->can('update', $edition))->toBeFalse();
 });

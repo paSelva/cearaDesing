@@ -6,6 +6,7 @@ namespace App\Policies;
 
 use App\Enums\Role;
 use App\Models\Category;
+use App\Models\Edition;
 use App\Models\User;
 
 class CategoryPolicy
@@ -17,7 +18,8 @@ class CategoryPolicy
 
     public function view(User $user, Category $category): bool
     {
-        return $user->role === Role::Admin;
+        return $user->role === Role::Admin
+            && $category->edition()->where('year', Edition::YEAR)->exists();
     }
 
     public function create(User $user): bool

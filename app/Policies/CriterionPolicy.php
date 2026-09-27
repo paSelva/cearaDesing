@@ -6,6 +6,7 @@ namespace App\Policies;
 
 use App\Enums\Role;
 use App\Models\Criterion;
+use App\Models\Edition;
 use App\Models\User;
 
 class CriterionPolicy
@@ -17,7 +18,8 @@ class CriterionPolicy
 
     public function view(User $user, Criterion $criterion): bool
     {
-        return $user->role === Role::Admin;
+        return $user->role === Role::Admin
+            && $criterion->category()->whereHas('edition', fn ($query) => $query->where('year', Edition::YEAR))->exists();
     }
 
     public function create(User $user): bool
