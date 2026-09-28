@@ -93,6 +93,10 @@ Cria `users` (role `eleitor`) + `voter_profiles`.
   - `cpf_hash` único, ou seja, 1 cadastro por CPF (P35);
   - e-mail único em `users`: quem já é participante ou jurado usa outro e-mail (T4, P60);
   - sem confirmação de e-mail (P42).
+- **Implementado na SPEC-009** (`app/Actions/Voting/RegisterVoter.php`, página `/eleitor/cadastro`):
+  - o limite de 5 por IP por hora conta só cadastros **concluídos** (erros de digitação não bloqueiam a rede);
+  - falha fechada: sem `CPF_HMAC_KEY` ou sem a chave secreta do Turnstile, o cadastro fica indisponível;
+  - o eleitor entra pelo mesmo login do site e vai para `/eleitor`; o participante continua indo para `/participante`.
 - **Efeitos:** grava `cpf_hash` (HMAC) + `cpf_encrypted` + `registration_ip` (Recomendação).
 
 ### `CreateJudge`

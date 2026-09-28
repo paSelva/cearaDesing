@@ -32,8 +32,8 @@ As inscrições abrem em **28/09/2026** (§7). A documentação foi escrita em *
 
 ## Fase 1b — Voto popular (P1)
 - [ ] Galeria pública dos projetos aprovados, onde o público vota (P24): a partir de 29/10, com nome, categoria e imagens (P55). Depois de 21/11, mostra também a distinção e a nota final (P57)
-- [ ] Cadastro de eleitor com CPF validado pelo dígito verificador (P35, P42)
-- [ ] Cloudflare Turnstile + limite de 5 cadastros de eleitor por IP por hora (P50, P52)
+- [x] Cadastro de eleitor com CPF validado pelo dígito verificador (P35, P42) — SPEC-009
+- [x] Cloudflare Turnstile + limite de 5 cadastros de eleitor por IP por hora (P50, P52) — SPEC-009 (⚠️ chaves reais da Cloudflare pendentes)
 - [ ] 1 voto por categoria (P36), só em projetos aprovados (P37)
 - [ ] Votação de 29/10 a 20/11 (P38), com contagem oculta até o fim (P39) e resultado por categoria (P40)
 - [ ] Parcial visível só para o admin (P48). Empate decidido pela organização (P49)
