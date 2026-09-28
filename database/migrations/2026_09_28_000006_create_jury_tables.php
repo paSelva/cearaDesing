@@ -46,8 +46,9 @@ return new class extends Migration
             $table->unique(['judge_assignment_id', 'criterion_id']);
         });
 
-        // Reforço opcional: o MySQL 5.7 ignora CHECK (⚠️ P65); a validação na aplicação é obrigatória.
-        if (DB::getDriverName() === 'mysql') {
+        // Reforço opcional, só no MySQL ≥ 8.0.16: versões anteriores ignoram ou não aceitam
+        // `ADD CONSTRAINT … CHECK` (⚠️ P65). A validação na aplicação é obrigatória em qualquer caso.
+        if (DB::getDriverName() === 'mysql' && $this->supportsCheckConstraints()) {
             DB::statement('ALTER TABLE scores ADD CONSTRAINT scores_value_between_1_and_5 CHECK (value BETWEEN 1 AND 5)');
         }
 
@@ -61,6 +62,15 @@ return new class extends Migration
             $table->foreignId('changed_by')->constrained('users')->restrictOnDelete();
             $table->timestamp('created_at')->nullable();
         });
+    }
+
+    private function supportsCheckConstraints(): bool
+    {
+        $version = (string) DB::selectOne('SELECT VERSION() AS v')->v;
+
+        // MariaDB informa "10.x-MariaDB": CHECK aplicado desde a 10.2; aqui só MySQL puro.
+        return ! str_contains(strtolower($version), 'mariadb')
+            && version_compare(preg_replace('/[^0-9.].*$/', '', $version), '8.0.16', '>=');
     }
 
     public function down(): void

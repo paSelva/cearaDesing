@@ -62,3 +62,6 @@ Desktop.ini
 .vscode/launch.json
 *.swp
 *.swo
+
+# Pacotes de deploy gerados por scripts/build-release.sh
+/dist
