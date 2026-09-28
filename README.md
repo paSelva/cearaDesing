@@ -29,6 +29,13 @@ semeados com `php artisan db:seed`; a repetição preserva alterações feitas p
 organização. Consulte o [handoff da SPEC-001](docs/qa/SPEC-001-handoff.md) antes
 de executar comandos que alterem bancos ou volumes.
 
+## Área do participante (SPEC-002)
+
+Cadastro em `/register`, login em `/login`, recuperação de senha em `/forgot-password` e
+área em `/participante` (Fortify, páginas próprias — T1). O login do site aceita só o papel
+`participante`; admin usa `/admin`. Localmente o e-mail de recuperação vai para o log
+(`MAIL_MAILER=log`); em produção depende do provedor (⚠️ P31).
+
 ## Bootstrap local
 
 Pré-requisitos no host: Docker com Compose e Node/npm compatível com o `package-lock.json`.
@@ -74,6 +81,7 @@ segredos em `VITE_*` nem versione `.env`.
 7. [Actions (casos de uso)](docs/07-actions.md)
 8. [SPEC-001 — catálogo e painel administrativo](docs/specs/SPEC-001-catalogo-admin.md)
 9. [Handoff reproduzível para QA](docs/qa/SPEC-001-handoff.md)
+10. [SPEC-002 — cadastro e login do participante](docs/specs/SPEC-002-cadastro-participante.md) · [handoff QA](docs/qa/SPEC-002-handoff.md)
 
 Convenção: **(§x)** = regra do edital · **(P#, confirmado)** = decisão do responsável que não está no edital · **Recomendação** = proposta técnica · **⚠️ A definir (P#)** = pergunta em aberto.
 

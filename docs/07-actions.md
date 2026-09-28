@@ -72,6 +72,11 @@ Cria `users` (role `participante`) + `participant_profiles`.
   - documento **único** entre participantes (P74);
   - `participant_type` dentro da lista do §2.
 - **Efeitos:** o participante entra logado. **Não** é exigida a confirmação de e-mail (P73).
+- **Implementado na SPEC-002** (`app/Actions/Account/RegisterParticipant.php`), chamado pelo `CreateNewUser` do Fortify:
+  - o documento é normalizado antes de validar (sem máscara; CNPJ em maiúsculas) e aceita CNPJ alfanumérico (P81);
+  - telefone só com dígitos, com DDD (10 ou 11 dígitos) e senha com mínimo de 8 caracteres (Recomendação);
+  - `role` definido no servidor, nunca pela entrada; usuário e perfil em uma transação;
+  - erro de regra vira `ValidationException` por campo (como as Actions da SPEC-001 e o que o Fortify espera), e não `BusinessRuleException`.
 
 ### `UpdateParticipantProfile`
 Atualiza o perfil do participante.

@@ -21,7 +21,7 @@ As inscrições abrem em **28/09/2026** (§7). A documentação foi escrita em *
 ## Fase 1 — Site público e inscrição
 **Prazo do edital:** inscrições de 28/09 a 28/10/2026 (§7).
 - [ ] Site público: Hero/Sobre, Categorias/Avaliação, Datas/Como participar, Parceiros/Diretoria, Avaliadores (P26) · ⚠️ P27
-- [ ] Cadastro e login do participante em páginas próprias (Fortify, T1): PF/PJ, CPF/CNPJ, telefone, cidade/UF, tipo (P3, P4)
+- [x] Cadastro e login do participante em páginas próprias (Fortify, T1): PF/PJ, CPF/CNPJ, telefone, cidade/UF, tipo (P3, P4) — SPEC-002; recuperação de senha em produção depende do e-mail (⚠️ P31)
 - [ ] Formulário de inscrição com os campos do §4, links + PDF (P7), a declaração de IA e os aceites do §8 · ⚠️ P6, P45
 - [ ] Edição permitida até o fim do prazo (P8)
 - [ ] Aceites do §8 com um checkbox por item, data/hora e IP (P11, P53)
