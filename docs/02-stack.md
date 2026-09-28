@@ -41,7 +41,7 @@ Pacotes que só entram se a funcionalidade for confirmada:
 
 ## Produção
 
-- **Domínio:** já existe, e o sistema ficará em um **subdomínio** (P29). ⚠️ Nome exato: P62.
+- **Domínio:** **votacao.cearadesign.org.br** (P29, P62), com o sistema inteiro nesse subdomínio. Passo a passo: [deploy-hostgator.md](runbooks/deploy-hostgator.md).
 - **Hospedagem:** **HostGator, plano compartilhado**, servidor já existente (P30, P63). **Sem SSH** (P66).
 - **Manutenção:** o sistema é só para a edição 2026 (P32).
 - **E-mail transacional:** 🟡 aguardando a organização (P31).
