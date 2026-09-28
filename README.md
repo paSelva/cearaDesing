@@ -87,6 +87,7 @@ segredos em `VITE_*` nem versione `.env`.
 13. [SPEC-005 — comprovação](docs/specs/SPEC-005-comprovacao.md) · [handoff QA](docs/qa/SPEC-005-handoff.md)
 14. [SPEC-006 — júri: jurados da categoria, atribuição e substituição](docs/specs/SPEC-006-juri.md) · [handoff QA](docs/qa/SPEC-006-handoff.md)
 15. [SPEC-007 — avaliação: painel do jurado, notas, resultado e correção](docs/specs/SPEC-007-avaliacao.md) · [handoff QA](docs/qa/SPEC-007-handoff.md)
+16. [SPEC-008 — site público com o conteúdo do edital](docs/specs/SPEC-008-site-publico.md)
 
 Convenção: **(§x)** = regra do edital · **(P#, confirmado)** = decisão do responsável que não está no edital · **Recomendação** = proposta técnica · **⚠️ A definir (P#)** = pergunta em aberto.
 
