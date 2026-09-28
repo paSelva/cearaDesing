@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\EntryResource\RelationManagers;
 
+use App\Actions\Evaluation\CorrectScore;
 use App\Actions\Jury\AssignJudgesToEntry;
 use App\Actions\Jury\ReplaceJudgeOnEntry;
 use App\Enums\AssignmentStatus;
@@ -11,6 +12,7 @@ use App\Enums\EntryStatus;
 use App\Enums\Role;
 use App\Models\Entry;
 use App\Models\JudgeAssignment;
+use App\Models\Score;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -50,6 +52,10 @@ class JudgeAssignmentsRelationManager extends RelationManager
                         AssignmentStatus::Substituida => 'gray',
                     }),
                 TextColumn::make('submitted_at')->label('Enviada em')->dateTime('d/m/Y H:i', 'America/Fortaleza')->placeholder('—'),
+                TextColumn::make('scores_sum')->label('Notas')
+                    ->state(fn (JudgeAssignment $record): string => $record->scores->isEmpty()
+                        ? '—'
+                        : $record->scores->sortBy('criterion.sort')->pluck('value')->implode(' + ').' = '.$record->scores->sum('value')),
                 TextColumn::make('replacement_reason')->label('Motivo da substituição')->placeholder('—')->wrap(),
             ])
             ->defaultSort('id')
@@ -66,7 +72,26 @@ class JudgeAssignmentsRelationManager extends RelationManager
                         $this->run($action, fn () => app(AssignJudgesToEntry::class)->handle($entry, auth()->user()), 'Jurados atribuídos.');
                     }),
             ])
+            ->modifyQueryUsing(fn ($query) => $query->with(['judge', 'scores.criterion']))
             ->recordActions([
+                Action::make('correctScore')
+                    ->label('Corrigir nota')
+                    ->icon('heroicon-o-pencil')
+                    ->visible(fn (JudgeAssignment $record): bool => $record->status === AssignmentStatus::Enviada && auth()->user()?->role === Role::Admin)
+                    ->modalHeading('Corrigir nota (erro, §8)')
+                    ->modalDescription('A correção fica no histórico com a justificativa (P46) e recalcula o resultado.')
+                    ->schema(fn (JudgeAssignment $record): array => [
+                        Select::make('score_id')
+                            ->label('Critério')
+                            ->options($record->scores->mapWithKeys(fn (Score $score) => [$score->id => "{$score->criterion->name} (nota atual: {$score->value})"])->all())
+                            ->required(),
+                        Select::make('new_value')->label('Nova nota')->options([1 => '1', 2 => '2', 3 => '3', 4 => '4', 5 => '5'])->required(),
+                        Textarea::make('reason')->label('Justificativa')->required()->maxLength(5000)->rows(3),
+                    ])
+                    ->action(function (JudgeAssignment $record, array $data, Action $action): void {
+                        $score = $record->scores()->findOrFail($data['score_id']);
+                        $this->run($action, fn () => app(CorrectScore::class)->handle($score, auth()->user(), $data), 'Nota corrigida.');
+                    }),
                 Action::make('replace')
                     ->label('Substituir')
                     ->icon('heroicon-o-arrow-path')

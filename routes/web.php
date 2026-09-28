@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\EntryFileController;
 use App\Http\Controllers\Admin\ProofFileController;
+use App\Http\Controllers\Jurado\AssignmentFileController;
 use App\Http\Controllers\Participant\DashboardController;
 use App\Http\Controllers\Participant\EntryController;
 use App\Http\Controllers\Participant\ProofController;
@@ -41,4 +42,12 @@ Route::middleware(['auth', 'role:admin'])
     ->group(function (): void {
         Route::get('/inscricoes/{entry}/arquivos/{media}', EntryFileController::class)->name('entries.file');
         Route::get('/comprovacoes/{proofRequest}/arquivo', ProofFileController::class)->name('proofs.file');
+    });
+
+// Jurado (SPEC-007): arquivos da inscrição atribuída. O painel fica no Filament (/jurado).
+Route::middleware(['auth', 'role:jurado'])
+    ->prefix('avaliacao')
+    ->name('jurado.')
+    ->group(function (): void {
+        Route::get('/atribuicoes/{assignment}/arquivos/{media}', AssignmentFileController::class)->name('assignments.file');
     });
