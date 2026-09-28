@@ -13,13 +13,13 @@ enum Role: string
 
     /**
      * Papéis que usam a autenticação do site (Fortify): login e recuperação de senha.
-     * Admin e jurado usam o Filament (T1); o eleitor entra aqui na SPEC do voto popular.
+     * Admin e jurado usam o Filament (T1).
      *
      * @return list<self>
      */
     public static function siteAuth(): array
     {
-        return [self::Participante];
+        return [self::Participante, self::Eleitor];
     }
 
     public function usesSiteAuth(): bool

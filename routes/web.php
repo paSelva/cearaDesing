@@ -7,9 +7,21 @@ use App\Http\Controllers\Jurado\AssignmentFileController;
 use App\Http\Controllers\Participant\DashboardController;
 use App\Http\Controllers\Participant\EntryController;
 use App\Http\Controllers\Participant\ProofController;
+use App\Http\Controllers\Voter\RegisterVoterController;
+use App\Http\Controllers\Voter\VoterHomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+
+// Voto popular (SPEC-009): cadastro de eleitor separado do participante (P60).
+Route::middleware('guest')->group(function (): void {
+    Route::get('/eleitor/cadastro', [RegisterVoterController::class, 'create'])->name('voter.register');
+    Route::post('/eleitor/cadastro', [RegisterVoterController::class, 'store'])->name('voter.register.store');
+});
+
+Route::middleware(['auth', 'role:eleitor'])->group(function (): void {
+    Route::get('/eleitor', VoterHomeController::class)->name('voter.home');
+});
 
 // Área do participante (SPEC-002/003). Login/cadastro/recuperação de senha: rotas do Fortify.
 Route::middleware(['auth', 'role:participante'])

@@ -70,14 +70,15 @@ describe('login', function () {
         $this->assertGuest();
     });
 
-    it('recusa admin, jurado e eleitor com a mesma mensagem genérica', function (Role $role) {
+    // SPEC-009: o eleitor passou a entrar pelo login do site (vai para a área dele).
+    it('recusa admin e jurado com a mesma mensagem genérica', function (Role $role) {
         $user = User::factory()->create(['role' => $role]);
 
         $this->from('/login')
             ->post('/login', ['email' => $user->email, 'password' => 'password'])
             ->assertSessionHasErrors(['email' => 'E-mail ou senha inválidos.']);
         $this->assertGuest();
-    })->with([Role::Admin, Role::Jurado, Role::Eleitor]);
+    })->with([Role::Admin, Role::Jurado]);
 
     it('recusa senha errada com a mesma mensagem genérica', function () {
         $user = ParticipantProfile::factory()->create()->user;
