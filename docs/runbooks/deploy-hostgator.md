@@ -70,10 +70,10 @@ Criar `/home/USUARIO/admin-inicial.ini` (fora da pasta `votacao`), permissão `6
 ```ini
 name="Nome do administrador"
 email="admin@exemplo.org.br"
-password="uma-senha-forte-com-12-ou-mais-caracteres"
+password="TROQUE_PELA_SENHA"
 ```
 
-O passo 8 cria o admin e **apaga este arquivo**. Se o arquivo continuar lá depois, veja o log (passo 8) e apague-o à mão.
+Troque `TROQUE_PELA_SENHA` por uma senha forte, com 12 ou mais caracteres. O passo 8 cria o admin e **apaga este arquivo**. Se o arquivo continuar lá depois, veja o log (passo 8) e apague-o à mão.
 
 ## 8. Cron temporário de deploy
 
