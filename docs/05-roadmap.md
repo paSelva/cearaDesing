@@ -50,8 +50,8 @@ As inscrições abrem em **28/09/2026** (§7). A documentação foi escrita em *
 ## Fase 3 — Resultado
 **Prazo do edital:** divulgação em 21/11 e cerimônia em 26/11/2026 (§7).
 - [x] Cálculo da nota final e da distinção (§5, §6) — SPEC-007 (visível só para a organização até a publicação)
-- [ ] Botão **Publicar resultado** no admin (P69)
-- [ ] Página pública de premiados: nome, categoria, distinção, nota final, autoria, imagens e textos (P21, P22, P44)
-- [ ] Nota final visível ao participante na área logada (P22)
+- [x] Botão **Publicar resultado** no admin (P69) — SPEC-011
+- [x] Página pública de premiados: nome, categoria, distinção, nota final, autoria, imagens e textos (P21, P22, P44) — SPEC-011, com o mais votado do voto popular (P51)
+- [x] Nota final visível ao participante na área logada (P22) — SPEC-011
 - [ ] E-mails (P25) · ⚠️ a definir
 - Certificados: fora do sistema (P23)

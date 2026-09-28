@@ -30,6 +30,7 @@ final class HomeController extends Controller
             'registrationOpen' => $edition !== null && $guard->isRegistrationOpen($edition),
             'galleryOpen' => $window->galleryOpen($edition),
             'votingOpen' => $window->votingOpen($edition),
+            'resultsPublished' => $window->resultsPublished($edition),
             'categories' => $categories,
             'defaultCriteria' => $categories->first(fn (Category $c) => $c->code === '3.1')?->criteria ?? collect(),
             'exportCategory' => $categories->first(fn (Category $c) => $c->code === '3.9'),
