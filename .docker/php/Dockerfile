@@ -2,8 +2,10 @@ FROM php:8.4-cli
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libicu-dev libonig-dev libzip-dev \
-    && docker-php-ext-install intl pdo_mysql mbstring zip \
+    && docker-php-ext-install exif intl pdo_mysql mbstring zip \
     && rm -rf /var/lib/apt/lists/*
+
+COPY uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 
 WORKDIR /var/www/html
 

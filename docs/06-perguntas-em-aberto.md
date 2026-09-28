@@ -38,17 +38,17 @@ Tudo o que **não está no edital** e ainda **não foi confirmado** pelo respons
 | P3 | Quem é o "participante" dono da conta: pessoa física, pessoa jurídica ou as duas? Em projetos de equipe ou escritório, quem faz a inscrição? | 🟢 **Pessoa física e pessoa jurídica** podem ser titulares da conta (26/09). |
 | P4 | Quais dados de **cadastro da conta** coletar? O edital só lista os dados do **projeto** (§4). Exemplos: CPF/CNPJ, telefone, cidade, tipo de participante (§2). | 🟢 Nome, e-mail, senha, **CPF ou CNPJ**, **telefone/WhatsApp**, **cidade/UF** e **tipo de participante** (lista do §2) (26/09). |
 | P5 | O formulário deve pedir **campos extras**, como data de conclusão do projeto ou relação com o Ceará? O edital diz que a organização "poderá solicitar" essas informações (§2), mas não diz se elas entram no formulário. | 🟢 **Nenhum campo extra**: o formulário tem só os campos do §4, mais a declaração de IA e os aceites do §8 (26/09). |
-| P6 | **Imagens:** quantidade mínima e máxima, formatos e tamanho máximo por arquivo. | 🟡 Aguardando a organização (o responsável vai confirmar, 26/09). |
+| P6 | **Imagens:** quantidade mínima e máxima, formatos e tamanho máximo por arquivo. | 🟢 **De 1 a 10 imagens, JPG, PNG ou WebP, até 5 MB cada** (28/09). Os limites ficam em `config/premio.php`. |
 | P7 | **Links e vídeos:** só URLs (YouTube, Vimeo etc.) ou também upload de vídeo/PDF? | 🟢 **Links (URLs) + upload de PDF**. Não haverá upload de vídeo (26/09). Limites do PDF: ver P45. |
 | P8 | O participante pode **editar** a inscrição depois de enviada, enquanto o prazo estiver aberto? | 🟢 **Sim**: o participante pode editar até o fim do prazo de inscrição, e depois a inscrição trava (26/09). |
 | P9 | A categoria **3.7 Estudantes** é exclusiva para estudantes? E estudantes podem se inscrever também nas outras categorias? | 🟢 **A 3.7 é exclusiva para estudantes, e estudantes só podem concorrer na 3.7** (26/09). ⚠️ Essa regra é **mais restritiva que o edital**: o §2 permite estudantes sem limitar a categoria. Ver P41. |
-| P10 | O mesmo projeto ou produto pode ser inscrito em **mais de uma categoria** (ex.: 3.2 e 3.9)? | 🟡 Aguardando a organização (o responsável vai confirmar, 26/09). |
+| P10 | O mesmo projeto ou produto pode ser inscrito em **mais de uma categoria** (ex.: 3.2 e 3.9)? | 🟢 **Pode, sem bloqueio no sistema** (28/09). O sistema não tem como saber se duas inscrições são o mesmo projeto; a organização avalia na triagem. |
 | P11 | Como registrar os **aceites** do §8: um checkbox por item ou um aceite único? É preciso guardar data/hora e IP? | 🟢 **Um checkbox por item** do §8 (26/09). Se é preciso guardar data/hora e IP: ver P53. |
 | P12 | Quando a organização pede **comprovação** (§2, §3.7, §4), isso acontece dentro do sistema (upload, status) ou por fora (e-mail)? | 🟢 **Dentro do sistema**: a organização muda o status para *comprovação solicitada* e o participante envia o arquivo na área logada (26/09). Formatos e limites: ver P54. |
 | P53 | Nos aceites (P11), é preciso guardar **data/hora e IP** de cada aceite, como comprovação para a LGPD? | 🟢 **Sim**: guardar data/hora e IP de cada aceite (26/09). |
 | P54 | **Comprovação (P12):** quais formatos de arquivo são aceitos (PDF, imagem), quantos arquivos, qual o tamanho máximo e se há um prazo para o participante responder. | 🟢 **Só PDF, 1 arquivo, até 10 MB** (26/09). Se há prazo para o participante responder: ver P56. |
 | P56 | **Comprovação:** existe prazo para o participante enviar o arquivo depois da solicitação? O que acontece se ele não enviar? | 🟢 **O admin define o prazo** em cada solicitação. Depois do prazo, a organização decide o que fazer (26/09). |
-| P45 | **PDF complementar** (P7): quantos por inscrição, qual o tamanho máximo, e se é obrigatório ou opcional. | 🟡 Aguardando a organização (o responsável vai confirmar, 26/09). |
+| P45 | **PDF complementar** (P7): quantos por inscrição, qual o tamanho máximo, e se é obrigatório ou opcional. | 🟢 **Opcional, 1 PDF de até 10 MB** (28/09), igual ao limite da comprovação (P54). |
 
 ## Jurados e avaliação
 

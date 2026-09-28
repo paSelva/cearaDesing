@@ -178,14 +178,14 @@ Validação do CPF: só o dígito verificador (P42), com Turnstile e limite de 5
 **Índices e regras:**
 - **Único `(edition_id, category_id, user_id)`**: 1 projeto por categoria (§4).
 - Categoria com `is_student_only` só aceita `participant_type = estudante`, e o estudante só pode se inscrever em categoria `is_student_only` (P9). Essa regra fica na aplicação.
-- ⚠️ Se o mesmo projeto pode ir para mais de uma categoria: P10. Hoje o sistema não tem como detectar isso, e cada inscrição é independente.
+- O mesmo projeto pode ir para mais de uma categoria, sem bloqueio (P10). Cada inscrição é independente.
 
 **Arquivos (Media Library, tabela `media`):**
 
 | Coleção | Regras |
 |---|---|
-| `images` | Pelo menos 1 é obrigatória (§4). ⚠️ Quantidade, formatos e tamanho: P6 |
-| `supplementary_pdf` | PDF complementar (P7). ⚠️ Quantidade, tamanho e obrigatoriedade: P45 |
+| `images` | De 1 a 10 imagens (§4, P6), JPG, PNG ou WebP, até 5 MB cada (P6). Disco privado até a galeria (P55) |
+| `supplementary_pdf` | PDF complementar (P7): opcional, 1 arquivo, até 10 MB (P45). Disco privado |
 
 ### 4.1 Status da inscrição
 

@@ -19,7 +19,7 @@ O resto deste documento é **recomendação**. As versões e a compatibilidade e
 
 | Pacote | Versão atual | Compatível | Uso proposto | Depende de |
 |---|---|---|---|---|
-| `spatie/laravel-medialibrary` | 11.23.8 | L13 ✅ | Imagens das inscrições | P6 |
+| `spatie/laravel-medialibrary` | 11.23.8 | L13 ✅ | Imagens e PDF das inscrições — **instalado na SPEC-003**; exige `ext-exif` (adicionada às imagens Docker e ao CI). Sem conversões de imagem (não depende de GD/Imagick) | P6 ✅ |
 | `filament/spatie-laravel-media-library-plugin` | 5.9.0 | Filament 5 ✅ | Exibir e gerenciar as imagens nos painéis admin e jurado (o upload do participante fica nas páginas próprias, T1) | P6 |
 | `spatie/laravel-activitylog` | 5.1.1 | L13 ✅ · **PHP ^8.4** | Histórico de alterações (notas, status) | P46 · T3 ✅ |
 | `laravel/fortify` | 1.40.0 | L13 ✅ | Cadastro, login, verificação e reset de senha do **participante e do eleitor**, em páginas próprias | T1 ✅ |
@@ -67,6 +67,8 @@ Como o plano não tem SSH, não dá para rodar Composer nem `php artisan` no ser
 3. **Migrations e comandos artisan:** rodar por um **cron job temporário** no cPanel. O cron é suportado no plano compartilhado, segundo a tabela da HostGator.
 4. **Raiz do subdomínio** apontando para `public/`. ⚠️ Confirmar no cPanel (P68).
 5. O SSH **não será solicitado** (P67), então esse é o processo definitivo.
+
+Limites de PHP exigidos pela SPEC-003 (conferir no MultiPHP INI Editor do cPanel, ⚠️ não verificado): `upload_max_filesize` ≥ 10M, `post_max_size` ≥ 12M, `display_errors = Off`. O upload é feito **um arquivo por requisição** para caber nesses limites. Extensão `exif` necessária (Media Library).
 
 Consequências para o código (Recomendação):
 - sem Redis garantido, filas, cache e sessão usam o driver `database`;
