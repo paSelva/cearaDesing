@@ -34,6 +34,11 @@ final class SubmitEntry
         $this->consents->ensureAllAccepted($acceptedConsents);
 
         return DB::transaction(function () use ($entry, $ip): Entry {
+            $this->guard->lockEditable($entry);
+            if ($entry->status !== EntryStatus::Rascunho) {
+                throw ValidationException::withMessages(['entry' => 'Esta inscrição já foi enviada.']);
+            }
+
             $entry->status = EntryStatus::Enviada;
             $entry->submitted_at = now();
             $entry->save();

@@ -64,6 +64,11 @@ final class UpdateEntry
         }
 
         return DB::transaction(function () use ($entry, $validated, $isSubmitted, $ip): Entry {
+            $this->guard->lockEditable($entry);
+            if ($isSubmitted !== ($entry->status === EntryStatus::Enviada)) {
+                throw ValidationException::withMessages(['entry' => 'A inscrição mudou de status. Recarregue a página.']);
+            }
+
             $aiUsed = isset($validated['ai_used']) ? (string) $validated['ai_used'] === '1' : null;
 
             $entry->fill([
