@@ -170,6 +170,12 @@ O admin define uma nova senha para o jurado (P82).
   - registro em `activity_log`.
 - Votos populares já recebidos ficam no banco, mas são **desconsiderados na apuração**, e o eleitor **não vota de novo** naquela categoria (P78).
 
+**Implementado na SPEC-004** (`app/Actions/Triage/`, painel `/admin/inscricoes`):
+- `ApproveEntry` e `DisqualifyEntry` travam a linha (`lockForUpdate`) e reconferem o status; o activity log (`triagem`) guarda admin, status anterior e novo, e o motivo — sem dados pessoais.
+- As Actions de edição do participante também travam a linha e reconferem o status dentro da transação, para um salvamento não passar por cima de uma aprovação feita no meio da requisição (P70).
+- Não há desfazer aprovação nem desclassificação (não previsto em `docs/`).
+- A saída da galeria, votação, avaliação e resultado acontece nas SPECs dessas funcionalidades, pelo status.
+
 ---
 
 ## 4. Comprovação (P12)

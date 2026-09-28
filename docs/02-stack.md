@@ -21,7 +21,7 @@ O resto deste documento é **recomendação**. As versões e a compatibilidade e
 |---|---|---|---|---|
 | `spatie/laravel-medialibrary` | 11.23.8 | L13 ✅ | Imagens e PDF das inscrições — **instalado na SPEC-003**; exige `ext-exif` (adicionada às imagens Docker e ao CI). Sem conversões de imagem (não depende de GD/Imagick) | P6 ✅ |
 | `filament/spatie-laravel-media-library-plugin` | 5.9.0 | Filament 5 ✅ | Exibir e gerenciar as imagens nos painéis admin e jurado (o upload do participante fica nas páginas próprias, T1) | P6 |
-| `spatie/laravel-activitylog` | 5.1.1 | L13 ✅ · **PHP ^8.4** | Histórico de alterações (notas, status) | P46 · T3 ✅ |
+| `spatie/laravel-activitylog` | 5.1.1 | L13 ✅ · **PHP ^8.4** | Histórico de alterações (notas, status) — **instalado na SPEC-004** (log `triagem`); sem extensão adicional | P46 · T3 ✅ |
 | `laravel/fortify` | 1.40.0 | L13 ✅ | Cadastro, login, verificação e reset de senha do **participante e do eleitor**, em páginas próprias | T1 ✅ |
 
 Papéis: um campo `role` em `users` + Policies do Laravel, sem pacote extra (T2).

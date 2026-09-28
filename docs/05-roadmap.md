@@ -28,7 +28,7 @@ As inscrições abrem em **28/09/2026** (§7). A documentação foi escrita em *
 - [ ] Fluxo de comprovação: status + upload de 1 PDF de até 10 MB pelo participante (P12, P54), com prazo definido pelo admin em cada solicitação (P56)
 - [x] Regra da 3.7: exclusiva para estudantes, e estudantes só na 3.7 (P9) — SPEC-003
 - [x] Bloqueio das inscrições ao fim do prazo — SPEC-003
-- [ ] Área da organização: consultar as inscrições e fazer a triagem (a aprovação libera a votação popular, P37, P43)
+- [x] Área da organização: consultar as inscrições e fazer a triagem (a aprovação libera a votação popular, P37, P43) — SPEC-004 (aprovar/desclassificar; saída da galeria/votação/avaliação entra nas SPECs dessas funções)
 
 ## Fase 1b — Voto popular (P1)
 - [ ] Galeria pública dos projetos aprovados, onde o público vota (P24): a partir de 29/10, com nome, categoria e imagens (P55). Depois de 21/11, mostra também a distinção e a nota final (P57)
