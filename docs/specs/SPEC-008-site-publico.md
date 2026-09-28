@@ -38,7 +38,7 @@ Substituir a página técnica provisória pelo site do prêmio (P26), com o cont
 ## Pendências
 
 - ⚠️ P27: textos institucionais, parceiros, diretoria; P59: fotos e bios dos avaliadores.
-- As telas de login, cadastro e área do participante ainda usam o tema escuro provisório (SPEC-002); alinhar à identidade num próximo passo.
+- Telas de login, cadastro, recuperação de senha e área do participante alinhadas à mesma identidade (cabeçalho com o logo, fundo claro, títulos em Roboto Condensed, botões em tinta com hover laranja escuro).
 - Nada está no ar (P2, P62, P65, P68).
 
 ## Evidência DEV

@@ -1,6 +1,6 @@
 <x-layouts.site title="Nova senha">
     <section class="mx-auto max-w-md">
-        <h1 class="text-3xl font-semibold tracking-tight">Definir nova senha</h1>
+        <h1 class="font-display text-4xl font-bold uppercase leading-none text-tinta md:text-5xl">Definir nova senha</h1>
 
         <form method="POST" action="{{ route('password.update') }}" class="mt-8 space-y-5">
             @csrf
