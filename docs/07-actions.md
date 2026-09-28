@@ -198,6 +198,12 @@ O admin define uma nova senha para o jurado (P82).
 - **Entrada:** decisão (`aceita` / `recusada`).
 - **Efeitos:** registra `reviewed_at` e `reviewed_by`. Qualquer consequência (ex.: desclassificar) é uma ação separada da organização (P56).
 
+**Implementado na SPEC-005** (`app/Actions/Proofs/`, seção "Comprovações" em `/admin/inscricoes/{id}`, e na página da inscrição do participante):
+- `RequestProof` exige mensagem e prazo **futuro** (Recomendação); pode haver mais de um pedido por inscrição.
+- `SubmitProof` independe do prazo de inscrições e do status da inscrição (P72); o pedido é travado para não receber dois envios.
+- Pedidos e análises vão para o activity log (`comprovacao`), sem dados pessoais.
+- ⚠️ Sem aviso por e-mail (P25): o participante vê o pedido no painel e na página da inscrição.
+
 ---
 
 ## 5. Júri
