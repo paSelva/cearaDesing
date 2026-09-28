@@ -10,4 +10,20 @@ enum Role: string
     case Jurado = 'jurado';
     case Participante = 'participante';
     case Eleitor = 'eleitor';
+
+    /**
+     * Papéis que usam a autenticação do site (Fortify): login e recuperação de senha.
+     * Admin e jurado usam o Filament (T1); o eleitor entra aqui na SPEC do voto popular.
+     *
+     * @return list<self>
+     */
+    public static function siteAuth(): array
+    {
+        return [self::Participante];
+    }
+
+    public function usesSiteAuth(): bool
+    {
+        return in_array($this, self::siteAuth(), true);
+    }
 }

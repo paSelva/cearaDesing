@@ -21,6 +21,11 @@ class ResetUserPassword implements ResetsUserPasswords
      */
     public function reset(User $user, array $input): void
     {
+        // Defesa em profundidade: mesmo com um token válido, só papéis do site redefinem por aqui.
+        if (! $user->role->usesSiteAuth()) {
+            throw ValidationException::withMessages(['email' => trans('passwords.token')]);
+        }
+
         Validator::make($input, [
             'password' => $this->passwordRules(),
         ])->validate();

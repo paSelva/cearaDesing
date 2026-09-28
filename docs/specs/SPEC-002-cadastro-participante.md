@@ -6,7 +6,7 @@ Status: implementação DEV concluída, aguardando revisão independente do QA. 
 
 Permitir que pessoas físicas e jurídicas criem uma conta de participante, entrem, saiam e recuperem a senha em páginas próprias do site (Fortify), e acessem uma área do participante mínima. É a porta de entrada para o fluxo de inscrição (SPEC-003).
 
-**Fora do escopo:** inscrição de projetos; edição do perfil (`UpdateParticipantProfile`, que depende da regra da 3.7 — P9 — e entra com a inscrição); confirmação de e-mail (P73); 2FA e passkeys; alteração de senha logado; cadastro de eleitor e Turnstile (P52, voto popular); envio real de e-mail em produção (⚠️ P31).
+**Fora do escopo:** recuperação de senha de jurado e admin (hoje: admin pelo CLI; jurado depende de decisão — P17 só diz que o admin cria a conta); inscrição de projetos; edição do perfil (`UpdateParticipantProfile`, que depende da regra da 3.7 — P9 — e entra com a inscrição); confirmação de e-mail (P73); 2FA e passkeys; alteração de senha logado; cadastro de eleitor e Turnstile (P52, voto popular); envio real de e-mail em produção (⚠️ P31).
 
 ### Critérios verificáveis
 
@@ -17,7 +17,7 @@ Permitir que pessoas físicas e jurídicas criem uma conta de participante, entr
 5. `participant_type` só aceita a lista do §2; UF só aceita as 27 UFs; telefone com DDD.
 6. `/login` aceita somente participante. Admin, jurado e eleitor recebem a mesma mensagem genérica de credencial inválida (não revela o papel).
 7. Login limitado a 5 tentativas por minuto por e-mail + IP (429 na 6ª).
-8. Recuperação de senha envia link e redefine; e-mail não cadastrado recebe a mesma resposta de sucesso (não revela quais e-mails têm conta).
+8. Recuperação de senha envia link e redefine só para participante. E-mail não cadastrado, e-mail de admin/jurado e pedido repetido (throttle) recebem a mesma resposta de sucesso (não revela quais e-mails têm conta nem o papel); admin/jurado não recebem link e não redefinem por aqui, mesmo com token válido.
 9. `/participante`: visitante vai para o login; outros papéis recebem 403; a página não mostra documento nem telefone.
 10. Mensagens de validação, login e senha em português.
 
@@ -43,7 +43,7 @@ Permitir que pessoas físicas e jurídicas criem uma conta de participante, entr
 - Regras `App\Rules\Cpf` e `App\Rules\Cnpj` (normalização + dígito verificador), previstas em `docs/07`.
 - Action `App\Actions\Account\RegisterParticipant`: normaliza, valida, cria usuário e perfil em uma transação e converte `UniqueConstraintViolationException` (corrida entre requisições) em erro de campo.
 - Fortify 1.40 (compatível com Laravel 13): só `registration` e `resetPasswords`. Migrations de 2FA/passkeys publicadas pelo `fortify:install` foram removidas; Actions de edição de perfil e senha não foram mantidas. Confirmação de senha responde 404.
-- `Fortify::authenticateUsing` restringe o login do site a `participante` (lista `SITE_LOGIN_ROLES`; o eleitor entra nela na SPEC do voto popular).
+- `Role::siteAuth()` define os papéis da autenticação do site (hoje só `participante`; o eleitor entra na SPEC do voto popular). É usada no `Fortify::authenticateUsing`, no envio do link de recuperação (`User::sendPasswordResetNotification`) e no `ResetUserPassword`.
 - Resposta neutra na recuperação de senha (`NeutralPasswordResetLinkResponse`).
 - Middleware `role:<papel>` para grupos de rotas; não substitui Policies.
 - Traduções `lang/pt_BR` (`validation`, `auth`, `passwords`, `pagination`).

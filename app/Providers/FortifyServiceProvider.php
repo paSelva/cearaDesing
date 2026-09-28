@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
-use App\Enums\Role;
 use App\Http\Responses\NeutralPasswordResetLinkResponse;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -18,12 +17,6 @@ use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
 {
-    /**
-     * Papéis que podem entrar pelo login do site. Admin e jurado usam o Filament (T1);
-     * o eleitor entra aqui quando o voto popular for implementado.
-     */
-    public const SITE_LOGIN_ROLES = [Role::Participante];
-
     public function register(): void
     {
         $this->app->bind(FailedPasswordResetLinkRequestResponse::class, NeutralPasswordResetLinkResponse::class);
@@ -47,7 +40,7 @@ class FortifyServiceProvider extends ServiceProvider
             $user = User::query()->where('email', Str::lower((string) $request->input(Fortify::username())))->first();
 
             if ($user === null
-                || ! in_array($user->role, self::SITE_LOGIN_ROLES, true)
+                || ! $user->role->usesSiteAuth()
                 || ! Hash::check((string) $request->input('password'), $user->password)) {
                 return null;
             }

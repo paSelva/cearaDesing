@@ -5,6 +5,7 @@ use App\Models\ParticipantProfile;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
 
 function registrationPayload(array $overrides = []): array
 {
@@ -129,6 +130,46 @@ describe('recuperação de senha', function () {
             ->assertSessionHas('status', 'Se o e-mail estiver cadastrado, você receberá um link para redefinir a senha.');
 
         Notification::assertNothingSent();
+    });
+});
+
+describe('recuperação de senha — papéis fora do site', function () {
+    it('não envia link para admin nem jurado, com a mesma resposta neutra', function (Role $role) {
+        Notification::fake();
+        $user = User::factory()->create(['role' => $role]);
+
+        $this->post('/forgot-password', ['email' => $user->email])
+            ->assertSessionHasNoErrors()
+            ->assertSessionHas('status', 'Se o e-mail estiver cadastrado, você receberá um link para redefinir a senha.');
+
+        Notification::assertNothingSent();
+    })->with([Role::Admin, Role::Jurado]);
+
+    it('recusa redefinir senha de admin mesmo com token válido', function () {
+        $admin = User::factory()->admin()->create();
+        $token = Password::broker()->createToken($admin);
+
+        $this->post('/reset-password', [
+            'token' => $token,
+            'email' => $admin->email,
+            'password' => 'nova-senha-sintetica',
+            'password_confirmation' => 'nova-senha-sintetica',
+        ])->assertSessionHasErrors('email');
+
+        expect(password_verify('nova-senha-sintetica', $admin->fresh()->password))->toBeFalse();
+    });
+
+    it('pedido repetido (throttle) tem a mesma resposta de e-mail inexistente', function () {
+        Notification::fake();
+        $user = ParticipantProfile::factory()->create()->user;
+
+        foreach (range(1, 2) as $_) {
+            $this->post('/forgot-password', ['email' => $user->email])
+                ->assertSessionHasNoErrors()
+                ->assertSessionHas('status', 'Se o e-mail estiver cadastrado, você receberá um link para redefinir a senha.');
+        }
+
+        Notification::assertSentToTimes($user, ResetPassword::class, 1);
     });
 });
 

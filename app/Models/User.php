@@ -41,6 +41,19 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasOne(ParticipantProfile::class);
     }
 
+    /**
+     * A recuperação de senha pública só atende papéis do site (Role::siteAuth()).
+     * Para admin/jurado nada é enviado; a resposta da tela é a mesma (neutra).
+     */
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        if (! $this->role->usesSiteAuth()) {
+            return;
+        }
+
+        parent::sendPasswordResetNotification($token);
+    }
+
     public function hasRole(Role $role): bool
     {
         return $this->role === $role;

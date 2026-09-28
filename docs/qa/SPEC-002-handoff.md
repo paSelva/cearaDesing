@@ -49,7 +49,7 @@ Roteiro manual (dados sintéticos):
 2. Sair; criar PJ com CNPJ alfanumérico `12.ABC.345/01DE-35` e tipo "Empresa".
 3. Tentar repetir o documento sem máscara (`52998224725`) com outro e-mail → erro "Já existe uma conta de participante com este documento."
 4. Criar admin por `php artisan app:create-admin` e tentar entrar com ele em `/login` → "E-mail ou senha inválidos."; `/admin` continua funcionando.
-5. `/forgot-password` com e-mail cadastrado e com e-mail inexistente → mesma mensagem; link no `storage/logs/laravel.log` para o cadastrado; redefinir e entrar com a nova senha.
+5. `/forgot-password` com e-mail de participante, e-mail inexistente e e-mail do admin → mesma mensagem (só o participante recebe link); link no `storage/logs/laravel.log` para o cadastrado; redefinir e entrar com a nova senha.
 6. Seis tentativas erradas de login seguidas → a sexta retorna 429.
 7. Conferir que `/participante` não mostra CPF/CNPJ nem telefone.
 
@@ -59,8 +59,10 @@ Roteiro manual (dados sintéticos):
 |---|---|
 | `bash scripts/bootstrap-local.sh` | exit 0 |
 | `up -d --build`, `key:generate`, `migrate`, `db:seed` | exit 0; migration `create_participant_profiles_table` aplicada |
-| `php artisan test --compact` | **97 testes, 199 assertions, todos passaram** (29 da SPEC-001 + 68 novos) |
-| `vendor/bin/pint --test` | passou (80 arquivos; `skills/` excluída por `pint.json`) |
+| `php artisan test --compact` | **101 testes, 213 assertions, todos passaram** (29 da SPEC-001 + 72 novos) |
+| `vendor/bin/pint --test` e o comando do CI | passaram (`skills/` excluída por `pint.json`) |
+| `scripts/validate-foundation.sh`, `composer validate --strict`, `composer audit`, `npm audit --audit-level=high` | passaram (0 advisories, 0 vulnerabilidades) |
+| `migrate:status` | nenhuma tabela de 2FA/passkeys (migrations publicadas pelo `fortify:install` foram removidas) |
 | `npm run build` | passou |
 | HTTP local | `/`, `/login`, `/register`, `/forgot-password` → 200; `/participante` sem login → 302 para `/login` |
 | Fluxo real com cookie/CSRF | cadastro PJ com CNPJ alfanumérico → 302 para `/participante`; página mostra nome, "Pessoa jurídica (CNPJ)", "Empresa", "Fortaleza/CE" |
