@@ -41,6 +41,9 @@
                         <li><a href="#avaliacao" class="site-link">Avaliação</a></li>
                         <li><a href="#datas" class="site-link">Datas</a></li>
                         <li><a href="#como-participar" class="site-link">Como participar</a></li>
+                        @if ($galleryOpen)
+                            <li><a href="{{ route('gallery.index') }}" class="site-link">Galeria</a></li>
+                        @endif
                     </ul>
                 </nav>
                 <div class="flex items-center gap-5 text-[0.95rem] font-semibold">
@@ -78,6 +81,9 @@
                         <div class="mt-8 flex flex-wrap items-center gap-6">
                             @if ($registrationOpen)
                                 <a href="{{ route('register') }}" class="site-button site-button--grande">Inscrever projeto</a>
+                            @endif
+                            @if ($votingOpen)
+                                <a href="{{ route('gallery.index') }}" class="site-button site-button--grande">Ver a galeria e votar</a>
                             @endif
                             <a href="#categorias" class="site-link text-lg font-semibold text-tinta">Conhecer as categorias</a>
                         </div>

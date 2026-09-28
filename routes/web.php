@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\EntryFileController;
 use App\Http\Controllers\Admin\ProofFileController;
+use App\Http\Controllers\Gallery\GalleryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Jurado\AssignmentFileController;
 use App\Http\Controllers\Participant\DashboardController;
@@ -21,7 +22,14 @@ Route::middleware('guest')->group(function (): void {
 
 Route::middleware(['auth', 'role:eleitor'])->group(function (): void {
     Route::get('/eleitor', VoterHomeController::class)->name('voter.home');
+    // Recomendação: limite de votos por minuto por eleitor (não é regra do edital).
+    Route::post('/galeria/{entry}/votar', [GalleryController::class, 'vote'])->middleware('throttle:votes')->name('gallery.vote');
 });
+
+// Galeria pública (SPEC-010): a partir do início da votação (P55).
+Route::get('/galeria', [GalleryController::class, 'index'])->name('gallery.index');
+Route::get('/galeria/{entry}', [GalleryController::class, 'show'])->name('gallery.show');
+Route::get('/galeria/{entry}/imagens/{media}', [GalleryController::class, 'image'])->name('gallery.image');
 
 // Área do participante (SPEC-002/003). Login/cadastro/recuperação de senha: rotas do Fortify.
 Route::middleware(['auth', 'role:participante'])

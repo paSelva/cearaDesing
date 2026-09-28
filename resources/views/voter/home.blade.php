@@ -7,12 +7,28 @@
 
         <x-flash />
 
-        <p class="mt-6 text-lg">
-            Seu cadastro de eleitor está pronto.
-            @if ($edition)
-                A votação acontece de {{ $date($edition->voting_starts_at) }} a {{ $date($edition->voting_ends_at) }}:
-                você poderá votar em um projeto de cada categoria, entre os aprovados pela organização. O voto não pode ser trocado.
-            @endif
-        </p>
+        @if ($edition)
+            <p class="mt-6 text-lg">
+                A votação acontece de {{ $date($edition->voting_starts_at) }} a {{ $date($edition->voting_ends_at) }}.
+                Você pode votar em um projeto de cada categoria, entre os aprovados pela organização. O voto não pode ser trocado.
+            </p>
+        @endif
+
+        <a href="{{ route('gallery.index') }}" class="site-button site-button--grande mt-8">Ver a galeria</a>
     </section>
+
+    @if ($votes->isNotEmpty())
+        <section class="mt-14 max-w-2xl">
+            <h2 class="font-display text-2xl font-bold text-tinta">Seus votos</h2>
+            <ul class="mt-4 divide-y divide-tinta/15 border-y border-tinta/15">
+                @foreach ($votes as $vote)
+                    <li class="py-3">
+                        <span class="text-laranja-escuro">{{ $vote->entry->category->code }}</span>
+                        {{ $vote->entry->category->name }}:
+                        <a href="{{ route('gallery.show', $vote->entry) }}" class="site-link font-semibold text-tinta">{{ $vote->entry->title }}</a>
+                    </li>
+                @endforeach
+            </ul>
+        </section>
+    @endif
 </x-layouts.site>

@@ -125,7 +125,7 @@ describe('pelo site', function () {
             ->assertRedirect('/eleitor');
 
         $this->assertAuthenticatedAs(User::where('email', 'eleitor@example.test')->sole());
-        $this->get('/eleitor')->assertOk()->assertSee('Seu cadastro de eleitor está pronto');
+        $this->get('/eleitor')->assertOk()->assertSee('Cadastro de eleitor concluído.')->assertSee('Ver a galeria');
     });
 
     it('eleitor entra pelo login do site e vai para a área dele; não entra na do participante', function () {
