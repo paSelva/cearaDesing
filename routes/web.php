@@ -2,15 +2,14 @@
 
 use App\Http\Controllers\Admin\EntryFileController;
 use App\Http\Controllers\Admin\ProofFileController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Jurado\AssignmentFileController;
 use App\Http\Controllers\Participant\DashboardController;
 use App\Http\Controllers\Participant\EntryController;
 use App\Http\Controllers\Participant\ProofController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', HomeController::class)->name('home');
 
 // Área do participante (SPEC-002/003). Login/cadastro/recuperação de senha: rotas do Fortify.
 Route::middleware(['auth', 'role:participante'])

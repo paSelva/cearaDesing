@@ -10,8 +10,8 @@
 
 <x-layouts.site title="Criar conta">
     <section class="mx-auto max-w-xl">
-        <h1 class="text-3xl font-semibold tracking-tight">Criar conta de participante</h1>
-        <p class="mt-2 text-stone-400">
+        <h1 class="font-display text-4xl font-bold uppercase leading-none text-tinta md:text-5xl">Criar conta de participante</h1>
+        <p class="mt-2 text-grafite/75">
             Com a conta você poderá inscrever projetos no 1º Prêmio Ceará Tem Design.
             A conta pode ser de pessoa física ou jurídica.
         </p>
@@ -44,8 +44,8 @@
             <x-form.button>Criar conta</x-form.button>
         </form>
 
-        <p class="mt-6 text-sm text-stone-400">
-            Já tem conta? <a href="{{ route('login') }}" class="text-amber-300 hover:underline">Entrar</a>
+        <p class="mt-6 text-sm text-grafite/75">
+            Já tem conta? <a href="{{ route('login') }}" class="text-laranja-escuro hover:underline">Entrar</a>
         </p>
     </section>
 </x-layouts.site>
