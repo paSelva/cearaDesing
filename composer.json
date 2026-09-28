@@ -11,6 +11,7 @@
         "laravel/fortify": "^1.40",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
+        "spatie/laravel-activitylog": "^5.1",
         "spatie/laravel-medialibrary": "^11.23"
     },
     "require-dev": {

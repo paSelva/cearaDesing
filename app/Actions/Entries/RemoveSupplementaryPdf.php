@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Entries;
 
 use App\Models\Entry;
+use Illuminate\Support\Facades\DB;
 
 final class RemoveSupplementaryPdf
 {
@@ -14,6 +15,9 @@ final class RemoveSupplementaryPdf
     {
         $this->guard->ensureEditable($entry);
 
-        $entry->clearMediaCollection('supplementary_pdf');
+        DB::transaction(function () use ($entry): void {
+            $this->guard->lockEditable($entry);
+            $entry->clearMediaCollection('supplementary_pdf');
+        });
     }
 }

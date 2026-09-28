@@ -33,7 +33,7 @@ final class AddEntryImage
 
         // Trava a inscrição para dois envios simultâneos não passarem do limite.
         return DB::transaction(function () use ($entry, $file, $config): Media {
-            Entry::query()->whereKey($entry->id)->lockForUpdate()->first();
+            $this->guard->lockEditable($entry);
 
             if ($entry->imageCount() >= $config['max']) {
                 throw ValidationException::withMessages(['image' => "Limite de {$config['max']} imagens por inscrição."]);

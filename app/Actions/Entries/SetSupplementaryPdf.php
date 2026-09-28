@@ -6,6 +6,7 @@ namespace App\Actions\Entries;
 
 use App\Models\Entry;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -27,10 +28,14 @@ final class SetSupplementaryPdf
             'pdf.uploaded' => 'O PDF não foi recebido. O arquivo pode ter no máximo 10 MB.',
         ], ['pdf' => 'PDF'])->validate();
 
-        /** @var UploadedFile $file */
-        return $entry->addMedia($file)
-            ->usingName(Str::limit(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME), 200, ''))
-            ->usingFileName(Str::uuid().'.pdf')
-            ->toMediaCollection('supplementary_pdf');
+        return DB::transaction(function () use ($entry, $file): Media {
+            $this->guard->lockEditable($entry);
+
+            /** @var UploadedFile $file */
+            return $entry->addMedia($file)
+                ->usingName(Str::limit(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME), 200, ''))
+                ->usingFileName(Str::uuid().'.pdf')
+                ->toMediaCollection('supplementary_pdf');
+        });
     }
 }
