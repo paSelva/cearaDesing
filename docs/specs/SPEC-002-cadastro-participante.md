@@ -6,7 +6,7 @@ Status: implementação DEV concluída, aguardando revisão independente do QA. 
 
 Permitir que pessoas físicas e jurídicas criem uma conta de participante, entrem, saiam e recuperem a senha em páginas próprias do site (Fortify), e acessem uma área do participante mínima. É a porta de entrada para o fluxo de inscrição (SPEC-003).
 
-**Fora do escopo:** recuperação de senha de jurado e admin (hoje: admin pelo CLI; jurado depende de decisão — P17 só diz que o admin cria a conta); inscrição de projetos; edição do perfil (`UpdateParticipantProfile`, que depende da regra da 3.7 — P9 — e entra com a inscrição); confirmação de e-mail (P73); 2FA e passkeys; alteração de senha logado; cadastro de eleitor e Turnstile (P52, voto popular); envio real de e-mail em produção (⚠️ P31).
+**Fora do escopo:** recuperação pública de senha para jurado e admin (admin: CLI; jurado: o admin troca a senha no painel, P82); mini bio e foto do jurado (P59); inscrição de projetos; edição do perfil (`UpdateParticipantProfile`, que depende da regra da 3.7 — P9 — e entra com a inscrição); confirmação de e-mail (P73); 2FA e passkeys; alteração de senha logado; cadastro de eleitor e Turnstile (P52, voto popular); envio real de e-mail em produção (⚠️ P31).
 
 ### Critérios verificáveis
 
@@ -20,11 +20,13 @@ Permitir que pessoas físicas e jurídicas criem uma conta de participante, entr
 8. Recuperação de senha envia link e redefine só para participante. E-mail não cadastrado, e-mail de admin/jurado e pedido repetido (throttle) recebem a mesma resposta de sucesso (não revela quais e-mails têm conta nem o papel); admin/jurado não recebem link e não redefinem por aqui, mesmo com token válido.
 9. `/participante`: visitante vai para o login; outros papéis recebem 403; a página não mostra documento nem telefone.
 10. Mensagens de validação, login e senha em português.
+11. Em `/admin/jurados`, só o admin lista e cria jurados (nome, e-mail, senha de 12+ caracteres, P17) e define uma nova senha para um jurado (P82). A troca invalida o "manter conectado". Ninguém exclui contas; o admin não altera outros admins pelo painel.
 
 ## Regras, decisões e perguntas
 
 - **Edital:** tipos de participante (§2); dados pessoais usados só para o prêmio (§8).
 - **Decisões confirmadas:** PF e PJ podem ser titulares (P3); dados do cadastro (P4); sem confirmação de e-mail (P73); documento único (P74); páginas próprias com Fortify para participante e eleitor (T1); tudo em `users`, com e-mail distinto para cadastro de eleitor (T4).
+- **Nova decisão (P82, 28/09):** o jurado não usa a recuperação pública; o admin define a nova senha no painel.
 - **Nova decisão (P81, 27/09):** aceitar CNPJ alfanumérico (IN RFB 2.229/2024), com o dígito verificador oficial (caractere = código ASCII − 48). Registrada em `docs/06` e `docs/04`.
 - **Recomendações técnicas aplicadas:**
   - senha com mínimo de 8 caracteres (o admin, criado por CLI, continua com 12);
@@ -46,6 +48,7 @@ Permitir que pessoas físicas e jurídicas criem uma conta de participante, entr
 - `Role::siteAuth()` define os papéis da autenticação do site (hoje só `participante`; o eleitor entra na SPEC do voto popular). É usada no `Fortify::authenticateUsing`, no envio do link de recuperação (`User::sendPasswordResetNotification`) e no `ResetUserPassword`.
 - Resposta neutra na recuperação de senha (`NeutralPasswordResetLinkResponse`).
 - Middleware `role:<papel>` para grupos de rotas; não substitui Policies.
+- Actions `CreateJudge` (parcial: sem bio/foto) e `SetJudgePassword`; `UserPolicy` (admin gerencia só jurados, ninguém exclui); Resource Filament `JudgeResource` em `/admin/jurados` com a ação "Alterar senha".
 - Traduções `lang/pt_BR` (`validation`, `auth`, `passwords`, `pagination`).
 - `pint.json` exclui `skills/` (exemplos PHP de documentação, não código da aplicação).
 

@@ -19,6 +19,7 @@ Legenda: **(§x)** edital · **(P#)** decisão confirmada · **Recomendação** 
 |---|---|---|---|
 | Administração | `CreateAdminUser` | operador autorizado | CLI `app:create-admin` |
 | Administração | `UpdateEditionSettings` | admin autorizado | Filament `/admin` |
+| Administração | `SetJudgePassword` | admin | Filament `/admin` (P82) |
 | Conta | `RegisterParticipant` | visitante | site (Fortify) |
 | Conta | `UpdateParticipantProfile` | participante | área do participante |
 | Conta | `RegisterVoter` | visitante | site (Fortify) |
@@ -98,6 +99,12 @@ Cria `users` (role `eleitor`) + `voter_profiles`.
 O admin cria o jurado (P17).
 - **Entrada:** nome, e-mail, senha, mini bio, foto (P59).
 - **Efeitos:** `users` (role `jurado`) + `judge_profiles` + mídia `photo`. A senha é repassada pela organização (P17).
+- **Implementado em parte na SPEC-002** (`app/Actions/Admin/CreateJudge.php`, tela `/admin/jurados`): nome, e-mail e senha (mínimo de 12 caracteres, como o admin — Recomendação). `judge_profiles`, mini bio e foto (P59) entram com a seção Avaliadores, junto com a Media Library.
+
+### `SetJudgePassword`
+O admin define uma nova senha para o jurado (P82).
+- **Regras:** só para usuários `jurado`; senha com mínimo de 12 caracteres e confirmação.
+- **Efeitos:** grava a nova senha com hash e troca o `remember_token` (encerra o "manter conectado"). A organização repassa a senha ao jurado.
 
 ---
 

@@ -52,6 +52,7 @@ Roteiro manual (dados sintéticos):
 5. `/forgot-password` com e-mail de participante, e-mail inexistente e e-mail do admin → mesma mensagem (só o participante recebe link); link no `storage/logs/laravel.log` para o cadastrado; redefinir e entrar com a nova senha.
 6. Seis tentativas erradas de login seguidas → a sexta retorna 429.
 7. Conferir que `/participante` não mostra CPF/CNPJ nem telefone.
+8. Como admin, em `/admin/jurados`: criar um jurado; usar "Alterar senha" na linha dele; confirmar que senha com menos de 12 caracteres é recusada. Entrar como participante e abrir `/admin/jurados` → 403.
 
 ## Evidência executada pelo DEV
 
@@ -59,7 +60,7 @@ Roteiro manual (dados sintéticos):
 |---|---|
 | `bash scripts/bootstrap-local.sh` | exit 0 |
 | `up -d --build`, `key:generate`, `migrate`, `db:seed` | exit 0; migration `create_participant_profiles_table` aplicada |
-| `php artisan test --compact` | **101 testes, 213 assertions, todos passaram** (29 da SPEC-001 + 72 novos) |
+| `php artisan test --compact` | **117 testes, 245 assertions, todos passaram** (29 da SPEC-001 + 88 novos) |
 | `vendor/bin/pint --test` e o comando do CI | passaram (`skills/` excluída por `pint.json`) |
 | `scripts/validate-foundation.sh`, `composer validate --strict`, `composer audit`, `npm audit --audit-level=high` | passaram (0 advisories, 0 vulnerabilidades) |
 | `migrate:status` | nenhuma tabela de 2FA/passkeys (migrations publicadas pelo `fortify:install` foram removidas) |
@@ -68,7 +69,7 @@ Roteiro manual (dados sintéticos):
 | Fluxo real com cookie/CSRF | cadastro PJ com CNPJ alfanumérico → 302 para `/participante`; página mostra nome, "Pessoa jurídica (CNPJ)", "Empresa", "Fortaleza/CE" |
 | Navegador | **não executado** (extensão de navegador indisponível); QA deve conferir o visual das páginas |
 
-Testes novos: `tests/Unit/DocumentRulesTest.php`, `tests/Feature/Account/RegisterParticipantTest.php`, `tests/Feature/Account/ParticipantAuthTest.php`. Alterado: `tests/Feature/Admin/AdminAccessTest.php` (ver SPEC, seção "Alteração de teste da SPEC-001").
+Testes novos: `tests/Unit/DocumentRulesTest.php`, `tests/Feature/Account/RegisterParticipantTest.php`, `tests/Feature/Account/ParticipantAuthTest.php`, `tests/Feature/Admin/JudgeManagementTest.php`. Alterado: `tests/Feature/Admin/AdminAccessTest.php` (ver SPEC, seção "Alteração de teste da SPEC-001").
 
 ## Segurança e escopo QA
 
