@@ -124,7 +124,7 @@ O admin define uma nova senha para o jurado (P82).
   - dentro do período de inscrições (P8);
   - status `rascunho` ou `enviada`: **aprovada não pode ser editada** (P70);
   - textos com até 5.000 caracteres, e até 5 links (P75);
-  - ⚠️ limites de imagens (P6) e do PDF complementar (P45).
+  - imagens: de 1 a 10, JPG/PNG/WebP, até 5 MB cada (P6); PDF complementar opcional, 1 arquivo de até 10 MB (P45).
 - **Efeitos:** atualiza os campos.
   - Se a inscrição já estava `enviada`, grava um novo conjunto de `entry_consents` (Recomendação). Isso exige os aceites de novo na tela de edição.
 
@@ -140,6 +140,10 @@ O admin define uma nova senha para o jurado (P82).
   - status → `enviada`, `submitted_at`;
   - 6 registros em `entry_consents` com data/hora e IP (P53);
   - ⚠️ e-mail de confirmação depende de P25.
+
+**Implementado na SPEC-003** (`app/Actions/Entries/`): `CreateEntryDraft`, `UpdateEntry` (textos, IA e links), `SubmitEntry`, e, para os arquivos (um por requisição), `AddEntryImage`, `RemoveEntryImage`, `SetSupplementaryPdf`, `RemoveSupplementaryPdf`. Prazo e status ficam em `EntryGuard`; os aceites em `RecordConsents`.
+- Inscrição `enviada`: ao salvar os textos, todos os campos continuam obrigatórios e os 6 aceites são pedidos de novo (novo conjunto em `entry_consents`). Enviar ou remover arquivo **não** pede novo aceite (os aceites já cobrem "imagens e materiais enviados"), mas a inscrição enviada não pode ficar sem imagem.
+- `ai_used` é uma resposta explícita sim/não (obrigatória para enviar), não um checkbox.
 
 ---
 

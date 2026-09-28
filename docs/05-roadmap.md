@@ -22,12 +22,12 @@ As inscrições abrem em **28/09/2026** (§7). A documentação foi escrita em *
 **Prazo do edital:** inscrições de 28/09 a 28/10/2026 (§7).
 - [ ] Site público: Hero/Sobre, Categorias/Avaliação, Datas/Como participar, Parceiros/Diretoria, Avaliadores (P26) · ⚠️ P27
 - [x] Cadastro e login do participante em páginas próprias (Fortify, T1): PF/PJ, CPF/CNPJ, telefone, cidade/UF, tipo (P3, P4) — SPEC-002; recuperação de senha em produção depende do e-mail (⚠️ P31)
-- [ ] Formulário de inscrição com os campos do §4, links + PDF (P7), a declaração de IA e os aceites do §8 · ⚠️ P6, P45
-- [ ] Edição permitida até o fim do prazo (P8)
-- [ ] Aceites do §8 com um checkbox por item, data/hora e IP (P11, P53)
+- [x] Formulário de inscrição com os campos do §4, links + PDF (P7), a declaração de IA e os aceites do §8 (P6, P45) — SPEC-003
+- [x] Edição permitida até o fim do prazo (P8) — SPEC-003
+- [x] Aceites do §8 com um checkbox por item, data/hora e IP (P11, P53) — SPEC-003
 - [ ] Fluxo de comprovação: status + upload de 1 PDF de até 10 MB pelo participante (P12, P54), com prazo definido pelo admin em cada solicitação (P56)
-- [ ] Regra da 3.7: exclusiva para estudantes, e estudantes só na 3.7 (P9)
-- [ ] Bloqueio das inscrições ao fim do prazo
+- [x] Regra da 3.7: exclusiva para estudantes, e estudantes só na 3.7 (P9) — SPEC-003
+- [x] Bloqueio das inscrições ao fim do prazo — SPEC-003
 - [ ] Área da organização: consultar as inscrições e fazer a triagem (a aprovação libera a votação popular, P37, P43)
 
 ## Fase 1b — Voto popular (P1)

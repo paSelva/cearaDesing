@@ -82,6 +82,7 @@ segredos em `VITE_*` nem versione `.env`.
 8. [SPEC-001 — catálogo e painel administrativo](docs/specs/SPEC-001-catalogo-admin.md)
 9. [Handoff reproduzível para QA](docs/qa/SPEC-001-handoff.md)
 10. [SPEC-002 — cadastro e login do participante](docs/specs/SPEC-002-cadastro-participante.md) · [handoff QA](docs/qa/SPEC-002-handoff.md)
+11. [SPEC-003 — inscrição de projetos](docs/specs/SPEC-003-inscricao.md) · [handoff QA](docs/qa/SPEC-003-handoff.md)
 
 Convenção: **(§x)** = regra do edital · **(P#, confirmado)** = decisão do responsável que não está no edital · **Recomendação** = proposta técnica · **⚠️ A definir (P#)** = pergunta em aberto.
 
