@@ -31,6 +31,8 @@ final class DashboardController extends Controller
         return view('participant.dashboard', [
             'edition' => $edition,
             'registrationOpen' => $edition !== null && $guard->isRegistrationOpen($edition),
+            // Nota final e distinção só depois da publicação (P22, P69).
+            'resultsPublished' => $edition?->results_published_at !== null,
             'categories' => $categories,
             'entriesByCategory' => $user->entries()
                 ->with('category')

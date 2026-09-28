@@ -44,6 +44,9 @@
                         @if ($galleryOpen)
                             <li><a href="{{ route('gallery.index') }}" class="site-link">Galeria</a></li>
                         @endif
+                        @if ($resultsPublished)
+                            <li><a href="{{ route('results.index') }}" class="site-link">Premiados</a></li>
+                        @endif
                     </ul>
                 </nav>
                 <div class="flex items-center gap-5 text-[0.95rem] font-semibold">
@@ -82,7 +85,9 @@
                             @if ($registrationOpen)
                                 <a href="{{ route('register') }}" class="site-button site-button--grande">Inscrever projeto</a>
                             @endif
-                            @if ($votingOpen)
+                            @if ($resultsPublished)
+                                <a href="{{ route('results.index') }}" class="site-button site-button--grande">Ver os premiados</a>
+                            @elseif ($votingOpen)
                                 <a href="{{ route('gallery.index') }}" class="site-button site-button--grande">Ver a galeria e votar</a>
                             @endif
                             <a href="#categorias" class="site-link text-lg font-semibold text-tinta">Conhecer as categorias</a>

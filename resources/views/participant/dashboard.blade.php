@@ -59,6 +59,11 @@
                             <p class="mt-1 text-sm text-grafite/75">
                                 {{ $entry->title ?: 'Projeto sem nome' }} — {{ $entry->status->label() }}
                             </p>
+                            @if ($resultsPublished && $entry->final_score !== null)
+                                <p class="mt-1 text-sm font-semibold text-tinta">
+                                    Resultado: {{ $entry->distinction?->label() }}, {{ $entry->final_score }} pontos
+                                </p>
+                            @endif
                             @if ($entry->pending_proofs_count > 0)
                                 <p class="mt-1 text-sm font-semibold text-laranja-escuro">A organização pediu uma comprovação. Abra a inscrição para enviar.</p>
                             @endif

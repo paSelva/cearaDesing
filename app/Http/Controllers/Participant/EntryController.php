@@ -46,6 +46,8 @@ final class EntryController extends Controller
             'entry' => $entry,
             'editable' => $entry->status->isEditableByParticipant() && $guard->isRegistrationOpen($entry->edition),
             'isSubmitted' => $entry->status === EntryStatus::Enviada,
+            // Nota final e distinção só depois da publicação (P22, P69); nunca notas por jurado.
+            'resultsPublished' => $entry->edition->results_published_at !== null,
             'images' => $entry->getMedia('images'),
             'pdf' => $entry->getFirstMedia('supplementary_pdf'),
             'missing' => $entry->status === EntryStatus::Rascunho ? $submit->missingItems($entry) : [],

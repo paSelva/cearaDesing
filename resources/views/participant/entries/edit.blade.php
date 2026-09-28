@@ -17,6 +17,11 @@
                 · enviada em {{ $entry->submitted_at->format('d/m/Y H:i') }}
             @endif
         </p>
+        @if ($resultsPublished && $entry->final_score !== null)
+            <p class="mt-4 rounded-md border border-amarelo bg-amarelo/20 px-4 py-3 text-lg font-semibold text-tinta">
+                Resultado: {{ $entry->distinction?->label() }}, {{ $entry->final_score }} pontos
+            </p>
+        @endif
         @if (! $editable)
             <p class="mt-4 rounded-md border border-tinta/25 bg-white px-4 py-3 text-sm text-grafite">
                 Esta inscrição não pode ser editada agora (fora do prazo de inscrições ou já aprovada na triagem).

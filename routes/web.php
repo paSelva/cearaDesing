@@ -8,6 +8,7 @@ use App\Http\Controllers\Jurado\AssignmentFileController;
 use App\Http\Controllers\Participant\DashboardController;
 use App\Http\Controllers\Participant\EntryController;
 use App\Http\Controllers\Participant\ProofController;
+use App\Http\Controllers\ResultsController;
 use App\Http\Controllers\Voter\RegisterVoterController;
 use App\Http\Controllers\Voter\VoterHomeController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,9 @@ Route::middleware(['auth', 'role:eleitor'])->group(function (): void {
 Route::get('/galeria', [GalleryController::class, 'index'])->name('gallery.index');
 Route::get('/galeria/{entry}', [GalleryController::class, 'show'])->name('gallery.show');
 Route::get('/galeria/{entry}/imagens/{media}', [GalleryController::class, 'image'])->name('gallery.image');
+
+// Premiados (SPEC-011): público depois do botão "Publicar resultado" (P21, P69).
+Route::get('/premiados', ResultsController::class)->name('results.index');
 
 // Área do participante (SPEC-002/003). Login/cadastro/recuperação de senha: rotas do Fortify.
 Route::middleware(['auth', 'role:participante'])
