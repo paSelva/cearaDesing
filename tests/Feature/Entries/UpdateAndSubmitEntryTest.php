@@ -57,6 +57,15 @@ describe('UpdateEntry', function () {
         'IA sim sem descrição' => [['ai_used' => '1'], 'ai_usage_description'],
     ]);
 
+    it('trata ai_used inteiro 1 como "sim"', function () {
+        $entry = entryFor(participant(), regularCategory(openEdition()));
+
+        app(UpdateEntry::class)->handle($entry, completeTexts(['ai_used' => 1, 'ai_usage_description' => 'Imagens geradas com IA.']), '203.0.113.5');
+
+        expect($entry->fresh()->ai_used)->toBeTrue()
+            ->and($entry->fresh()->ai_usage_description)->toBe('Imagens geradas com IA.');
+    });
+
     it('limpa a descrição de IA quando a resposta é "não"', function () {
         $entry = entryFor(participant(), regularCategory(openEdition()));
 

@@ -18,7 +18,6 @@ Route::middleware(['auth', 'role:participante'])
         Route::post('/inscricoes', [EntryController::class, 'store'])->name('entries.store');
         Route::get('/inscricoes/{entry}', [EntryController::class, 'edit'])->name('entries.edit');
         Route::put('/inscricoes/{entry}', [EntryController::class, 'update'])->name('entries.update');
-        Route::post('/inscricoes/{entry}/enviar', [EntryController::class, 'submit'])->name('entries.submit');
 
         // Um arquivo por requisição (limites de upload do PHP na hospedagem compartilhada).
         Route::post('/inscricoes/{entry}/imagens', [EntryController::class, 'storeImage'])->name('entries.images.store');

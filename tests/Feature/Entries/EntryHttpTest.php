@@ -21,9 +21,9 @@ describe('fluxo pelo site', function () {
         $this->post('/participante/inscricoes', ['category_id' => $category->id])->assertRedirect();
         $entry = Entry::sole();
 
-        $this->put("/participante/inscricoes/{$entry->id}", completeTexts())->assertSessionHasNoErrors();
         $this->post("/participante/inscricoes/{$entry->id}/imagens", ['image' => fakeImage()])->assertSessionHasNoErrors();
-        $this->post("/participante/inscricoes/{$entry->id}/enviar", ['consents' => allConsents()])
+        $this->put("/participante/inscricoes/{$entry->id}", completeTexts(['intent' => 'submit', 'consents' => allConsents()]))
+            ->assertSessionHasNoErrors()
             ->assertRedirect("/participante/inscricoes/{$entry->id}");
 
         expect($entry->fresh()->status)->toBe(EntryStatus::Enviada)
@@ -33,6 +33,32 @@ describe('fluxo pelo site', function () {
             ->assertOk()
             ->assertSee('Enviada')
             ->assertSee('Cadeira Jangada');
+    });
+
+    it('se o envio falha, os textos digitados ficam salvos e a inscrição continua rascunho', function () {
+        $user = participant();
+        $entry = entryFor($user, regularCategory(openEdition()));
+
+        $this->actingAs($user)
+            ->from("/participante/inscricoes/{$entry->id}")
+            ->put("/participante/inscricoes/{$entry->id}", completeTexts(['intent' => 'submit', 'consents' => allConsents()]))
+            ->assertRedirect("/participante/inscricoes/{$entry->id}")
+            ->assertSessionHasErrors('entry');
+
+        $entry->refresh();
+        expect($entry->status)->toBe(EntryStatus::Rascunho)
+            ->and($entry->title)->toBe('Cadeira Jangada')
+            ->and($entry->summary)->toBe('Uma cadeira inspirada nas jangadas.');
+    });
+
+    it('salvar rascunho com intent=save não envia', function () {
+        $user = participant();
+        $entry = entryFor($user, regularCategory(openEdition()), 'completo');
+        app(AddEntryImage::class)->handle($entry, fakeImage());
+
+        $this->actingAs($user)->put("/participante/inscricoes/{$entry->id}", completeTexts(['intent' => 'save', 'consents' => allConsents()]));
+
+        expect($entry->fresh()->status)->toBe(EntryStatus::Rascunho);
     });
 
     it('mostra os textos do §8 e o que falta para enviar', function () {
@@ -83,7 +109,6 @@ describe('acesso (IDOR)', function () {
 
         $this->get("/participante/inscricoes/{$entry->id}")->assertForbidden();
         $this->put("/participante/inscricoes/{$entry->id}", completeTexts())->assertForbidden();
-        $this->post("/participante/inscricoes/{$entry->id}/enviar", ['consents' => allConsents()])->assertForbidden();
         $this->post("/participante/inscricoes/{$entry->id}/imagens", ['image' => fakeImage()])->assertForbidden();
         $this->delete("/participante/inscricoes/{$entry->id}/imagens/{$media->id}")->assertForbidden();
         $this->post("/participante/inscricoes/{$entry->id}/pdf", ['pdf' => fakePdf()])->assertForbidden();

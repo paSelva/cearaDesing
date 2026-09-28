@@ -45,7 +45,81 @@
         </div>
     @endif
 
-    {{-- Textos do §4, IA (§8) e links (P7) --}}
+    {{-- Imagens (§4, P6) — cada envio recarrega a página --}}
+    <section class="mt-10 space-y-4">
+        <h2 class="text-xl font-semibold">Imagens do projeto</h2>
+        <p class="text-sm text-stone-400">
+            De {{ $imageConfig['min'] }} a {{ $imageConfig['max'] }} imagens, em JPG, PNG ou WebP, com até 5 MB cada. Envie uma por vez.
+        </p>
+
+        @if ($images->isNotEmpty())
+            <ul class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                @foreach ($images as $image)
+                    <li class="space-y-2">
+                        <img src="{{ route('participant.entries.file', [$entry, $image]) }}" alt="{{ $image->name }}" class="aspect-square w-full rounded-md border border-stone-800 object-cover" loading="lazy">
+                        @if ($editable)
+                            <form method="POST" action="{{ route('participant.entries.images.destroy', [$entry, $image]) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-xs text-red-300 hover:underline">Remover</button>
+                            </form>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+
+        @error('image')
+            <p class="text-sm text-red-400">{{ $message }}</p>
+        @enderror
+
+        @if ($editable && $images->count() < $imageConfig['max'])
+            <form method="POST" action="{{ route('participant.entries.images.store', $entry) }}" enctype="multipart/form-data" class="flex flex-wrap items-center gap-3">
+                @csrf
+                <input type="file" name="image" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" required class="text-sm text-stone-300">
+                <button type="submit" class="rounded-md border border-stone-700 px-4 py-2 text-sm font-semibold hover:border-stone-500">Enviar imagem</button>
+            </form>
+        @endif
+    </section>
+
+    {{-- PDF complementar (P7, P45) --}}
+    <section class="mt-10 space-y-4">
+        <h2 class="text-xl font-semibold">PDF complementar (opcional)</h2>
+        <p class="text-sm text-stone-400">1 arquivo PDF de até 10 MB. Um novo envio substitui o anterior.</p>
+
+        @if ($pdf)
+            <div class="flex flex-wrap items-center gap-4 text-sm">
+                <a href="{{ route('participant.entries.file', [$entry, $pdf]) }}" class="text-amber-300 hover:underline" target="_blank" rel="noopener noreferrer">{{ $pdf->name }}.pdf</a>
+                @if ($editable)
+                    <form method="POST" action="{{ route('participant.entries.pdf.destroy', $entry) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-xs text-red-300 hover:underline">Remover</button>
+                    </form>
+                @endif
+            </div>
+        @endif
+
+        @error('pdf')
+            <p class="text-sm text-red-400">{{ $message }}</p>
+        @enderror
+
+        @if ($editable)
+            <form method="POST" action="{{ route('participant.entries.pdf.store', $entry) }}" enctype="multipart/form-data" class="flex flex-wrap items-center gap-3">
+                @csrf
+                <input type="file" name="pdf" accept=".pdf,application/pdf" required class="text-sm text-stone-300">
+                <button type="submit" class="rounded-md border border-stone-700 px-4 py-2 text-sm font-semibold hover:border-stone-500">{{ $pdf ? 'Substituir PDF' : 'Enviar PDF' }}</button>
+            </form>
+        @endif
+    </section>
+
+    @if ($editable)
+        <p class="mt-8 rounded-md border border-stone-700 bg-stone-900 px-4 py-3 text-sm text-stone-300">
+            Dica: envie as imagens e o PDF <strong>antes</strong> de preencher os textos, ou salve os textos antes de enviar um arquivo — cada envio de arquivo recarrega a página.
+        </p>
+    @endif
+
+    {{-- Textos do §4, IA (§8), links (P7), aceites (§8) e envio --}}
     <form method="POST" action="{{ route('participant.entries.update', $entry) }}" class="mt-10 space-y-6">
         @csrf
         @method('PUT')
@@ -90,107 +164,29 @@
                 @endfor
             </fieldset>
 
-            @if ($isSubmitted)
-                @include('participant.entries._consents')
-            @endif
-
-            @if ($editable)
-                <button type="submit" class="rounded-md bg-amber-300 px-5 py-2.5 font-semibold text-stone-950 hover:bg-amber-200">
-                    {{ $isSubmitted ? 'Salvar alterações' : 'Salvar rascunho' }}
-                </button>
-            @endif
-        </fieldset>
-    </form>
-
-    {{-- Imagens (§4, P6) --}}
-    <section class="mt-14 space-y-4">
-        <h2 class="text-xl font-semibold">Imagens do projeto</h2>
-        <p class="text-sm text-stone-400">
-            De {{ $imageConfig['min'] }} a {{ $imageConfig['max'] }} imagens, em JPG, PNG ou WebP, com até 5 MB cada. Envie uma por vez.
-        </p>
-
-        @if ($images->isNotEmpty())
-            <ul class="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                @foreach ($images as $image)
-                    <li class="space-y-2">
-                        <img src="{{ route('participant.entries.file', [$entry, $image]) }}" alt="{{ $image->name }}" class="aspect-square w-full rounded-md border border-stone-800 object-cover" loading="lazy">
-                        @if ($editable)
-                            <form method="POST" action="{{ route('participant.entries.images.destroy', [$entry, $image]) }}">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-xs text-red-300 hover:underline">Remover</button>
-                            </form>
-                        @endif
-                    </li>
-                @endforeach
-            </ul>
-        @endif
-
-        @error('image')
-            <p class="text-sm text-red-400">{{ $message }}</p>
-        @enderror
-        @if ($editable && $images->count() < $imageConfig['max'])
-            <form method="POST" action="{{ route('participant.entries.images.store', $entry) }}" enctype="multipart/form-data" class="flex flex-wrap items-center gap-3">
-                @csrf
-                <input type="file" name="image" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" required class="text-sm text-stone-300">
-                <button type="submit" class="rounded-md border border-stone-700 px-4 py-2 text-sm font-semibold hover:border-stone-500">Enviar imagem</button>
-            </form>
-        @endif
-    </section>
-
-    {{-- PDF complementar (P7, P45) --}}
-    <section class="mt-14 space-y-4">
-        <h2 class="text-xl font-semibold">PDF complementar (opcional)</h2>
-        <p class="text-sm text-stone-400">1 arquivo PDF de até 10 MB. Um novo envio substitui o anterior.</p>
-
-        @if ($pdf)
-            <div class="flex flex-wrap items-center gap-4 text-sm">
-                <a href="{{ route('participant.entries.file', [$entry, $pdf]) }}" class="text-amber-300 hover:underline" target="_blank" rel="noopener">{{ $pdf->name }}.pdf</a>
-                @if ($editable)
-                    <form method="POST" action="{{ route('participant.entries.pdf.destroy', $entry) }}">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-xs text-red-300 hover:underline">Remover</button>
-                    </form>
-                @endif
-            </div>
-        @endif
-
-        @error('pdf')
-            <p class="text-sm text-red-400">{{ $message }}</p>
-        @enderror
-
-        @if ($editable)
-            <form method="POST" action="{{ route('participant.entries.pdf.store', $entry) }}" enctype="multipart/form-data" class="flex flex-wrap items-center gap-3">
-                @csrf
-                <input type="file" name="pdf" accept=".pdf,application/pdf" required class="text-sm text-stone-300">
-                <button type="submit" class="rounded-md border border-stone-700 px-4 py-2 text-sm font-semibold hover:border-stone-500">{{ $pdf ? 'Substituir PDF' : 'Enviar PDF' }}</button>
-            </form>
-        @endif
-    </section>
-
-    {{-- Envio (rascunho → enviada) --}}
-    @if ($editable && ! $isSubmitted)
-        <section class="mt-14 space-y-5 border-t border-stone-800 pt-10">
-            <h2 class="text-xl font-semibold">Enviar inscrição</h2>
-
-            @if ($missing !== [])
+            @if ($editable && ! $isSubmitted && $missing !== [])
                 <div class="rounded-md border border-amber-700 bg-amber-950 px-4 py-3 text-sm text-amber-100">
-                    <p class="font-medium">Antes de enviar, falta:</p>
+                    <p class="font-medium">Para enviar a inscrição, falta:</p>
                     <ul class="mt-2 list-inside list-disc space-y-1">
                         @foreach ($missing as $item)
                             <li>{{ $item }}</li>
                         @endforeach
                     </ul>
-                    <p class="mt-2 text-xs">Salve o rascunho depois de preencher os textos.</p>
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('participant.entries.submit', $entry) }}" class="space-y-5">
-                @csrf
-                @include('participant.entries._consents')
-                <button type="submit" class="rounded-md bg-amber-300 px-5 py-2.5 font-semibold text-stone-950 hover:bg-amber-200">Enviar inscrição</button>
-            </form>
-        </section>
-    @endif
+            @if ($editable)
+                @include('participant.entries._consents', ['requiredFor' => $isSubmitted ? 'salvar as alterações' : 'enviar a inscrição'])
+
+                <div class="flex flex-wrap gap-3">
+                    @if ($isSubmitted)
+                        <button type="submit" name="intent" value="save" class="rounded-md bg-amber-300 px-5 py-2.5 font-semibold text-stone-950 hover:bg-amber-200">Salvar alterações</button>
+                    @else
+                        <button type="submit" name="intent" value="save" class="rounded-md border border-stone-700 px-5 py-2.5 font-semibold hover:border-stone-500">Salvar rascunho</button>
+                        <button type="submit" name="intent" value="submit" class="rounded-md bg-amber-300 px-5 py-2.5 font-semibold text-stone-950 hover:bg-amber-200">Salvar e enviar inscrição</button>
+                    @endif
+                </div>
+            @endif
+        </fieldset>
+    </form>
 </x-layouts.site>

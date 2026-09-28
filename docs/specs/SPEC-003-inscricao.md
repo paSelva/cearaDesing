@@ -19,7 +19,8 @@ Permitir que o participante inscreva um projeto por categoria, preencha os campo
 7. Aprovada e desclassificada não podem ser editadas (P70, §8).
 8. Imagens: de 1 a 10, JPG/PNG/WebP, até 5 MB cada (P6). PDF complementar opcional, 1 arquivo de até 10 MB, substituído a cada novo envio (P7, P45). Textos até 5.000 caracteres e até 5 links `http(s)` (P75).
 9. Arquivos ficam no disco privado e só o dono os vê, por rota com Policy. Outro participante recebe 403 em todas as rotas da inscrição (IDOR).
-10. Arquivo acima do limite do PHP volta para a página com mensagem, sem erro 500.
+10. Arquivo acima do limite do PHP volta para a página com mensagem que cita o limite, sem erro 500.
+11. O envio acontece no mesmo formulário dos textos ("Salvar e enviar"): se falhar, o que foi digitado já está salvo. Arquivos são enviados em formulários próprios, acima dos textos, com aviso de que recarregam a página.
 
 ## Regras, decisões e perguntas
 
@@ -29,7 +30,7 @@ Permitir que o participante inscreva um projeto por categoria, preencha os campo
 - **P9 × P41:** a regra "estudante só na 3.7" está confirmada (P9) e foi implementada nas duas direções. P41 (publicar um adendo com essa regra) continua com a organização.
 - **Recomendações técnicas aplicadas:**
   - status `rascunho` antes de enviar (docs/04);
-  - um arquivo por requisição, para caber nos limites de upload da hospedagem compartilhada;
+  - um arquivo por requisição, para caber nos limites de upload da hospedagem compartilhada (com trava da inscrição para dois envios simultâneos não passarem de 10 imagens);
   - `ai_used` como resposta explícita sim/não;
   - arquivos com nome gerado (UUID), nome original guardado só como rótulo;
   - sem conversões de imagem (miniaturas), para não depender de GD/Imagick no servidor;
@@ -61,6 +62,8 @@ Permitir que o participante inscreva um projeto por categoria, preencha os campo
 - **Limites de upload na HostGator não verificados:** `upload_max_filesize` ≥ 10M, `post_max_size` ≥ 12M, `display_errors = Off` e extensão `exif`.
 - **SPEC-002 ainda sem QA:** esta branch parte dela (PR #5).
 - **P25:** sem e-mail de confirmação do envio.
+- **Fotos de iPhone (HEIC):** o iPhone salva fotos em HEIC por padrão, e a P6 aceita só JPG/PNG/WebP; essas fotos serão recusadas. A organização pode querer orientar os participantes ("exporte como JPG").
+- **IP dos aceites (P53):** vem de `$request->ip()`. Se houver proxy ou Cloudflare na frente do servidor, será o IP do proxy — conferir no deploy.
 - **Espaço em disco:** até 10 imagens de 5 MB + 1 PDF de 10 MB por inscrição (até 60 MB). Acompanhar a cota da hospedagem.
 
 ## Evidência DEV

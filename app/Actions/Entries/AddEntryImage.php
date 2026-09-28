@@ -6,6 +6,7 @@ namespace App\Actions\Entries;
 
 use App\Models\Entry;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -27,16 +28,22 @@ final class AddEntryImage
             'image.max' => 'Cada imagem pode ter no máximo 5 MB.',
             'image.mimes' => 'Envie imagens em JPG, PNG ou WebP.',
             'image.image' => 'Envie imagens em JPG, PNG ou WebP.',
+            'image.uploaded' => 'A imagem não foi recebida. Cada imagem pode ter no máximo 5 MB.',
         ], ['image' => 'imagem'])->validate();
 
-        if ($entry->imageCount() >= $config['max']) {
-            throw ValidationException::withMessages(['image' => "Limite de {$config['max']} imagens por inscrição."]);
-        }
+        // Trava a inscrição para dois envios simultâneos não passarem do limite.
+        return DB::transaction(function () use ($entry, $file, $config): Media {
+            Entry::query()->whereKey($entry->id)->lockForUpdate()->first();
 
-        /** @var UploadedFile $file */
-        return $entry->addMedia($file)
-            ->usingName(Str::limit(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME), 200, ''))
-            ->usingFileName(Str::uuid().'.'.strtolower($file->guessExtension() ?? 'jpg'))
-            ->toMediaCollection('images');
+            if ($entry->imageCount() >= $config['max']) {
+                throw ValidationException::withMessages(['image' => "Limite de {$config['max']} imagens por inscrição."]);
+            }
+
+            /** @var UploadedFile $file */
+            return $entry->addMedia($file)
+                ->usingName(Str::limit(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME), 200, ''))
+                ->usingFileName(Str::uuid().'.'.strtolower($file->guessExtension() ?? 'jpg'))
+                ->toMediaCollection('images');
+        });
     }
 }

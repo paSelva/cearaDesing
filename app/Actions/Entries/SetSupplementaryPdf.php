@@ -24,6 +24,7 @@ final class SetSupplementaryPdf
         ], [
             'pdf.max' => 'O PDF pode ter no máximo 10 MB.',
             'pdf.mimetypes' => 'Envie um arquivo PDF.',
+            'pdf.uploaded' => 'O PDF não foi recebido. O arquivo pode ter no máximo 10 MB.',
         ], ['pdf' => 'PDF'])->validate();
 
         /** @var UploadedFile $file */

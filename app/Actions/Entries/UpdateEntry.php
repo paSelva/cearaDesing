@@ -64,7 +64,7 @@ final class UpdateEntry
         }
 
         return DB::transaction(function () use ($entry, $validated, $isSubmitted, $ip): Entry {
-            $aiUsed = isset($validated['ai_used']) ? $validated['ai_used'] === '1' : null;
+            $aiUsed = isset($validated['ai_used']) ? (string) $validated['ai_used'] === '1' : null;
 
             $entry->fill([
                 'title' => $validated['title'] ?? null,

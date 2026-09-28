@@ -28,7 +28,7 @@ O seeder cria as inscrições de 28/09 00:00:00 a 28/10 23:59:59 (Fortaleza). Fo
 2. Salvar rascunho só com o nome; conferir a lista "Antes de enviar, falta".
 3. Enviar uma imagem JPG de ~5 MB (aceita) e uma de 5 MB + alguns bytes (recusada com "Cada imagem pode ter no máximo 5 MB.").
 4. Enviar PDF de 10 MB (aceito), de 11 MB (recusado) e de 13 MB (volta com "O arquivo é maior que o limite permitido…").
-5. Preencher os textos, responder "Não" sobre IA, salvar; enviar a inscrição marcando os 6 aceites. Conferir status "Enviada".
+5. Preencher os textos e clicar em "Salvar e enviar inscrição" **sem imagem** → os textos ficam salvos, aparece "Rascunho salvo, mas a inscrição ainda não foi enviada" e a lista do que falta. Enviar uma imagem (os textos continuam lá), marcar os 6 aceites e "Salvar e enviar" → status "Enviada".
 6. Editar um texto da inscrição enviada sem marcar os aceites → erro; marcando → salva. Conferir em `entry_consents` 12 registros com data/hora e IP.
 7. Tentar remover a única imagem da inscrição enviada → recusado.
 8. Cadastrar participante estudante: só a 3.7 aparece.
@@ -39,12 +39,12 @@ O seeder cria as inscrições de 28/09 00:00:00 a 28/10 23:59:59 (Fortaleza). Fo
 
 | Verificação | Resultado |
 |---|---|
-| `php artisan test --compact` | **169 testes, 362 assertions, todos passaram** (117 até a SPEC-002 + 52 novos) |
+| `php artisan test --compact` | **172 testes, 371 assertions, todos passaram** (117 até a SPEC-002 + 55 novos) |
 | `vendor/bin/pint --test` | passou |
 | `scripts/validate-foundation.sh`, `npm run build` | passaram |
 | `composer require spatie/laravel-medialibrary` | 11.23.8; `composer audit` sem advisories |
 | `migrate` | `create_media_table` e `create_entries_tables` aplicadas |
-| Fluxo HTTP real (arquivos de verdade, passando pelos limites do PHP) | cadastro → rascunho → imagem 5 MB aceita → imagem 5 MB+10 B recusada → PDF 10 MB aceito → PDF 11 MB recusado ("Falha ao enviar PDF.") → PDF 13 MB volta com mensagem (302) → textos → envio com 6 aceites → status "Enviada" |
+| Fluxo HTTP real (arquivos de verdade, passando pelos limites do PHP) | imagem 5 MB aceita; 5 MB+10 B recusada ("no máximo 5 MB"); foto de 11 MB recusada ("A imagem não foi recebida. Cada imagem pode ter no máximo 5 MB."); PDF 10 MB aceito; PDF 11 MB recusado ("…no máximo 10 MB"); PDF 13 MB volta com mensagem (302); "Salvar e enviar" sem imagem guarda os textos e mantém rascunho; com imagem → "Enviada" |
 | Navegador | **não executado** (extensão indisponível); QA deve conferir o visual |
 
 Testes novos em `tests/Feature/Entries/`: `CreateEntryDraftTest`, `UpdateAndSubmitEntryTest`, `EntryFilesTest`, `EntryHttpTest` (+ `EntryFixtures.php`). As imagens falsas usam bytes reais de JPG/PNG/WebP/GIF para não depender da extensão GD.

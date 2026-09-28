@@ -20,6 +20,7 @@ use App\Models\Entry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -51,20 +52,32 @@ final class EntryController extends Controller
         ]);
     }
 
-    public function update(Request $request, Entry $entry, UpdateEntry $action): RedirectResponse
+    /**
+     * Salva os textos e, com intent=submit, envia a inscrição na mesma requisição:
+     * o que foi digitado nunca se perde se o envio falhar (ex.: falta imagem).
+     */
+    public function update(Request $request, Entry $entry, UpdateEntry $update, SubmitEntry $submit): RedirectResponse
     {
         Gate::authorize('update', $entry);
-        $action->handle($entry, $request->only([
+        $ip = (string) $request->ip();
+        $wantsSubmit = $request->input('intent') === 'submit' && $entry->status === EntryStatus::Rascunho;
+
+        $update->handle($entry, $request->only([
             ...Entry::TEXT_FIELDS, 'ai_used', 'ai_usage_description', 'links', 'consents',
-        ]), (string) $request->ip());
+        ]), $ip);
 
-        return back()->with('status', 'Alterações salvas.');
-    }
+        if (! $wantsSubmit) {
+            return back()->with('status', 'Alterações salvas.');
+        }
 
-    public function submit(Request $request, Entry $entry, SubmitEntry $action): RedirectResponse
-    {
-        Gate::authorize('update', $entry);
-        $action->handle($entry, (array) $request->input('consents', []), (string) $request->ip());
+        try {
+            $submit->handle($entry->refresh(), (array) $request->input('consents', []), $ip);
+        } catch (ValidationException $e) {
+            return back()
+                ->withErrors($e->errors())
+                ->withInput($request->only('consents'))
+                ->with('status', 'Rascunho salvo, mas a inscrição ainda não foi enviada.');
+        }
 
         return redirect()->route('participant.entries.edit', $entry)
             ->with('status', 'Inscrição enviada! Você pode editá-la até o fim do prazo.');
