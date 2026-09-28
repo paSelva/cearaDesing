@@ -123,6 +123,8 @@ Tudo o que **não está no edital** e ainda **não foi confirmado** pelo respons
 | P78 | Se um projeto aprovado for **desclassificado durante a votação popular**, o que acontece com os votos que ele já recebeu? Os eleitores podem votar de novo naquela categoria? (Recomendação atual: manter os votos no banco, desconsiderar na apuração e não liberar novo voto.) | 🟢 **Os votos são descartados na apuração** (ficam no banco) e o eleitor **não vota de novo** naquela categoria (26/09). |
 | P79 | O sistema aceita a **comprovação enviada depois do prazo**? (Recomendação atual: aceitar e marcar como atrasada; a organização decide.) | 🟢 **Aceita e marca como atrasada**. A organização decide (26/09). |
 | P80 | Se uma nota for **corrigida depois da publicação** do resultado, é preciso avisar o participante? | 🟢 **Não**: a nota e a distinção só são atualizadas na página e na área logada. Se quiser, a organização comunica por fora (26/09). |
+| P81 | Desde julho/2026 a Receita pode emitir **CNPJ alfanumérico** (IN RFB 2.229/2024, ex.: `12.ABC.345/01DE-35`). O cadastro do participante PJ aceita esse formato? | 🟢 **Aceita os dois formatos**, numérico e alfanumérico, com o dígito verificador oficial. A coluna continua com 14 caracteres (27/09, SPEC-002). |
+| P82 | Como o jurado recupera a senha? A recuperação pública do site atende só participantes (SPEC-002). | 🟢 **O admin define uma nova senha para o jurado** no painel `/admin` e repassa a ele (28/09). O jurado não usa a recuperação pública. |
 
 ## Decisões técnicas pendentes (minhas, para validar)
 

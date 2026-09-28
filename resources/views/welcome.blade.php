@@ -15,6 +15,14 @@
                 <p class="mt-6 max-w-2xl text-lg leading-8 text-stone-300">
                     Fundação técnica preparada. Os módulos de inscrição, júri, votação e premiação serão desenvolvidos nas próximas especificações.
                 </p>
+                <div class="mt-10 flex flex-wrap gap-4">
+                    @auth
+                        <a href="{{ route('participant.dashboard') }}" class="rounded-md bg-amber-300 px-5 py-2.5 font-semibold text-stone-950 hover:bg-amber-200">Área do participante</a>
+                    @else
+                        <a href="{{ route('register') }}" class="rounded-md bg-amber-300 px-5 py-2.5 font-semibold text-stone-950 hover:bg-amber-200">Criar conta de participante</a>
+                        <a href="{{ route('login') }}" class="rounded-md border border-stone-700 px-5 py-2.5 font-semibold text-stone-100 hover:border-stone-500">Entrar</a>
+                    @endauth
+                </div>
             </section>
         </main>
     </body>

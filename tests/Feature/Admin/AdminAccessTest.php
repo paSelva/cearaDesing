@@ -61,5 +61,21 @@ it('does not allow a public mass assignment to promote a user to admin', functio
 
     expect($user->fresh()->role)->toBe(Role::Participante);
 
-    $this->get('/register')->assertNotFound();
+    // SPEC-002: /register passou a existir (cadastro público de participante, T1).
+    // A garantia continua: o cadastro público nunca cria admin, mesmo com role no POST.
+    $this->post('/register', [
+        'name' => 'Tentativa de promoção',
+        'email' => 'promocao@example.test',
+        'password' => 'senha-sintetica-1',
+        'password_confirmation' => 'senha-sintetica-1',
+        'person_type' => 'pf',
+        'document' => '529.982.247-25',
+        'phone' => '(85) 99999-0000',
+        'city' => 'Fortaleza',
+        'state' => 'CE',
+        'participant_type' => 'profissional',
+        'role' => 'admin',
+    ]);
+
+    expect(User::where('email', 'promocao@example.test')->sole()->role)->toBe(Role::Participante);
 });

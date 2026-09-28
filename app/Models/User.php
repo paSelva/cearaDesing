@@ -10,6 +10,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -32,6 +33,30 @@ class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
             'role' => Role::class,
         ];
+    }
+
+    /** @return HasOne<ParticipantProfile, $this> */
+    public function participantProfile(): HasOne
+    {
+        return $this->hasOne(ParticipantProfile::class);
+    }
+
+    /**
+     * A recuperação de senha pública só atende papéis do site (Role::siteAuth()).
+     * Para admin/jurado nada é enviado; a resposta da tela é a mesma (neutra).
+     */
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        if (! $this->role->usesSiteAuth()) {
+            return;
+        }
+
+        parent::sendPasswordResetNotification($token);
+    }
+
+    public function hasRole(Role $role): bool
+    {
+        return $this->role === $role;
     }
 
     public function canAccessPanel(Panel $panel): bool

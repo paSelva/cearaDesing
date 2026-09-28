@@ -114,7 +114,7 @@ Todos os usuários ficam em `users`, com o papel em uma coluna `role` (T2). Os d
 |---|---|---|---|
 | user_id | FK → users | não | **único** |
 | person_type | enum(`pf`,`pj`) | não | (P3) |
-| document | varchar(14) | não | CPF (11 dígitos) ou CNPJ (14), só dígitos, validado pelo dígito verificador (P4). **único** (P74) |
+| document | varchar(14) | não | CPF (11 dígitos) ou CNPJ (14 caracteres: numérico ou alfanumérico, P81), sem máscara, validado pelo dígito verificador (P4). **único** (P74) |
 | phone | varchar(20) | não | telefone/WhatsApp (P4) |
 | city | varchar(120) | não | (P4) |
 | state | char(2) | não | UF (P4) |

@@ -19,6 +19,7 @@ Legenda: **(§x)** edital · **(P#)** decisão confirmada · **Recomendação** 
 |---|---|---|---|
 | Administração | `CreateAdminUser` | operador autorizado | CLI `app:create-admin` |
 | Administração | `UpdateEditionSettings` | admin autorizado | Filament `/admin` |
+| Administração | `SetJudgePassword` | admin | Filament `/admin` (P82) |
 | Conta | `RegisterParticipant` | visitante | site (Fortify) |
 | Conta | `UpdateParticipantProfile` | participante | área do participante |
 | Conta | `RegisterVoter` | visitante | site (Fortify) |
@@ -72,6 +73,11 @@ Cria `users` (role `participante`) + `participant_profiles`.
   - documento **único** entre participantes (P74);
   - `participant_type` dentro da lista do §2.
 - **Efeitos:** o participante entra logado. **Não** é exigida a confirmação de e-mail (P73).
+- **Implementado na SPEC-002** (`app/Actions/Account/RegisterParticipant.php`), chamado pelo `CreateNewUser` do Fortify:
+  - o documento é normalizado antes de validar (sem máscara; CNPJ em maiúsculas) e aceita CNPJ alfanumérico (P81);
+  - telefone só com dígitos, com DDD (10 ou 11 dígitos) e senha com mínimo de 8 caracteres (Recomendação);
+  - `role` definido no servidor, nunca pela entrada; usuário e perfil em uma transação;
+  - erro de regra vira `ValidationException` por campo (como as Actions da SPEC-001 e o que o Fortify espera), e não `BusinessRuleException`.
 
 ### `UpdateParticipantProfile`
 Atualiza o perfil do participante.
@@ -93,6 +99,12 @@ Cria `users` (role `eleitor`) + `voter_profiles`.
 O admin cria o jurado (P17).
 - **Entrada:** nome, e-mail, senha, mini bio, foto (P59).
 - **Efeitos:** `users` (role `jurado`) + `judge_profiles` + mídia `photo`. A senha é repassada pela organização (P17).
+- **Implementado em parte na SPEC-002** (`app/Actions/Admin/CreateJudge.php`, tela `/admin/jurados`): nome, e-mail e senha (mínimo de 12 caracteres, como o admin — Recomendação). `judge_profiles`, mini bio e foto (P59) entram com a seção Avaliadores, junto com a Media Library.
+
+### `SetJudgePassword`
+O admin define uma nova senha para o jurado (P82).
+- **Regras:** só para usuários `jurado`; senha com mínimo de 12 caracteres e confirmação.
+- **Efeitos:** grava a nova senha com hash e troca o `remember_token` (encerra o "manter conectado"). A organização repassa a senha ao jurado.
 
 ---
 
