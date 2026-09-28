@@ -36,7 +36,9 @@ describe('site público (P26)', function () {
         $this->get('/')->assertSee('Inscrever projeto');
 
         $this->travelTo(Carbon::parse('2026-10-29 00:00:00', 'America/Fortaleza'));
-        $this->get('/')->assertDontSee('site-button--grande', false);
+        $this->get('/')
+            ->assertDontSee('site-button site-button--grande">Inscrever projeto', false)
+            ->assertSee('Ver a galeria e votar');
     });
 
     it('não mostra parceiros, diretoria e avaliadores enquanto não houver conteúdo (P27, P59)', function () {
