@@ -15,7 +15,7 @@ use App\Actions\Entries\UpdateEntry;
 use App\Enums\ConsentType;
 use App\Enums\EntryStatus;
 use App\Http\Controllers\Controller;
-use App\Http\Responses\EntryMediaResponse;
+use App\Http\Responses\PrivateMediaResponse;
 use App\Models\Category;
 use App\Models\Entry;
 use Illuminate\Http\RedirectResponse;
@@ -40,7 +40,7 @@ final class EntryController extends Controller
     public function edit(Entry $entry, EntryGuard $guard, SubmitEntry $submit): View
     {
         Gate::authorize('view', $entry);
-        $entry->load(['category', 'edition', 'links']);
+        $entry->load(['category', 'edition', 'links', 'proofRequests.media']);
 
         return view('participant.entries.edit', [
             'entry' => $entry,
@@ -121,6 +121,6 @@ final class EntryController extends Controller
     {
         Gate::authorize('update', $entry);
 
-        return EntryMediaResponse::make($entry, $media);
+        return PrivateMediaResponse::make($entry, $media);
     }
 }

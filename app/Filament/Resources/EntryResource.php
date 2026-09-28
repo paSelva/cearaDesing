@@ -10,6 +10,7 @@ use App\Enums\ConsentType;
 use App\Enums\EntryStatus;
 use App\Filament\Resources\EntryResource\Pages\ListEntries;
 use App\Filament\Resources\EntryResource\Pages\ViewEntry;
+use App\Filament\Resources\EntryResource\RelationManagers\ProofRequestsRelationManager;
 use App\Models\Edition;
 use App\Models\Entry;
 use Filament\Actions\Action;
@@ -179,6 +180,11 @@ class EntryResource extends Resource
         return parent::getEloquentQuery()
             ->whereHas('edition', fn (Builder $query) => $query->where('year', Edition::YEAR))
             ->with(['category', 'user.participantProfile']);
+    }
+
+    public static function getRelations(): array
+    {
+        return [ProofRequestsRelationManager::class];
     }
 
     public static function getPages(): array

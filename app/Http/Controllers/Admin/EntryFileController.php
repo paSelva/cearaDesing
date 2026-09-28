@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Responses\EntryMediaResponse;
+use App\Http\Responses\PrivateMediaResponse;
 use App\Models\Entry;
 use Illuminate\Support\Facades\Gate;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -18,6 +18,6 @@ final class EntryFileController extends Controller
     {
         Gate::authorize('view', $entry);
 
-        return EntryMediaResponse::make($entry, $media);
+        return PrivateMediaResponse::make($entry, $media);
     }
 }

@@ -25,7 +25,7 @@ As inscrições abrem em **28/09/2026** (§7). A documentação foi escrita em *
 - [x] Formulário de inscrição com os campos do §4, links + PDF (P7), a declaração de IA e os aceites do §8 (P6, P45) — SPEC-003
 - [x] Edição permitida até o fim do prazo (P8) — SPEC-003
 - [x] Aceites do §8 com um checkbox por item, data/hora e IP (P11, P53) — SPEC-003
-- [ ] Fluxo de comprovação: status + upload de 1 PDF de até 10 MB pelo participante (P12, P54), com prazo definido pelo admin em cada solicitação (P56)
+- [x] Fluxo de comprovação: status + upload de 1 PDF de até 10 MB pelo participante (P12, P54), com prazo definido pelo admin em cada solicitação (P56) — SPEC-005
 - [x] Regra da 3.7: exclusiva para estudantes, e estudantes só na 3.7 (P9) — SPEC-003
 - [x] Bloqueio das inscrições ao fim do prazo — SPEC-003
 - [x] Área da organização: consultar as inscrições e fazer a triagem (a aprovação libera a votação popular, P37, P43) — SPEC-004 (aprovar/desclassificar; saída da galeria/votação/avaliação entra nas SPECs dessas funções)

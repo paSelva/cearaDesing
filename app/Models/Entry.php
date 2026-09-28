@@ -94,6 +94,12 @@ class Entry extends Model implements HasMedia
         return $this->hasMany(EntryLink::class)->orderBy('sort');
     }
 
+    /** @return HasMany<ProofRequest, $this> */
+    public function proofRequests(): HasMany
+    {
+        return $this->hasMany(ProofRequest::class)->latest();
+    }
+
     /** @return HasMany<EntryConsent, $this> */
     public function consents(): HasMany
     {

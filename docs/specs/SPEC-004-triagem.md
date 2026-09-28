@@ -33,7 +33,7 @@ Dar à organização, no painel `/admin`, a consulta das inscrições e a triage
 - `EntryGuard::lockEditable()`: as Actions de edição do participante (textos, envio, imagens, PDF) travam a linha e reconferem o status dentro da transação.
 - `EntryPolicy`: `viewAny`/`view` para admin; `approve`/`disqualify` por status; `update` só do dono; ninguém cria ou exclui.
 - Filament `EntryResource` (`/admin/inscricoes`): listagem e visualização, sem criar/editar; ações "Aprovar" (com confirmação) e "Desclassificar" (com motivo) na tabela e na página.
-- `EntryMediaResponse` compartilhado entre a rota do participante e a da organização (disco privado, `nosniff`, `private, no-store`).
+- `EntryMediaResponse` (renomeado para `PrivateMediaResponse` na SPEC-005) compartilhado entre a rota do participante e a da organização (disco privado, `nosniff`, `private, no-store`).
 
 ## Pendências e riscos
 
