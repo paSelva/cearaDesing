@@ -234,6 +234,7 @@ describe('pelo site e pelo painel', function () {
         $this->actingAs(User::factory()->admin()->create())
             ->get("/admin/inscricoes/{$entry->id}")
             ->assertOk()
-            ->assertSeeLivewire(ProofRequestsRelationManager::class);
+            // Com mais de uma seção (Jurados, Comprovações), o Filament mostra abas.
+            ->assertSee('Comprovações');
     });
 });

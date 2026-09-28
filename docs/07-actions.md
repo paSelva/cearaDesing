@@ -232,6 +232,12 @@ O admin define uma nova senha para o jurado (P82).
   - cria uma atribuição nova `pendente`;
   - se a inscrição já tinha resultado calculado, chama `CalculateEntryResult`.
 
+**Implementado na SPEC-006** (`app/Actions/Jury/`):
+- `SetCategoryJudges`: limite = `editions.judges_per_entry` (3 pelo §5), não um número fixo; mudar a lista não altera atribuições já feitas.
+- `AssignJudgesToEntry`: completa até `judges_per_entry` atribuições não substituídas, pulando quem já está ou esteve na inscrição; erro se a categoria não tiver jurados suficientes. Atalho `AssignJudgesToCategory` para todas as aprovadas incompletas de uma categoria (continua manual, P15).
+- `ReplaceJudgeOnEntry`: motivo obrigatório; qualquer jurado que ainda não esteve na inscrição (P47); só em inscrição aprovada. O recálculo do resultado entra na SPEC-007.
+- Atribuições e substituições no activity log (`juri`).
+
 ### `SaveScores`
 O jurado salva notas parciais antes de enviar (Recomendação: o P19 trava as notas só **depois** do envio).
 - **Regras:**

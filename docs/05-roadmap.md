@@ -42,7 +42,7 @@ As inscrições abrem em **28/09/2026** (§7). A documentação foi escrita em *
 ## Fase 2 — Avaliação
 **Prazo do edital:** 29/10 a 20/11/2026 (§7).
 - [x] Admin cria as contas dos jurados, com senha (P17), e define nova senha quando preciso (P82) — SPEC-002; mini bio e foto (P59) ainda pendentes
-- [ ] Admin define os 3 jurados fixos de cada categoria (P14, P15) e substitui em caso de conflito (P16): a organização escolhe o substituto daquele projeto (P47)
+- [x] Admin define os 3 jurados fixos de cada categoria (P14, P15) e substitui em caso de conflito (P16): a organização escolhe o substituto daquele projeto (P47) — SPEC-006
 - [ ] Tela de avaliação: 4 notas de 1 a 5 (§5), sem comentário (P18), travada após o envio (P19)
 - [ ] Correção de nota pela organização, com histórico e justificativa obrigatória (P19, P46)
 - [ ] Acompanhamento do andamento pela organização
