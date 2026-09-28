@@ -59,6 +59,9 @@
                             <p class="mt-1 text-sm text-stone-400">
                                 {{ $entry->title ?: 'Projeto sem nome' }} — {{ $entry->status->label() }}
                             </p>
+                            @if ($entry->pending_proofs_count > 0)
+                                <p class="mt-1 text-sm font-semibold text-amber-300">A organização pediu uma comprovação. Abra a inscrição para enviar.</p>
+                            @endif
                         @endif
                     </div>
                     @if ($entry)

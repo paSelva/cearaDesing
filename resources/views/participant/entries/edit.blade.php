@@ -45,6 +45,46 @@
         </div>
     @endif
 
+    {{-- Comprovações pedidas pela organização (P12, P54, P56, P79) --}}
+    @if ($entry->proofRequests->isNotEmpty())
+        <section class="mt-10 space-y-4 rounded-lg border border-amber-700 p-5">
+            <h2 class="text-xl font-semibold">Comprovações pedidas pela organização</h2>
+            @error('proof')
+                <p class="text-sm text-red-400">{{ $message }}</p>
+            @enderror
+            <ul class="space-y-5">
+                @foreach ($entry->proofRequests as $proofRequest)
+                    <li class="space-y-2 border-t border-stone-800 pt-4 first:border-0 first:pt-0">
+                        <p class="text-sm text-stone-400">
+                            Pedida em {{ $proofRequest->created_at->format('d/m/Y H:i') }}
+                            · prazo: <strong class="text-stone-100">{{ $proofRequest->deadline_at->format('d/m/Y \à\s H:i') }}</strong> (horário de Fortaleza)
+                            · {{ $proofRequest->status->label() }}
+                            @if ($proofRequest->is_late)
+                                · enviada após o prazo
+                            @endif
+                        </p>
+                        <p class="whitespace-pre-line text-stone-100">{{ $proofRequest->message }}</p>
+
+                        @if ($proofRequest->getFirstMedia('proof'))
+                            <a href="{{ route('participant.proofs.file', $proofRequest) }}" target="_blank" rel="noopener noreferrer" class="text-sm text-amber-300 hover:underline">Ver o PDF enviado</a>
+                        @endif
+
+                        @can('submit', $proofRequest)
+                            <form method="POST" action="{{ route('participant.proofs.store', $proofRequest) }}" enctype="multipart/form-data" class="flex flex-wrap items-center gap-3">
+                                @csrf
+                                <input type="file" name="proof" accept=".pdf,application/pdf" required class="text-sm text-stone-300">
+                                <button type="submit" class="rounded-md bg-amber-300 px-4 py-2 text-sm font-semibold text-stone-950 hover:bg-amber-200">Enviar comprovação (PDF até 10 MB)</button>
+                            </form>
+                            @if ($proofRequest->deadline_at->isPast())
+                                <p class="text-xs text-stone-400">O prazo passou, mas o envio ainda é aceito e fica marcado como atrasado; a organização decide.</p>
+                            @endif
+                        @endcan
+                    </li>
+                @endforeach
+            </ul>
+        </section>
+    @endif
+
     {{-- Imagens (§4, P6) — cada envio recarrega a página --}}
     <section class="mt-10 space-y-4">
         <h2 class="text-xl font-semibold">Imagens do projeto</h2>

@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\EntryFileController;
+use App\Http\Controllers\Admin\ProofFileController;
 use App\Http\Controllers\Participant\DashboardController;
 use App\Http\Controllers\Participant\EntryController;
+use App\Http\Controllers\Participant\ProofController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,6 +28,10 @@ Route::middleware(['auth', 'role:participante'])
         Route::post('/inscricoes/{entry}/pdf', [EntryController::class, 'storePdf'])->name('entries.pdf.store');
         Route::delete('/inscricoes/{entry}/pdf', [EntryController::class, 'destroyPdf'])->name('entries.pdf.destroy');
         Route::get('/inscricoes/{entry}/arquivos/{media}', [EntryController::class, 'file'])->name('entries.file');
+
+        // Comprovação (SPEC-005): independe do prazo de inscrições e do status da inscrição (P72, P79).
+        Route::post('/comprovacoes/{proofRequest}', [ProofController::class, 'store'])->name('proofs.store');
+        Route::get('/comprovacoes/{proofRequest}/arquivo', [ProofController::class, 'file'])->name('proofs.file');
     });
 
 // Organização (SPEC-004): arquivos das inscrições para a triagem. O painel fica no Filament (/admin).
@@ -34,4 +40,5 @@ Route::middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function (): void {
         Route::get('/inscricoes/{entry}/arquivos/{media}', EntryFileController::class)->name('entries.file');
+        Route::get('/comprovacoes/{proofRequest}/arquivo', ProofFileController::class)->name('proofs.file');
     });

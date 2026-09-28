@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Participant;
 
 use App\Actions\Entries\EntryGuard;
 use App\Enums\ParticipantType;
+use App\Enums\ProofRequestStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Edition;
@@ -31,7 +32,11 @@ final class DashboardController extends Controller
             'edition' => $edition,
             'registrationOpen' => $edition !== null && $guard->isRegistrationOpen($edition),
             'categories' => $categories,
-            'entriesByCategory' => $user->entries()->with('category')->get()->keyBy('category_id'),
+            'entriesByCategory' => $user->entries()
+                ->with('category')
+                ->withCount(['proofRequests as pending_proofs_count' => fn ($query) => $query->where('status', ProofRequestStatus::Pendente->value)])
+                ->get()
+                ->keyBy('category_id'),
         ]);
     }
 }
