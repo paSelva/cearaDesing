@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\EntryFileController;
 use App\Http\Controllers\Participant\DashboardController;
 use App\Http\Controllers\Participant\EntryController;
 use Illuminate\Support\Facades\Route;
@@ -25,4 +26,12 @@ Route::middleware(['auth', 'role:participante'])
         Route::post('/inscricoes/{entry}/pdf', [EntryController::class, 'storePdf'])->name('entries.pdf.store');
         Route::delete('/inscricoes/{entry}/pdf', [EntryController::class, 'destroyPdf'])->name('entries.pdf.destroy');
         Route::get('/inscricoes/{entry}/arquivos/{media}', [EntryController::class, 'file'])->name('entries.file');
+    });
+
+// Organização (SPEC-004): arquivos das inscrições para a triagem. O painel fica no Filament (/admin).
+Route::middleware(['auth', 'role:admin'])
+    ->prefix('organizacao')
+    ->name('admin.')
+    ->group(function (): void {
+        Route::get('/inscricoes/{entry}/arquivos/{media}', EntryFileController::class)->name('entries.file');
     });

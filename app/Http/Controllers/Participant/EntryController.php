@@ -15,6 +15,7 @@ use App\Actions\Entries\UpdateEntry;
 use App\Enums\ConsentType;
 use App\Enums\EntryStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Responses\EntryMediaResponse;
 use App\Models\Category;
 use App\Models\Entry;
 use Illuminate\Http\RedirectResponse;
@@ -115,24 +116,11 @@ final class EntryController extends Controller
         return back()->with('status', 'PDF complementar removido.');
     }
 
-    /** Arquivos ficam no disco privado; só o dono baixa (SPEC-004 inclui a organização). */
+    /** Arquivos ficam no disco privado; aqui, só o dono (a organização usa a rota própria). */
     public function file(Entry $entry, Media $media): StreamedResponse
     {
-        Gate::authorize('view', $entry);
-        abort_unless(
-            $media->model_type === $entry->getMorphClass() && (int) $media->model_id === $entry->id,
-            404,
-        );
+        Gate::authorize('update', $entry);
 
-        return response()->stream(function () use ($media): void {
-            $stream = $media->stream();
-            fpassthru($stream);
-            fclose($stream);
-        }, 200, [
-            'Content-Type' => $media->mime_type,
-            'Content-Disposition' => 'inline; filename="'.addcslashes($media->file_name, '"\\').'"',
-            'X-Content-Type-Options' => 'nosniff',
-            'Cache-Control' => 'private, no-store',
-        ]);
+        return EntryMediaResponse::make($entry, $media);
     }
 }
