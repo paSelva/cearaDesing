@@ -43,13 +43,13 @@ As inscrições abrem em **28/09/2026** (§7). A documentação foi escrita em *
 **Prazo do edital:** 29/10 a 20/11/2026 (§7).
 - [x] Admin cria as contas dos jurados, com senha (P17), e define nova senha quando preciso (P82) — SPEC-002; mini bio e foto (P59) ainda pendentes
 - [x] Admin define os 3 jurados fixos de cada categoria (P14, P15) e substitui em caso de conflito (P16): a organização escolhe o substituto daquele projeto (P47) — SPEC-006
-- [ ] Tela de avaliação: 4 notas de 1 a 5 (§5), sem comentário (P18), travada após o envio (P19)
-- [ ] Correção de nota pela organização, com histórico e justificativa obrigatória (P19, P46)
-- [ ] Acompanhamento do andamento pela organização
+- [x] Tela de avaliação: 4 notas de 1 a 5 (§5), sem comentário (P18), travada após o envio (P19) — SPEC-007 (painel `/jurado`)
+- [x] Correção de nota pela organização, com histórico e justificativa obrigatória (P19, P46) — SPEC-007
+- [x] Acompanhamento do andamento pela organização — coluna "Avaliações" (SPEC-006) e notas por jurado (SPEC-007)
 
 ## Fase 3 — Resultado
 **Prazo do edital:** divulgação em 21/11 e cerimônia em 26/11/2026 (§7).
-- [ ] Cálculo da nota final e da distinção (§5, §6)
+- [x] Cálculo da nota final e da distinção (§5, §6) — SPEC-007 (visível só para a organização até a publicação)
 - [ ] Botão **Publicar resultado** no admin (P69)
 - [ ] Página pública de premiados: nome, categoria, distinção, nota final, autoria, imagens e textos (P21, P22, P44)
 - [ ] Nota final visível ao participante na área logada (P22)

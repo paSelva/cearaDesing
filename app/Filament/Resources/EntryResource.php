@@ -67,6 +67,7 @@ class EntryResource extends Resource
                     ->state(fn (Entry $record): string => $record->status === EntryStatus::Aprovada
                         ? "{$record->submitted_assignments_count}/{$record->active_assignments_count}"
                         : '—'),
+                TextColumn::make('final_score')->label('Nota final')->placeholder('—')->sortable(),
             ])
             ->defaultSort('submitted_at', 'desc')
             ->filters([
@@ -96,6 +97,12 @@ class EntryResource extends Resource
                 TextEntry::make('disqualified_at')->label('Desclassificada em')->dateTime('d/m/Y H:i', 'America/Fortaleza')->placeholder('—'),
                 TextEntry::make('disqualification_reason')->label('Motivo da desclassificação')->placeholder('—')->columnSpanFull(),
             ])->columns(3),
+            Section::make('Resultado da avaliação (visível só para a organização até a publicação, P69)')->schema([
+                TextEntry::make('final_score')->label('Nota final (§5)')->placeholder('Avaliação incompleta'),
+                TextEntry::make('distinction')->label('Distinção (§6)')
+                    ->formatStateUsing(fn ($state): string => $state?->label() ?? '—')
+                    ->placeholder('—'),
+            ])->columns(2)->visible(fn (Entry $record): bool => $record->status === EntryStatus::Aprovada),
             Section::make('Participante')->schema([
                 TextEntry::make('user.name')->label('Nome'),
                 TextEntry::make('user.email')->label('E-mail'),

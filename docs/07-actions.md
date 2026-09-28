@@ -255,6 +255,11 @@ O jurado salva notas parciais antes de enviar (Recomendação: o P19 trava as no
   - status → `enviada`, `submitted_at`, e as notas **travam** (P19);
   - chama `CalculateEntryResult`.
 
+**Implementado na SPEC-007** (`app/Actions/Evaluation/`, painel `/jurado`):
+- `SaveScores` e `SubmitEvaluation` travam a atribuição e reconferem, sob a trava: dono, `pendente`, inscrição `aprovada` e período `judging_*` (§7). Os critérios vêm da categoria da inscrição.
+- Na tela, "Salvar e enviar" salva as notas primeiro e depois envia: se faltar nota, o que foi marcado fica salvo.
+- O jurado vê o projeto com autoria (P13), mas não os dados de conta do participante, as notas dos outros jurados nem a nota final (leitura do §8: avaliação independente). Comprovações não aparecem para o jurado.
+
 ### `CorrectScore`
 Correção pela organização em caso de erro (§8, P19).
 - **Entrada:** nota, novo valor (1–5), **justificativa obrigatória** (P46).
@@ -262,6 +267,7 @@ Correção pela organização em caso de erro (§8, P19).
   - grava `score_revisions` (valor anterior, valor novo, motivo, admin, data) (P46);
   - atualiza `scores.value`;
   - chama `CalculateEntryResult`.
+- **Implementado na SPEC-007** (ação "Corrigir nota" na aba Jurados da inscrição): só em avaliação `enviada`; a nova nota precisa ser diferente; activity log `juri`.
 - Se os resultados já foram publicados, a página pública reflete a correção imediatamente. O sistema não envia aviso: a organização comunica por fora, se quiser (P80).
 
 ---
@@ -295,7 +301,7 @@ Correção pela organização em caso de erro (§8, P19).
 ## 7. Resultado
 
 ### `CalculateEntryResult`
-Algoritmo descrito em [04-modelo-dados §9](04-modelo-dados.md).
+Algoritmo descrito em [04-modelo-dados §9](04-modelo-dados.md). **Implementado na SPEC-007**; chamado por `SubmitEvaluation`, `ReplaceJudgeOnEntry` e `CorrectScore`.
 - **Efeitos:**
   - grava `entries.final_score` e `entries.distinction` quando há 3 avaliações `enviada` (§5, §6);
   - com menos de 3, limpa os dois campos (avaliação incompleta).

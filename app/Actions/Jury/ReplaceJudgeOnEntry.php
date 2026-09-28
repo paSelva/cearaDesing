@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Jury;
 
+use App\Actions\Evaluation\CalculateEntryResult;
 use App\Enums\AssignmentStatus;
 use App\Enums\EntryStatus;
 use App\Models\JudgeAssignment;
@@ -15,11 +16,14 @@ use Illuminate\Validation\ValidationException;
 /**
  * Substitui um jurado numa inscrição por conflito (§8, P16), por qualquer jurado escolhido
  * pela organização (P47). As notas antigas ficam para histórico e deixam de contar.
- * O recálculo do resultado entra na SPEC-007 (ainda não há resultado calculado).
+ * Recalcula o resultado (SPEC-007): a atribuição substituída deixa de contar.
  */
 final class ReplaceJudgeOnEntry
 {
-    public function __construct(private readonly JuryGuard $guard) {}
+    public function __construct(
+        private readonly JuryGuard $guard,
+        private readonly CalculateEntryResult $calculate,
+    ) {}
 
     /** @param array<string, mixed> $input  new_judge_id, reason */
     public function handle(JudgeAssignment $assignment, User $admin, array $input): JudgeAssignment
@@ -68,6 +72,8 @@ final class ReplaceJudgeOnEntry
             $replacement->assigned_by = $admin->id;
             $replacement->status = AssignmentStatus::Pendente;
             $replacement->save();
+
+            $this->calculate->handle($locked->entry);
 
             activity('juri')
                 ->performedOn($locked->entry)

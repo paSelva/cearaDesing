@@ -8,3 +8,4 @@ pest()->extend(TestCase::class)
     ->in('Feature');
 
 require_once __DIR__.'/Feature/Entries/EntryFixtures.php';
+require_once __DIR__.'/Feature/Evaluation/EvaluationFixtures.php';

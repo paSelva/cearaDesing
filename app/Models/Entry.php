@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\Distinction;
 use App\Enums\EntryStatus;
 use Database\Factories\EntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -44,6 +45,8 @@ class Entry extends Model implements HasMedia
     {
         return [
             'status' => EntryStatus::class,
+            'distinction' => Distinction::class,
+            'final_score' => 'integer',
             'ai_used' => 'boolean',
             'submitted_at' => 'datetime',
             'approved_at' => 'datetime',
