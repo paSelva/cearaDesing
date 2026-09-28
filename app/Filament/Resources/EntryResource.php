@@ -6,10 +6,12 @@ namespace App\Filament\Resources;
 
 use App\Actions\Triage\ApproveEntry;
 use App\Actions\Triage\DisqualifyEntry;
+use App\Enums\AssignmentStatus;
 use App\Enums\ConsentType;
 use App\Enums\EntryStatus;
 use App\Filament\Resources\EntryResource\Pages\ListEntries;
 use App\Filament\Resources\EntryResource\Pages\ViewEntry;
+use App\Filament\Resources\EntryResource\RelationManagers\JudgeAssignmentsRelationManager;
 use App\Filament\Resources\EntryResource\RelationManagers\ProofRequestsRelationManager;
 use App\Models\Edition;
 use App\Models\Entry;
@@ -60,6 +62,11 @@ class EntryResource extends Resource
                         EntryStatus::Desclassificada => 'danger',
                     }),
                 TextColumn::make('submitted_at')->label('Enviada em')->dateTime('d/m/Y H:i', 'America/Fortaleza')->sortable(),
+                // Andamento da avaliação: enviadas / jurados ativos (substituídos não contam).
+                TextColumn::make('evaluation_progress')->label('Avaliações')
+                    ->state(fn (Entry $record): string => $record->status === EntryStatus::Aprovada
+                        ? "{$record->submitted_assignments_count}/{$record->active_assignments_count}"
+                        : '—'),
             ])
             ->defaultSort('submitted_at', 'desc')
             ->filters([
@@ -179,12 +186,16 @@ class EntryResource extends Resource
     {
         return parent::getEloquentQuery()
             ->whereHas('edition', fn (Builder $query) => $query->where('year', Edition::YEAR))
-            ->with(['category', 'user.participantProfile']);
+            ->with(['category', 'user.participantProfile'])
+            ->withCount([
+                'judgeAssignments as active_assignments_count' => fn (Builder $query) => $query->where('status', '!=', AssignmentStatus::Substituida->value),
+                'judgeAssignments as submitted_assignments_count' => fn (Builder $query) => $query->where('status', AssignmentStatus::Enviada->value),
+            ]);
     }
 
     public static function getRelations(): array
     {
-        return [ProofRequestsRelationManager::class];
+        return [JudgeAssignmentsRelationManager::class, ProofRequestsRelationManager::class];
     }
 
     public static function getPages(): array
