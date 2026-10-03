@@ -62,9 +62,29 @@ class CreateAdminCommand extends Command
             return self::FAILURE;
         }
 
+        $base = realpath(base_path());
+        if ($base !== false && str_starts_with($path, $base.DIRECTORY_SEPARATOR)) {
+            $this->error('O arquivo deve ficar fora da pasta da aplicação.');
+
+            return self::FAILURE;
+        }
+
+        $permissions = fileperms($path);
+        if ($permissions === false || ($permissions & 0037) !== 0) {
+            $this->error('Permissões inseguras: use 600 ou 640 no arquivo do administrador.');
+
+            return self::FAILURE;
+        }
+
         $data = parse_ini_file($path, false, INI_SCANNER_RAW);
         if (! is_array($data)) {
             $this->error('Arquivo inválido: use o formato INI com name, email e password.');
+
+            return self::FAILURE;
+        }
+
+        if (array_diff(array_keys($data), ['name', 'email', 'password']) !== []) {
+            $this->error('Arquivo inválido: somente name, email e password são permitidos.');
 
             return self::FAILURE;
         }

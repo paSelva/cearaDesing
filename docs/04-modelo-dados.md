@@ -1,6 +1,8 @@
 # 04 — Modelo de dados
 
-**Banco:** MySQL (P33, P64), versão 5.7 ou 8.0 conforme o servidor HostGator (⚠️ P65).
+**Banco:** o cPanel informou Percona Server 5.7.44-48/InnoDB (P65), validado localmente
+com a imagem oficial `percona:5.7.44`. MySQL 8.0.46 também tem histórico de validação;
+MariaDB não foi validado para esta release.
 
 **Convenção:**
 - **(§x)**: regra do edital.
@@ -272,7 +274,10 @@ Arquivo: Media Library, coleção `proof`, com **1 PDF de até 10 MB** (P54).
 | value | tinyint unsigned | **1 a 5** (§5) |
 
 - **Único:** `(judge_assignment_id, criterion_id)`.
-- `CHECK (value BETWEEN 1 AND 5)`: só é aplicado no MySQL 8.0.16 ou superior. No 5.7 é ignorado (⚠️ P65), e a validação da aplicação é **obrigatória em qualquer caso**.
+- `CHECK (value BETWEEN 1 AND 5)`: só é criado no MySQL 8.0.16 ou superior. No Percona
+  5.7.44-48 a migration o omite deliberadamente; `SaveScores` e `CorrectScore` garantem
+  inteiros de 1 a 5, cobertos por testes executados nesse banco. A regra de negócio não
+  depende do `CHECK`.
 - O jurado não deixa comentário (P18).
 
 ### `score_revisions` (correção pela organização, P19, P46)

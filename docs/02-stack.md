@@ -1,18 +1,19 @@
 # 02 — Stack e tecnologias
 
-**Definido pelo responsável do projeto:** PHP + Laravel · PHP 8.4 (T3) · MySQL (P33) · hospedagem compartilhada HostGator (P30, P63) · auth do participante e do eleitor via Fortify (T1).
+**Definido pelo responsável do projeto:** PHP + Laravel · PHP 8.4 (T3) · MySQL (P33) ·
+hospedagem administrada por cPanel · auth do participante e do eleitor via Fortify (T1).
 O resto deste documento é **recomendação**. As versões e a compatibilidade entre elas foram conferidas no Packagist e nas release notes em **26/09/2026**.
 
 ## Núcleo
 
 | Item | Versão | Situação | Observação |
 |---|---|---|---|
-| **PHP** | 8.4 | Definido (T3) | A máquina local tem **8.3.33** e precisa ser atualizada. A hospedagem também precisa ter 8.4. |
+| **PHP** | ≥ 8.4.1 | Travado pelas dependências | `composer.lock` inclui componentes Symfony que exigem 8.4.1+. PHP Web e CLI/Cron precisam ser conferidos separadamente. |
 | **Laravel** | 13.x | Definido (Laravel) / versão recomendada | Lançado em mar/2026. Bug fixes até o 3º tri de 2027 e segurança até o 1º tri de 2028 (fonte: Laravel News). |
 | **Filament** | 5.x (atual: 5.9.0) | Recomendação | Painéis de **admin e jurado** (T1). `filament/support` 5.9.0 aceita `illuminate/contracts ^11.28\|^12.0\|^13.0`. |
 | **Livewire** | 4.x | Dependência do Filament 5 | `filament/support` exige `livewire/livewire ^4.4.2`. |
 | **Tailwind CSS** | 4.x | Recomendação | Padrão atual do Laravel e do Filament. |
-| **Banco** | MySQL | Definido (P33, P64) | O Laravel 13 aceita MySQL 5.7 ou superior (docs oficiais). A HostGator compartilhada oferece 5.7 ou 8.0 (⚠️ P65), e a máquina local tem 9.6.0. Recomendação: desenvolver com a **mesma versão do servidor** (ex.: via Docker/Sail) para evitar diferenças. |
+| **Banco** | Percona Server 5.7.44-48 (produção) e MySQL 8 | Definido e validado localmente | O cPanel informou Percona Server 5.7.44-48. Migrations, seeder e testes relevantes passaram na imagem oficial `percona:5.7.44`; MySQL 8.0.46 também tem histórico de validação. MariaDB não foi validado. |
 | **Testes** | Pest | Recomendação | Versão instalada pelo `laravel new`. |
 
 ## Pacotes candidatos (compatibilidade com Laravel 13 conferida)
@@ -27,7 +28,7 @@ O resto deste documento é **recomendação**. As versões e a compatibilidade e
 Papéis: um campo `role` em `users` + Policies do Laravel, sem pacote extra (T2).
 
 Serviços externos confirmados:
-- **Cloudflare Turnstile**: captcha no cadastro do eleitor (P52). O pacote de integração ainda precisa ter a versão verificada.
+- **Cloudflare Turnstile**: implementado no cadastro do eleitor (P52), com validação backend via HTTPS. As chaves e a conectividade de saída do servidor ainda precisam de teste.
 
 Pacotes que só entram se a funcionalidade for confirmada:
 - exportação para planilha (ainda não perguntada).
@@ -41,39 +42,33 @@ Pacotes que só entram se a funcionalidade for confirmada:
 
 ## Produção
 
-- **Domínio:** **votacao.cearadesign.org.br** (P29, P62), com o sistema inteiro nesse subdomínio. Passo a passo: [deploy-hostgator.md](runbooks/deploy-hostgator.md).
-- **Hospedagem:** **HostGator, plano compartilhado**, servidor já existente (P30, P63). **Sem SSH** (P66).
+- **Domínio:** o valor final ainda deve ser confirmado e usado em `APP_URL`/Turnstile. Passo a passo: [deploy-hostgator.md](runbooks/deploy-hostgator.md).
+- **Hospedagem:** conta cPanel existente; plano, Terminal/SSH, Cron e Document Root ainda precisam de confirmação direta.
 - **Manutenção:** o sistema é só para a edição 2026 (P32).
 - **E-mail transacional:** 🟡 aguardando a organização (P31).
 
-### O que a HostGator suporta (documentação oficial, consultada em 26/09/2026)
+### O que precisa ser confirmado na conta real
 
-| Recurso | Compartilhada | VPS / Dedicado |
-|---|---|---|
-| PHP 8.4 | ✅ | ✅ |
-| MySQL | 5.7 (CentOS) ou 8.0 (AlmaLinux) | 8.0 |
-| **PostgreSQL** | ❌ | ✅ |
-| SSH | A tabela de compatibilidade marca como não incluso. O artigo de instalação do Laravel diz que o SSH precisa estar "liberado no plano" | ✅ incluso |
-| Cron | ✅ | ✅ |
-| Composer, Redis, Supervisor | Não mencionados na documentação | Não mencionados na documentação |
+Não usar a documentação genérica do fornecedor como prova do servidor contratado. Confirmar
+no cPanel: PHP Web e CLI ≥ 8.4.1, extensões do lockfile, Percona Server 5.7.44-48/InnoDB, Cron, Terminal/SSH,
+Document Root terminando em `/public`, HTTPS, SMTP, limites e quotas. P65 foi respondida;
+os demais itens ainda precisam de teste na conta real.
 
-**Resolvido:** como o plano é compartilhado e não tem PostgreSQL, o banco será **MySQL** (P64). ⚠️ Versão: P65.
+### Deploy pelo Gerenciador de Arquivos + Cron
 
-### Deploy sem SSH (Recomendação, P66)
-
-Como o plano não tem SSH, não dá para rodar Composer nem `php artisan` no servidor. Proposta:
+O caminho principal não depende de SSH nem Composer/npm no servidor:
 1. **Build local:** `composer install --no-dev --optimize-autoloader` e `npm run build`, gerando um pacote com `vendor/` e os assets compilados.
 2. **Envio** por FTP ou pelo Gerenciador de Arquivos do cPanel (upload do .zip e extração).
-3. **Migrations e comandos artisan:** rodar por um **cron job temporário** no cPanel. O cron é suportado no plano compartilhado, segundo a tabela da HostGator.
+3. **Migrations e comandos artisan:** rodar pelo wrapper com um **Cron temporário**, depois de confirmar Cron e PHP CLI na conta real.
 4. **Raiz do subdomínio** apontando para `public/`. ⚠️ Confirmar no cPanel (P68).
-5. O SSH **não será solicitado** (P67), então esse é o processo definitivo.
+5. O Cron é a rota principal preparada; Terminal/SSH pode executar o mesmo wrapper se a conta oferecer esses recursos.
 
 Limites de PHP exigidos pela SPEC-003 (conferir no MultiPHP INI Editor do cPanel, ⚠️ não verificado): `upload_max_filesize` ≥ 10M, `post_max_size` ≥ 12M, `display_errors = Off`. O upload é feito **um arquivo por requisição** para caber nesses limites. Extensão `exif` necessária (Media Library).
 
-Consequências para o código (Recomendação):
-- sem Redis garantido, filas, cache e sessão usam o driver `database`;
-- sem worker permanente garantido, as filas rodam pelo **cron** (`schedule:run` + `queue:work --stop-when-empty`);
-- o armazenamento de arquivos fica no disco do próprio servidor.
+Consequências para a release atual:
+- cache e sessão usam banco; `QUEUE_CONNECTION=sync`;
+- não há jobs/listeners enfileirados nem tarefas agendadas, portanto não há worker/Cron permanente;
+- uploads ficam em `storage/app/private` e são entregues por rotas autorizadas; não há `storage:link`.
 
 Fontes:
 - [Compatibilidades da HostGator](https://suporte.hostgator.com.br/hc/pt-br/articles/30811116692115-Quais-s%C3%A3o-as-compatibilidades-da-HostGator)
