@@ -11,7 +11,7 @@ it('responde na página inicial e no endpoint de saúde', function () {
 });
 
 it('aplica cabeçalhos básicos de segurança', function () {
-    $this->get('/')
+    $this->get('http://localhost/')
         ->assertHeader('X-Content-Type-Options', 'nosniff')
         ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
         ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')

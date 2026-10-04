@@ -46,11 +46,14 @@ Dependências travadas em `composer.lock`:
 MariaDB e outras versões de MySQL/Percona não foram validadas e são bloqueadas pelo
 preflight. Antes da instalação, obter e registrar:
 
-1. reconfirmar produto e versão do banco (`SELECT VERSION(), @@version_comment`);
-2. versão/extensões do PHP Web e o caminho/versão/extensões do PHP CLI/Cron;
+1. produto e versão do banco já informados: Percona Server 5.7.44-48; reconfirmar
+   (`SELECT VERSION(), @@version_comment`) antes de instalar;
+2. o seletor oferece PHP 8.4, mas ainda falta confirmar versão/extensões efetivas do PHP
+   Web e o caminho/versão/extensões do PHP CLI/Cron (não presuma que são iguais);
 3. se o cPanel permite o Document Root fora de `public_html` e terminando em `/public`;
 4. disponibilidade e frequência mínima de Cron; disponibilidade de Terminal/SSH;
-5. domínio final, emissão de HTTPS e eventual proxy/CDN;
+5. domínio escolhido `acdesign.chegadim.com.br`; confirmar DNS, emissão de HTTPS e eventual
+   proxy/CDN antes de assumir que o site está acessível por HTTPS;
 6. host/porta SMTP, remetente e requisitos de TLS/autenticação;
 7. limites de quota, upload, corpo da requisição, memória e tempo no PHP e no servidor web.
 
@@ -89,7 +92,7 @@ conter `.env`, `.git`, `node_modules`, testes, factories, dumps, logs, uploads,
 
 ## 3. Preparar domínio e PHP pela interface
 
-1. Em **Domínios**, crie/configure `DOMINIO`.
+1. Em **Domínios**, crie/configure `acdesign.chegadim.com.br`.
 2. Crie pelo Gerenciador de Arquivos
    `/home/USUARIO/ceara-design/releases/SHA/public`.
 3. Defina o Document Root exatamente como essa pasta `public`. Não use a raiz da release.
@@ -136,12 +139,19 @@ As migrations oficiais criam a estrutura. Registre produto/versão sem publicar 
 
 Configuração obrigatória:
 
-- `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://DOMINIO`;
+- `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://acdesign.chegadim.com.br`
+  depois que o HTTPS estiver ativo. Esse valor fica somente no `.env` privado desta
+  instalação; o exemplo versionado continua genérico e o código não fixa o domínio;
 - `APP_KEY` gerada uma vez e guardada no gerenciador de senhas;
-- `DB_HOST` fornecido pela hospedagem (nunca presuma `mysql` do Docker), porta, banco,
-  usuário e senha completos com prefixos do cPanel;
+- `DB_HOST` fornecido pela hospedagem (nunca presuma `mysql` do Docker), porta e usuário/
+  senha completos com prefixos do cPanel. O banco informado para esta instalação é
+  `chega101_cearadesign`; mantenha esse nome em `DB_DATABASE` no `.env` privado;
 - sessões/cache em banco, fila `sync`, filesystem `local`;
-- chaves Turnstile cadastradas para o domínio final;
+- Turnstile configurado no Cloudflare Dashboard → Turnstile para o host
+  `acdesign.chegadim.com.br`: copie a Site Key para `TURNSTILE_SITE_KEY` e a Secret Key
+  para `TURNSTILE_SECRET_KEY` no `.env` privado compartilhado. Esses são os nomes lidos
+  pela release atual (`config/services.php`); nunca exponha a Secret Key. O arquivo
+  `deploy/env.producao.example` contém somente placeholders genéricos;
 - `CPF_HMAC_KEY` aleatória e imutável;
 - SMTP real, quando contratado/testado.
 
@@ -215,7 +225,7 @@ migration/seeder, não recria administrador, não redefine senha e não altera o
 Rode de uma máquina externa:
 
 ```bash
-bash scripts/smoke-producao.sh https://DOMINIO
+bash scripts/smoke-producao.sh https://acdesign.chegadim.com.br
 ```
 
 Confira também, sem dados reais:

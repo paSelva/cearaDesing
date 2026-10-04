@@ -43,7 +43,7 @@ e [imagem oficial `percona:5.7.44`](https://hub.docker.com/_/percona).
 | Testes de saúde, headers, superfície pública e storage privado | 6 warnings, 19 assertions, sem falhas com `APP_URL=http://localhost` |
 | Wrapper no pacote extraído | Trava concorrente retornou 75; requisito Turnstile ausente interrompeu antes de `migrate`; instalação criou o admin sintético, removeu o INI, preservou `.env` e upload sentinela, restringiu log a 600 e marcou a release |
 | Repetição do Cron após marcador | Sucesso sem refazer migrations/seeder/admin; a conta sintética continuou única |
-| Suíte completa | 22 testes passaram; 1 falhou porque o teste esperava ausência de HSTS em HTTP, mas a configuração de ensaio usava `APP_URL=https://example.test`. O teste de fundação isolado passou após usar `APP_URL=http://localhost`. |
+| Suíte completa | 22 testes passaram, 897 assertions e 321 warnings do Pest (sem falhas), em schema descartável recém-migrado, com `APP_URL=https://example.test`; o teste HSTS solicitou explicitamente HTTP e HTTPS. Duração: 248,32 s. |
 
 Os warnings reportados pelo Pest não foram falhas nem interromperam os ensaios. O ambiente
 foi descartável, com chave e credenciais sintéticas. A suíte não executou `migrate:fresh` ou
