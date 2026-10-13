@@ -1,7 +1,7 @@
 name: Deploy produção (SSH)
 
-# Disparo manual com o SHA aprovado. O environment "production" deve exigir aprovação
-# (Settings → Environments → production → Required reviewers).
+# Disparo manual, a partir da main, com o SHA aprovado. Se o plano do GitHub permitir,
+# o environment "production" exige aprovação (Settings → Environments → Required reviewers).
 on:
   workflow_dispatch:
     inputs:
@@ -46,6 +46,8 @@ jobs:
 
       - name: Validate inputs
         run: |
+          # Scripts de build/instalação vêm da ref disparada: só a main pode chegar à produção.
+          [ "$GITHUB_REF" = refs/heads/main ] || { echo "::error::dispare o workflow a partir da main"; exit 1; }
           [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::SHA deve ter 40 caracteres hexadecimais"; exit 1; }
           git merge-base --is-ancestor "$SHA" origin/main || { echo "::error::o commit não está na main"; exit 1; }
           for name in SSH_HOST SSH_PORT SSH_USER PHP_CLI DEPLOY_BASE APP_URL; do

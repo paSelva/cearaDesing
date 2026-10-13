@@ -54,7 +54,11 @@ da release.
   "Git Version Control" do cPanel não é usado: o repositório é privado e `vendor/` e
   `public/build/` não são versionados.
 
-Esses dados vêm da documentação pública; a conta real ainda precisa confirmar (P66).
+Esses dados vêm da documentação pública; a conta real ainda precisa confirmar (P66). Há
+uma contradição na própria HostGator: a
+[tabela de compatibilidade](https://suporte.hostgator.com.br/hc/pt-br/articles/30811116692115-Quais-s%C3%A3o-as-compatibilidades-da-HostGator)
+marca "SSH2" como indisponível em compartilhada/revenda, enquanto o artigo de habilitação
+diz que o suporte libera. Só o chamado resolve; mantenha o caminho pelo Cron pronto.
 
 ### 0.2 Preparação única
 
@@ -76,15 +80,21 @@ Esses dados vêm da documentação pública; a conta real ainda precisa confirma
    `ceara_deploy.pub` e clique em **Autorizar**. A chave privada vai só para o secret do
    GitHub; apague a cópia local depois de configurar.
 3. **known_hosts:** rode `ssh-keyscan -p 2222 HOST` e compare o fingerprint
-   (`ssh-keygen -lf`) com o informado pela HostGator antes de usar a saída.
+   (`ssh-keygen -lf`) com o informado pela HostGator antes de usar a saída. Use em
+   `SSH_HOST` exatamente o mesmo `HOST` (IP ou domínio) do `ssh-keyscan`: a entrada
+   `[HOST]:2222` do known_hosts precisa bater, senão a conexão é recusada.
 4. **Primeira sessão SSH manual** (`ssh -p 2222 -i ~/.ssh/ceara_deploy USUARIO@HOST`):
    - confirme `PHP_CLI -v` e `PHP_CLI -m` (extensões da seção 1);
    - crie `/home/USUARIO/ceara-design/shared/` e o `shared/.env` (seção 5) com
      `chmod 600`. O `.env` e o `admin-inicial.ini` **nunca** passam pelo GitHub;
    - na primeira instalação, crie `shared/admin-inicial.ini` (seção 6).
 5. **GitHub → Settings → Environments → `production`:**
-   - **Required reviewers:** pelo menos uma pessoa responsável;
-   - **Deployment branches and tags:** somente `main`;
+   - **Required reviewers** e **Deployment branches: somente `main`**, se o plano do
+     GitHub oferecer esses recursos para repositório privado (o repositório é privado e de
+     conta pessoal; confira na tela). Sem eles, a proteção é: só quem tem escrita dispara
+     o workflow, e o próprio job recusa execução fora da `main`;
+   - se o plano não oferecer secrets de environment, cadastre os mesmos nomes em
+     **Settings → Secrets and variables → Actions** do repositório;
    - **Secrets:** `SSH_HOST`, `SSH_PORT` (2222), `SSH_USER`, `SSH_PRIVATE_KEY`,
      `SSH_KNOWN_HOSTS`, `PHP_CLI`, `DEPLOY_BASE` (`/home/USUARIO/ceara-design`);
    - **Variables:** `APP_URL` (ex.: `https://acdesign.chegadim.com.br`).
@@ -95,8 +105,10 @@ Esses dados vêm da documentação pública; a conta real ainda precisa confirma
 
 ### 0.3 Deploy
 
-1. Mergeie na `main` e copie o SHA completo do commit aprovado.
-2. **Actions → Deploy produção (SSH) → Run workflow**: `sha` = SHA, `action` = `install`.
+1. Mergeie na `main` e copie o SHA completo do commit aprovado. O botão do workflow só
+   aparece depois que `deploy.yml` estiver na `main`.
+2. **Actions → Deploy produção (SSH) → Run workflow** (branch `main`): `sha` = SHA,
+   `action` = `install`.
 3. Aprove o environment `production`. O workflow:
    - recusa SHA que não esteja na `main`;
    - roda `scripts/build-release.sh SHA` no runner;
@@ -105,7 +117,9 @@ Esses dados vêm da documentação pública; a conta real ainda precisa confirma
      extrai com `ZipArchive` (não depende de `unzip`), executa `cron-deploy.sh`, mostra o
      log no job e só troca `current` se tudo passou;
    - mantém as 3 releases mais recentes (nunca apaga a ativa nem a anterior);
-   - roda `scripts/smoke-producao.sh` contra `APP_URL`.
+   - roda `scripts/smoke-producao.sh` contra `APP_URL`. O smoke não prova qual release
+     está no ar (`/VERSION` é bloqueado de propósito): confira no log do job a linha
+     `current -> .../releases/SHA`.
 4. Se a instalação falhar, `current` continua na release anterior. O log completo fica em
    `shared/storage/logs/deploy-SHA.log`. Código 75 significa outra instalação em andamento.
 5. Faça backup do banco antes de releases com migrations novas (seção 9, item 1).
