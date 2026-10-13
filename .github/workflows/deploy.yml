@@ -1,5 +1,7 @@
 name: Deploy produção (SSH)
 
+# DORMENTE: a conta HostGator atual não tem SSH (13/10/2026). O caminho em uso é
+# release-cpanel.yml (Git Version Control do cPanel). Mantido para quando houver SSH.
 # Disparo manual, a partir da main, com o SHA aprovado. Se o plano do GitHub permitir,
 # o environment "production" exige aprovação (Settings → Environments → Required reviewers).
 on:
@@ -99,8 +101,9 @@ jobs:
 
       - name: Install or rollback on server
         run: |
+          MODE="$ACTION"; [ "$MODE" = install ] && MODE=install-zip
           # shellcheck disable=SC2029
-          ssh producao "bash -s -- '$ACTION' '$PHP_CLI' '$DEPLOY_BASE' '$SHA'" < deploy/ssh-deploy.sh
+          ssh producao "bash -s -- '$MODE' '$PHP_CLI' '$DEPLOY_BASE' '$SHA'" < deploy/install-release.sh
 
       - name: Smoke test
         run: bash scripts/smoke-producao.sh "$APP_URL"

@@ -1,0 +1,108 @@
+name: Release para o cPanel (branch producao)
+
+# Sem SSH na hospedagem: este workflow gera o pacote do SHA aprovado e o publica como um
+# commit no branch "producao" (com vendor/ e public/build/), junto de um .cpanel.yml.
+# No cPanel, Git Version Control → Update from Remote → Deploy HEAD Commit roda
+# deploy/install-release.sh, que instala em ~/ceara-design/releases/SHA e troca "current".
+# O branch "producao" só avança (nunca force-push): o cPanel atualiza por pull.
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: 'SHA completo (40 caracteres) de um commit já na main'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-producao
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Publicar release no branch producao
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      SHA: ${{ inputs.sha }}
+      PHP_CLI: ${{ vars.PHP_CLI }}
+      RELEASE_BRANCH: producao
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Validate inputs
+        run: |
+          # Scripts de build/instalação vêm da ref disparada: só a main pode chegar à produção.
+          [ "$GITHUB_REF" = refs/heads/main ] || { echo "::error::dispare o workflow a partir da main"; exit 1; }
+          [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::SHA deve ter 40 caracteres hexadecimais"; exit 1; }
+          git merge-base --is-ancestor "$SHA" origin/main || { echo "::error::o commit não está na main"; exit 1; }
+          [[ "$PHP_CLI" = /* ]] || { echo "::error::configure a variável PHP_CLI (caminho absoluto do PHP CLI 8.4 no servidor)"; exit 1; }
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+
+      - name: Build release
+        run: bash scripts/build-release.sh "$SHA"
+
+      - name: Prepare release branch worktree
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git ls-remote --exit-code --heads origin "$RELEASE_BRANCH" >/dev/null; then
+            git fetch origin "$RELEASE_BRANCH:refs/remotes/origin/$RELEASE_BRANCH"
+            git worktree add -B "$RELEASE_BRANCH" release "origin/$RELEASE_BRANCH"
+          else
+            git worktree add --orphan -b "$RELEASE_BRANCH" release
+          fi
+          find release -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+
+      - name: Fill release tree from the verified ZIP
+        run: |
+          ZIP="dist/ceara-tem-design-${SHA:0:12}.zip"
+          (cd dist && shasum -a 256 -c "$(basename "$ZIP").sha256")
+          unzip -q "$ZIP" -d release
+          [ "$(tr -d '[:space:]' < release/VERSION)" = "$SHA" ] || { echo "::error::VERSION difere do SHA"; exit 1; }
+          # Arquivos guardados byte a byte: sem isso, "text=auto" normalizaria CRLF de vendor/ e o
+          # clone do cPanel ficaria "sujo" (o cPanel desabilita o deploy com working tree suja).
+          find release -name .gitattributes -not -path 'release/.git/*' -delete
+          printf '* -text\n' > release/.gitattributes
+          cat > release/.cpanel.yml <<EOF
+          ---
+          # Gerado por .github/workflows/release-cpanel.yml para o commit $SHA. Não editar.
+          deployment:
+            tasks:
+              - /bin/bash deploy/install-release.sh install-dir $PHP_CLI "\$HOME/ceara-design" "\$(cat VERSION)" "\$PWD"
+          EOF
+
+      - name: Commit and push release branch
+        working-directory: release
+        run: |
+          # --force: o .gitignore da aplicação ignora *.pem, private/, tmp/ etc., o que
+          # descartaria arquivos de vendor/ (ex.: cacert.pem do composer/ca-bundle).
+          git add --all --force .
+          DISK_FILES="$(find . -path ./.git -prune -o \( -type f -o -type l \) -print | wc -l | tr -d ' ')"
+          GIT_FILES="$(git ls-files | wc -l | tr -d ' ')"
+          [ "$DISK_FILES" = "$GIT_FILES" ] || { echo "::error::$DISK_FILES arquivos no pacote e $GIT_FILES no commit"; exit 1; }
+          if git diff --cached --quiet && git rev-parse --verify -q HEAD >/dev/null; then
+            echo "Branch $RELEASE_BRANCH já contém este pacote; nada a publicar."
+          else
+            git commit -q -m "release: $SHA"
+          fi
+          # Simula o clone do cPanel: o checkout precisa sair limpo, senão o deploy fica bloqueado.
+          git worktree add -q --detach ../verify-checkout HEAD
+          [ -z "$(git -C ../verify-checkout status --porcelain)" ] || { echo "::error::checkout do release não fica limpo"; exit 1; }
+          git push origin "HEAD:$RELEASE_BRANCH"
+          {
+            echo "### Release ${SHA:0:12} publicada em \`$RELEASE_BRANCH\`"
+            echo "No cPanel: Git Version Control → Manage → Pull or Deploy → Update from Remote → Deploy HEAD Commit."
+            echo "Log no servidor: ~/ceara-design/shared/storage/logs/install-$SHA.log"
+          } >> "$GITHUB_STEP_SUMMARY"

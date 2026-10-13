@@ -3,7 +3,7 @@ name: code-best-practices
 description: >
   Boas práticas para desenvolver o Prêmio Ceará Tem Design com Claude Code: monólito
   Laravel 13 (PHP 8.4, MySQL) com regra de negócio em Actions, Policies e Enums, Filament
-  5 (admin/jurado), Blade + Livewire 4, Fortify, Pest e deploy por SSH + GitHub Actions na HostGator,
+  5 (admin/jurado), Blade + Livewire 4, Fortify, Pest e deploy sem SSH na HostGator (Git Version Control do cPanel),
   usando docs/ do repositório como memória do projeto (vault Obsidian opcional). Use
   sempre ao criar Action, Policy, migration, componente Livewire ou Resource do Filament,
   revisar arquitetura, refatorar, ou quando o usuário pedir "seguir boas práticas",
@@ -202,7 +202,7 @@ Checklist mínimo — detalhes nas skills `security-audit`, `security-backend`, 
 - FKs com `constrained()`; `restrictOnDelete()` onde apagar quebraria histórico (notas, votos)
 - `DB::transaction()` em Actions que gravam em mais de uma tabela
 - Evitar N+1: `with()`; em dev, `Model::preventLazyLoading(! app()->isProduction())`
-- Produção: migrations rodam pelo `deploy/cron-deploy.sh`, chamado via SSH pelo workflow `deploy.yml` (ou por **cron temporário** se não houver SSH) — docs/02. Nunca `migrate:fresh` em produção
+- Produção sem SSH: migrations rodam pelo `deploy/cron-deploy.sh`, chamado pelo `.cpanel.yml` do branch `producao` (Git Version Control do cPanel) ou por **cron temporário** — docs/02. Nunca `migrate:fresh` em produção
 - Backup antes de migration em produção
 
 ---

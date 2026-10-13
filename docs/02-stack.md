@@ -43,7 +43,7 @@ Pacotes que só entram se a funcionalidade for confirmada:
 ## Produção
 
 - **Domínio:** o valor final ainda deve ser confirmado e usado em `APP_URL`/Turnstile. Passo a passo: [deploy-hostgator.md](runbooks/deploy-hostgator.md).
-- **Hospedagem:** conta cPanel na HostGator; SSH (porta 2222, liberado por chamado ao suporte), Cron e Document Root ainda precisam de confirmação na conta (P66, P68).
+- **Hospedagem:** conta cPanel na HostGator (`chega101`, pasta pessoal `/home1/chega101`), **sem SSH** (P66). Deploy pelo Git Version Control do cPanel; Document Root ainda precisa de confirmação (P68).
 - **Manutenção:** o sistema é só para a edição 2026 (P32).
 - **E-mail transacional:** 🟡 aguardando a organização (P31).
 
@@ -54,14 +54,14 @@ no cPanel: PHP Web e CLI ≥ 8.4.1, extensões do lockfile, Percona Server 5.7.4
 Document Root terminando em `/public`, HTTPS, SMTP, limites e quotas. P65 foi respondida;
 os demais itens ainda precisam de teste na conta real.
 
-### Deploy por SSH + GitHub Actions (principal) ou Cron (alternativa)
+### Deploy pelo Git Version Control do cPanel (principal) ou Cron (alternativa)
 
 Nenhum caminho roda Composer/npm no servidor (a HostGator compartilhada não oferece Node.js):
-1. **Build no GitHub Actions** (`scripts/build-release.sh SHA`): ZIP com `vendor/` sem dev e assets compilados.
-2. **Envio por SSH** (`scp`, porta 2222) pelo workflow `deploy.yml`, disparado manualmente com o SHA aprovado e protegido pelo environment `production`.
-3. **Instalação** por `deploy/ssh-deploy.sh`, que roda `deploy/cron-deploy.sh` (preflight, migrations, seeder) e troca o link `current` só após sucesso; rollback de código pelo mesmo workflow.
-4. **Raiz do subdomínio** em `/home/USUARIO/ceara-design/current/public`. ⚠️ Confirmar no cPanel (P68).
-5. **Sem SSH** (pedido negado ou pendente): upload do ZIP pelo Gerenciador de Arquivos e o mesmo `cron-deploy.sh` por um **Cron temporário**.
+1. **Build no GitHub Actions** (`release-cpanel.yml` → `scripts/build-release.sh SHA`), disparado manualmente na `main` com o SHA aprovado.
+2. **Branch `producao`:** o pacote (com `vendor/` e `public/build/`) vira um commit, junto de um `.cpanel.yml`. Só avança, nunca force-push.
+3. **No cPanel:** Update from Remote → Deploy HEAD Commit roda `deploy/install-release.sh install-dir`, que copia para `~/ceara-design/releases/SHA`, roda `deploy/cron-deploy.sh` (preflight, migrations, seeder) e troca o link `current` só após sucesso.
+4. **Raiz do subdomínio** em `/home1/chega101/ceara-design/current/public`. ⚠️ Confirmar no cPanel (P68).
+5. **Alternativa:** upload do ZIP pelo Gerenciador de Arquivos e o mesmo `cron-deploy.sh` por um **Cron temporário**. O workflow `deploy.yml` (SSH) fica dormente.
 
 Passo a passo: [deploy-hostgator.md](runbooks/deploy-hostgator.md).
 

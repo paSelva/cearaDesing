@@ -1,134 +1,128 @@
 # Deploy no cPanel da HostGator — Ceará Tem Design 2026
 
-**Caminho principal: SSH + GitHub Actions** (seção 0). O workflow
-`.github/workflows/deploy.yml` gera o ZIP do SHA aprovado, envia por SSH e roda no servidor
-`deploy/ssh-deploy.sh`, que chama o mesmo `deploy/cron-deploy.sh` (preflight, migrations,
-seeder e admin inicial) e só então troca o link `current`.
+**Caminho principal: Git Version Control do cPanel + branch `producao`** (seção 0). A conta
+**não tem SSH** (confirmado em 13/10/2026). O workflow `.github/workflows/release-cpanel.yml`
+gera o pacote do SHA aprovado (com `vendor/` e `public/build/`) e o publica como commit no
+branch `producao`, junto de um `.cpanel.yml`. No cPanel, **Update from Remote** e **Deploy
+HEAD Commit** rodam `deploy/install-release.sh`, que chama o mesmo `deploy/cron-deploy.sh`
+(preflight, migrations, seeder e admin inicial) e só então troca o link `current`.
 
-**Alternativa sem SSH:** Gerenciador de Arquivos + Cron temporário (seções 5 a 7 e 11),
-usada enquanto a HostGator não liberar o SSH ou se o pedido for negado.
+**Alternativa:** Gerenciador de Arquivos + Cron temporário (seções 5 a 7 e 11), se o deploy
+pelo Git do cPanel não funcionar na conta. O workflow `deploy.yml` (SSH) fica dormente.
 
-Nenhum dos caminhos pressupõe root, WHM, Composer/npm no servidor nem que PHP Web e PHP
-CLI sejam o mesmo executável.
+Nenhum caminho pressupõe root, WHM, Composer/npm no servidor nem que PHP Web e PHP CLI
+sejam o mesmo executável.
 
 Use os valores literais abaixo como marcadores:
 
-- `USUARIO`: usuário da conta cPanel;
+- `USUARIO`: usuário da conta cPanel (nesta conta: `chega101`);
+- `HOME`: pasta pessoal da conta (nesta conta: `/home1/chega101`, não `/home/...`);
 - `SHA`: os 40 caracteres de `VERSION`;
 - `DOMINIO`: domínio final;
-- `PHP_CLI`: caminho absoluto do PHP CLI 8.4.1+ confirmado no cPanel.
+- `PHP_CLI`: caminho absoluto do PHP CLI 8.4.1+ confirmado no servidor.
 
-Estrutura recomendada:
+Estrutura:
 
 ```text
-/home/USUARIO/ceara-design/
-├── current -> releases/SHA     # só no caminho SSH; trocado de forma atômica
-├── incoming/                   # só no caminho SSH; ZIP recebido do GitHub (apagado após sucesso)
-├── releases/
-│   └── SHA/                    # conteúdo de um único ZIP; não editar
-└── shared/
-    ├── .env                    # 600 ou 640; nunca substituir
-    ├── admin-inicial.ini       # somente na primeira instalação; temporário
-    └── storage/                # uploads, logs e estado; nunca substituir
+HOME/
+├── repositories/cearaDesing/   # clone do Git Version Control; só leitura, nunca editar
+└── ceara-design/
+    ├── current -> releases/SHA # trocado de forma atômica após instalação concluída
+    ├── releases/
+    │   └── SHA/                # cópia do pacote; não editar
+    └── shared/
+        ├── .env                # 600 ou 640; nunca substituir
+        ├── admin-inicial.ini   # somente na primeira instalação; temporário
+        └── storage/            # uploads, logs e estado; nunca substituir
 ```
 
 O `cron-deploy.sh` cria links da release para `shared/.env` e `shared/storage`. O Document
-Root aponta para `/home/USUARIO/ceara-design/current/public` no caminho SSH, ou para
-`/home/USUARIO/ceara-design/releases/SHA/public` no caminho pelo Cron. Nunca para a raiz
-da release.
+Root aponta para `HOME/ceara-design/current/public` (ou, se o cPanel recusar o link,
+para `HOME/ceara-design/releases/SHA/public`). Nunca para a raiz da release nem para
+`repositories/`.
 
-## 0. Caminho principal: SSH + GitHub Actions
+## 0. Caminho principal: Git Version Control do cPanel
 
-### 0.1 O que a HostGator documenta (hospedagem compartilhada)
+### 0.1 Por que um branch de release
 
-- O SSH **não é ativado pelo cPanel**: nos planos Start, P, M, Turbo, Business e Plus ele é
-  habilitado **pelo suporte**, por chamado
-  ([artigo](https://suporte.hostgator.com.br/hc/pt-br/articles/30814927583379-Como-habilitar-o-acesso-SSH)).
-  Em revenda, o próprio dono habilita no WHM (Modificar uma conta → Acesso ao Shell).
-- Conexão: **porta 2222**, host = IP do servidor ou domínio já propagado, usuário = usuário
-  do cPanel ([artigo](https://suporte.hostgator.com.br/hc/pt-br/articles/30812824748051-Como-acessar-um-servidor-via-SSH)).
-  Chaves podem ser geradas/importadas no cPanel
-  ([artigo](https://suporte.hostgator.com.br/hc/pt-br/articles/30819530838291-Como-gerar-chaves-de-acesso-SSH-no-cPanel)).
-- A tabela de compatibilidade marca Node.js como indisponível na compartilhada e não lista
-  Composer. Por isso o build acontece no GitHub Actions, nunca no servidor. O deploy pelo
-  "Git Version Control" do cPanel não é usado: o repositório é privado e `vendor/` e
-  `public/build/` não são versionados.
+- A HostGator compartilhada não oferece Node.js e não lista Composer
+  ([compatibilidades](https://suporte.hostgator.com.br/hc/pt-br/articles/30811116692115-Quais-s%C3%A3o-as-compatibilidades-da-HostGator)),
+  e `vendor/` e `public/build/` não são versionados na `main`. O build acontece no GitHub
+  Actions e o resultado vira um commit no branch `producao`.
+- O deploy do cPanel exige um `.cpanel.yml` na raiz do branch e **working tree limpa**; o
+  modo pull roda as tarefas ao clicar em **Deploy HEAD Commit**
+  ([documentação do cPanel](https://docs.cpanel.net/knowledge-base/web-services/guide-to-git-deployment/)).
+  O `.cpanel.yml` existe só no `producao`; a `main` não pode ser implantada.
+- O branch `producao` só avança (nunca force-push), porque o cPanel atualiza por pull.
+- O workflow grava os arquivos byte a byte (`.gitattributes` com `* -text`) e confere que o
+  checkout sai limpo; com normalização de fim de linha o cPanel veria o clone "sujo".
 
-Esses dados vêm da documentação pública; a conta real ainda precisa confirmar (P66). Há
-uma contradição na própria HostGator: a
-[tabela de compatibilidade](https://suporte.hostgator.com.br/hc/pt-br/articles/30811116692115-Quais-s%C3%A3o-as-compatibilidades-da-HostGator)
-marca "SSH2" como indisponível em compartilhada/revenda, enquanto o artigo de habilitação
-diz que o suporte libera. Só o chamado resolve; mantenha o caminho pelo Cron pronto.
+### 0.2 Sonda (uma vez, antes do primeiro deploy)
 
-### 0.2 Preparação única
+Ainda não está confirmado na conta que as tarefas do `.cpanel.yml` rodam sem SSH, nem com
+qual `PATH`, pasta de trabalho e PHP. O branch `producao` começa com uma **sonda** que só
+grava um relatório:
 
-1. **Chamado na HostGator** pedindo o SSH da conta. No mesmo chamado, peça:
-   - a **impressão digital (fingerprint) da chave do host SSH**, para conferir o
-     `known_hosts`;
-   - o caminho do **PHP CLI 8.4** (a documentação da HostGator usa o padrão
-     `/opt/cpanel/ea-phpXX/root/usr/bin/php`; confirme o de 8.4);
-   - se o Document Root do subdomínio pode ficar fora de `public_html` e passar por um link
-     simbólico (`/home/USUARIO/ceara-design/current/public`) (P68).
-2. **Chave de deploy exclusiva**, gerada na sua máquina (sem passphrase, usada só pelo
-   GitHub):
+1. cPanel → **Git Version Control** → `cearaDesing` → **Manage**.
+2. Aba **Pull or Deploy** → **Update from Remote**.
+3. Aba **Basic Information** → **Checked-Out Branch** → `producao` → **Update**.
+4. Aba **Pull or Deploy** → **Deploy HEAD Commit**.
+5. No **Gerenciador de Arquivos** (com "mostrar arquivos ocultos"), abra
+   `HOME/ceara-design-probe.txt` e envie o conteúdo para a equipe de desenvolvimento. Ele
+   não contém senhas nem variáveis de ambiente.
 
-   ```bash
-   ssh-keygen -t ed25519 -C "deploy-github-ceara" -f ~/.ssh/ceara_deploy -N ""
-   ```
+O relatório confirma: se o deploy executa, a pasta de trabalho, `$HOME`, ferramentas
+disponíveis (GNU `find`/`mv`, `tar`), os binários `ea-php8*` com versão e extensões, e
+se uma variável exportada numa tarefa chega à seguinte. Com isso define-se `PHP_CLI`.
+Se o arquivo não aparecer, o deploy pelo Git não executa nesta conta: use o caminho pelo
+Cron (seção 11).
 
-   No cPanel: **Acesso SSH → Gerenciar chaves SSH → Importar chave**, cole o conteúdo de
-   `ceara_deploy.pub` e clique em **Autorizar**. A chave privada vai só para o secret do
-   GitHub; apague a cópia local depois de configurar.
-3. **known_hosts:** rode `ssh-keyscan -p 2222 HOST` e compare o fingerprint
-   (`ssh-keygen -lf`) com o informado pela HostGator antes de usar a saída. Use em
-   `SSH_HOST` exatamente o mesmo `HOST` (IP ou domínio) do `ssh-keyscan`: a entrada
-   `[HOST]:2222` do known_hosts precisa bater, senão a conexão é recusada.
-4. **Primeira sessão SSH manual** (`ssh -p 2222 -i ~/.ssh/ceara_deploy USUARIO@HOST`):
-   - confirme `PHP_CLI -v` e `PHP_CLI -m` (extensões da seção 1);
-   - crie `/home/USUARIO/ceara-design/shared/` e o `shared/.env` (seção 5) com
-     `chmod 600`. O `.env` e o `admin-inicial.ini` **nunca** passam pelo GitHub;
-   - na primeira instalação, crie `shared/admin-inicial.ini` (seção 6).
-5. **GitHub → Settings → Environments → `production`:**
-   - **Required reviewers** e **Deployment branches: somente `main`**, se o plano do
-     GitHub oferecer esses recursos para repositório privado (o repositório é privado e de
-     conta pessoal; confira na tela). Sem eles, a proteção é: só quem tem escrita dispara
-     o workflow, e o próprio job recusa execução fora da `main`;
-   - se o plano não oferecer secrets de environment, cadastre os mesmos nomes em
-     **Settings → Secrets and variables → Actions** do repositório;
-   - **Secrets:** `SSH_HOST`, `SSH_PORT` (2222), `SSH_USER`, `SSH_PRIVATE_KEY`,
-     `SSH_KNOWN_HOSTS`, `PHP_CLI`, `DEPLOY_BASE` (`/home/USUARIO/ceara-design`);
-   - **Variables:** `APP_URL` (ex.: `https://acdesign.chegadim.com.br`).
-6. Faça a seção 3 (domínio, PHP Web, limites de upload) e a seção 4 (banco) normalmente.
-   O Document Root aponta para `/home/USUARIO/ceara-design/current/public`. Se o cPanel
-   recusar esse caminho, use o da release (`releases/SHA/public`) e troque-o a cada
-   atualização, como no caminho pelo Cron.
+### 0.3 Preparação única
 
-### 0.3 Deploy
+1. **GitHub → Settings → Secrets and variables → Actions → Variables:** `PHP_CLI` com o
+   caminho confirmado pela sonda (não é segredo; vai escrito no `.cpanel.yml`).
+2. **Credencial do clone:** abra `HOME/repositories/cearaDesing/.git/config` no
+   Gerenciador de Arquivos. Se a URL do `remote` tiver um token embutido, troque por uma
+   deploy key **somente leitura** (GitHub → Settings → Deploy keys), pois o PHP da conta
+   consegue ler esse arquivo.
+3. Faça a seção 3 (domínio, PHP Web, limites de upload) e a seção 4 (banco).
+4. Pelo Gerenciador de Arquivos, crie `HOME/ceara-design/shared/` e o `shared/.env`
+   (seção 5), permissão 600. Na primeira instalação, crie também
+   `shared/admin-inicial.ini` (seção 6). Nada disso passa pelo GitHub.
+5. Confira cota de disco e de inodes no cPanel: o clone e as releases guardadas
+   (a ativa e a anterior) somam cerca de três cópias de `vendor/` (~140 MB cada, ~16 mil arquivos).
+
+### 0.4 Deploy
 
 1. Mergeie na `main` e copie o SHA completo do commit aprovado. O botão do workflow só
-   aparece depois que `deploy.yml` estiver na `main`.
-2. **Actions → Deploy produção (SSH) → Run workflow** (branch `main`): `sha` = SHA,
-   `action` = `install`.
-3. Aprove o environment `production`. O workflow:
-   - recusa SHA que não esteja na `main`;
-   - roda `scripts/build-release.sh SHA` no runner;
-   - envia ZIP e `.sha256` por `scp` para `incoming/`;
-   - roda `deploy/ssh-deploy.sh install` no servidor: confere o checksum com o PHP CLI,
-     extrai com `ZipArchive` (não depende de `unzip`), executa `cron-deploy.sh`, mostra o
-     log no job e só troca `current` se tudo passou;
-   - mantém as 3 releases mais recentes (nunca apaga a ativa nem a anterior);
-   - roda `scripts/smoke-producao.sh` contra `APP_URL`. O smoke não prova qual release
-     está no ar (`/VERSION` é bloqueado de propósito): confira no log do job a linha
-     `current -> .../releases/SHA`.
-4. Se a instalação falhar, `current` continua na release anterior. O log completo fica em
-   `shared/storage/logs/deploy-SHA.log`. Código 75 significa outra instalação em andamento.
-5. Faça backup do banco antes de releases com migrations novas (seção 9, item 1).
+   aparece depois que `release-cpanel.yml` estiver na `main`.
+2. **Actions → Release para o cPanel (branch producao) → Run workflow** (branch `main`),
+   `sha` = SHA. O workflow recusa SHA fora da `main` e execução a partir de outro branch.
+3. Faça backup do banco pelo phpMyAdmin antes de releases com migrations novas.
+4. No cPanel: **Git Version Control → Manage → Pull or Deploy → Update from Remote →
+   Deploy HEAD Commit**.
+5. Confira no Gerenciador de Arquivos `HOME/ceara-design/shared/storage/logs/install-SHA.log`:
+   deve terminar em `== Deploy SHA ativo`, com a linha `current -> .../releases/SHA`.
+   Se falhar, `current` continua na release anterior; o detalhe fica em `deploy-SHA.log`.
+6. Na primeira vez, ajuste o Document Root para `HOME/ceara-design/current/public`
+   (P68) e confirme que `admin-inicial.ini` foi apagado.
+7. Rode `bash scripts/smoke-producao.sh https://DOMINIO` de uma máquina externa.
 
-### 0.4 Rollback de código
+### 0.5 Rollback de código
 
-**Actions → Run workflow** com `action` = `rollback` e o SHA de uma release ainda
-instalada e concluída. O link `current` volta para ela e os caches são limpos. O banco
-**não** é alterado: confirme antes que a release é compatível com o schema atual (seção 10).
+Rode o workflow de novo com o SHA anterior e repita o passo 4. Se a release ainda estiver
+guardada, ela é reaproveitada; se não, é recriada e o `cron-deploy.sh` roda de novo
+(migrations e seeder são idempotentes). O banco **não** é revertido: confirme antes que a
+release anterior é compatível com o schema atual (seção 10).
+
+### 0.6 Se um dia houver SSH
+
+O workflow `deploy.yml` (dormente) faz o mesmo por `scp`/`ssh` na porta 2222 e usa
+`install-release.sh install-zip`. A HostGator libera SSH na compartilhada por chamado
+([artigo](https://suporte.hostgator.com.br/hc/pt-br/articles/30814927583379-Como-habilitar-o-acesso-SSH)),
+mas a própria tabela de compatibilidade o marca como indisponível. Exige os secrets
+`SSH_HOST`, `SSH_PORT`, `SSH_USER`, `SSH_PRIVATE_KEY`, `SSH_KNOWN_HOSTS`, `PHP_CLI` e
+`DEPLOY_BASE`, e a variável `APP_URL`.
 
 ## 1. Requisitos comprovados e dados ainda pendentes
 
@@ -155,8 +149,8 @@ preflight. Antes da instalação, obter e registrar:
 2. o seletor oferece PHP 8.4, mas ainda falta confirmar versão/extensões efetivas do PHP
    Web e o caminho/versão/extensões do PHP CLI/Cron (não presuma que são iguais);
 3. se o cPanel permite o Document Root fora de `public_html` e terminando em `/public`;
-4. SSH liberado pela HostGator (seção 0); sem SSH, disponibilidade e frequência mínima de
-   Cron;
+4. deploy pelo Git Version Control executando (sonda da seção 0.2); se não executar,
+   disponibilidade e frequência mínima de Cron;
 5. domínio escolhido `acdesign.chegadim.com.br`; confirmar DNS, emissão de HTTPS e eventual
    proxy/CDN antes de assumir que o site está acessível por HTTPS;
 6. host/porta SMTP, remetente e requisitos de TLS/autenticação;
@@ -381,10 +375,10 @@ depois do backup. Valide a consistência de banco e uploads antes de reabrir.
 
 ## 11. Quando usar o caminho pelo Cron
 
-Use as seções 5 a 7 (Gerenciador de Arquivos + Cron temporário) somente se o SSH não for
-liberado ou estiver indisponível no momento do deploy. O resultado no servidor é o mesmo:
-ambos rodam `deploy/cron-deploy.sh`. A diferença é que, pelo Cron, o envio do ZIP, a
-extração e a troca do Document Root são manuais.
+Use as seções 5 a 7 (Gerenciador de Arquivos + Cron temporário) somente se o deploy pelo
+Git Version Control não executar na conta (sonda da seção 0.2). O resultado no servidor é
+o mesmo: ambos rodam `deploy/cron-deploy.sh`. Pelo Cron, o envio do ZIP, a extração e a
+troca do Document Root são manuais.
 
 Em nenhum caminho: rode Composer/npm no servidor, use root ou crie rota HTTP para Artisan,
 migrations, instalação, comandos do sistema ou `phpinfo()`.
