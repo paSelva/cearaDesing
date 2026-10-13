@@ -1,0 +1,8 @@
+---
+# Sonda do deploy pelo Git Version Control (sem SSH). Só grava um relatório em
+# $HOME/ceara-design-probe.txt; não altera site, banco nem arquivos da aplicação.
+# Será substituída pelo primeiro commit de release gerado por release-cpanel.yml.
+deployment:
+  tasks:
+    - export CEARA_PROBE_EXPORT=persistiu
+    - /bin/bash deploy-probe.sh
