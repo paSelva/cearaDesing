@@ -17,7 +17,7 @@ echo "== Páginas que devem abrir"
 for p in /up / /login /register /eleitor/cadastro /galeria /premiados /admin/login /jurado/login; do check "$p" "200"; done
 
 echo "== Arquivos que NÃO podem ser públicos"
-for p in /.env /composer.json /composer.lock /.git/HEAD /storage/logs/laravel.log /vendor/autoload.php /artisan /VERSION /deploy/cron-deploy.sh; do check "$p" "403 404"; done
+for p in /.env /composer.json /composer.lock /.git/HEAD /storage/logs/laravel.log /vendor/autoload.php /artisan /VERSION /deploy/cron-deploy.sh /deploy/ssh-deploy.sh; do check "$p" "403 404"; done
 
 echo "== HTTP redireciona para HTTPS"
 code=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' --max-time 20 "http://$HOST/")

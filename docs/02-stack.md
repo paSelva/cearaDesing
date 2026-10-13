@@ -43,7 +43,7 @@ Pacotes que só entram se a funcionalidade for confirmada:
 ## Produção
 
 - **Domínio:** o valor final ainda deve ser confirmado e usado em `APP_URL`/Turnstile. Passo a passo: [deploy-hostgator.md](runbooks/deploy-hostgator.md).
-- **Hospedagem:** conta cPanel existente; plano, Terminal/SSH, Cron e Document Root ainda precisam de confirmação direta.
+- **Hospedagem:** conta cPanel na HostGator; SSH (porta 2222, liberado por chamado ao suporte), Cron e Document Root ainda precisam de confirmação na conta (P66, P68).
 - **Manutenção:** o sistema é só para a edição 2026 (P32).
 - **E-mail transacional:** 🟡 aguardando a organização (P31).
 
@@ -54,14 +54,16 @@ no cPanel: PHP Web e CLI ≥ 8.4.1, extensões do lockfile, Percona Server 5.7.4
 Document Root terminando em `/public`, HTTPS, SMTP, limites e quotas. P65 foi respondida;
 os demais itens ainda precisam de teste na conta real.
 
-### Deploy pelo Gerenciador de Arquivos + Cron
+### Deploy por SSH + GitHub Actions (principal) ou Cron (alternativa)
 
-O caminho principal não depende de SSH nem Composer/npm no servidor:
-1. **Build local:** `composer install --no-dev --optimize-autoloader` e `npm run build`, gerando um pacote com `vendor/` e os assets compilados.
-2. **Envio** por FTP ou pelo Gerenciador de Arquivos do cPanel (upload do .zip e extração).
-3. **Migrations e comandos artisan:** rodar pelo wrapper com um **Cron temporário**, depois de confirmar Cron e PHP CLI na conta real.
-4. **Raiz do subdomínio** apontando para `public/`. ⚠️ Confirmar no cPanel (P68).
-5. O Cron é a rota principal preparada; Terminal/SSH pode executar o mesmo wrapper se a conta oferecer esses recursos.
+Nenhum caminho roda Composer/npm no servidor (a HostGator compartilhada não oferece Node.js):
+1. **Build no GitHub Actions** (`scripts/build-release.sh SHA`): ZIP com `vendor/` sem dev e assets compilados.
+2. **Envio por SSH** (`scp`, porta 2222) pelo workflow `deploy.yml`, disparado manualmente com o SHA aprovado e protegido pelo environment `production`.
+3. **Instalação** por `deploy/ssh-deploy.sh`, que roda `deploy/cron-deploy.sh` (preflight, migrations, seeder) e troca o link `current` só após sucesso; rollback de código pelo mesmo workflow.
+4. **Raiz do subdomínio** em `/home/USUARIO/ceara-design/current/public`. ⚠️ Confirmar no cPanel (P68).
+5. **Sem SSH** (pedido negado ou pendente): upload do ZIP pelo Gerenciador de Arquivos e o mesmo `cron-deploy.sh` por um **Cron temporário**.
+
+Passo a passo: [deploy-hostgator.md](runbooks/deploy-hostgator.md).
 
 Limites de PHP exigidos pela SPEC-003 (conferir no MultiPHP INI Editor do cPanel, ⚠️ não verificado): `upload_max_filesize` ≥ 10M, `post_max_size` ≥ 12M, `display_errors = Off`. O upload é feito **um arquivo por requisição** para caber nesses limites. Extensão `exif` necessária (Media Library).
 

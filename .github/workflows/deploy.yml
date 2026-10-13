@@ -1,0 +1,108 @@
+name: Deploy produção (SSH)
+
+# Disparo manual com o SHA aprovado. O environment "production" deve exigir aprovação
+# (Settings → Environments → production → Required reviewers).
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: 'SHA completo (40 caracteres) de um commit já na main'
+        required: true
+        type: string
+      action:
+        description: 'install = nova release; rollback = volta o código para uma release já instalada'
+        required: true
+        default: install
+        type: choice
+        options: [install, rollback]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.action }}
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+    env:
+      SHA: ${{ inputs.sha }}
+      ACTION: ${{ inputs.action }}
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      PHP_CLI: ${{ secrets.PHP_CLI }}
+      DEPLOY_BASE: ${{ secrets.DEPLOY_BASE }}
+      APP_URL: ${{ vars.APP_URL }}
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Validate inputs
+        run: |
+          [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::SHA deve ter 40 caracteres hexadecimais"; exit 1; }
+          git merge-base --is-ancestor "$SHA" origin/main || { echo "::error::o commit não está na main"; exit 1; }
+          for name in SSH_HOST SSH_PORT SSH_USER PHP_CLI DEPLOY_BASE APP_URL; do
+            [ -n "${!name}" ] || { echo "::error::configure $name no environment production"; exit 1; }
+          done
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          [ -n "$SSH_PRIVATE_KEY" ] && [ -n "$SSH_KNOWN_HOSTS" ] \
+            || { echo "::error::configure SSH_PRIVATE_KEY e SSH_KNOWN_HOSTS"; exit 1; }
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<EOF
+          Host producao
+            HostName $SSH_HOST
+            Port $SSH_PORT
+            User $SSH_USER
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+            ServerAliveInterval 30
+          EOF
+          chmod 600 ~/.ssh/config
+          ssh producao 'echo conexão ok'
+
+      - name: Set up Node
+        if: inputs.action == 'install'
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+
+      - name: Build release
+        if: inputs.action == 'install'
+        run: bash scripts/build-release.sh "$SHA"
+
+      - name: Upload release
+        if: inputs.action == 'install'
+        run: |
+          # Expansão no runner é intencional: os caminhos vêm dos secrets do environment.
+          ZIP="dist/ceara-tem-design-${SHA:0:12}.zip"
+          # shellcheck disable=SC2029
+          ssh producao "mkdir -p '$DEPLOY_BASE/incoming'"
+          scp "$ZIP" "$ZIP.sha256" "producao:$DEPLOY_BASE/incoming/"
+
+      - name: Install or rollback on server
+        run: |
+          # shellcheck disable=SC2029
+          ssh producao "bash -s -- '$ACTION' '$PHP_CLI' '$DEPLOY_BASE' '$SHA'" < deploy/ssh-deploy.sh
+
+      - name: Smoke test
+        run: bash scripts/smoke-producao.sh "$APP_URL"
+
+      - name: Remove SSH key
+        if: always()
+        run: rm -rf ~/.ssh

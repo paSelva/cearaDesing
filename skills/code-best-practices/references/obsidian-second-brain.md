@@ -48,7 +48,7 @@ Sistema de inscrição, avaliação por jurados e voto popular do 1º Prêmio Ce
 Repositório: paSelva/cearaDesing · Fonte de verdade: docs/
 
 ## Stack
-Ver docs/02-stack.md (Laravel 13, PHP 8.4, MySQL, Filament 5, Livewire 4, HostGator sem SSH)
+Ver docs/02-stack.md (Laravel 13, PHP 8.4, MySQL, Filament 5, Livewire 4, HostGator com deploy por SSH + GitHub Actions)
 
 ## Estado atual
 - Última sessão: AAAA-MM-DD
