@@ -11,8 +11,9 @@ Sistema web do **1º Prêmio Ceará Tem Design 2026** (Associação Ceará Desig
 - **Recomendado:** Laravel 13 + Filament 5 (admin e jurado) + Blade/Livewire 4/Tailwind 4 + Pest.
 - **Hospedagem:** cPanel na HostGator; banco confirmado como Percona Server 5.7.44-48.
   Sem SSH: deploy pelo Git Version Control do cPanel a partir do branch `producao`, gerado
-  por `.github/workflows/release-cpanel.yml`, com Cron como alternativa. PHP CLI e Document
-  Root ainda precisam ser confirmados na conta real.
+  por `.github/workflows/release-cpanel.yml`, com Cron como alternativa. No ar desde
+  13/10/2026 em `https://acdesign.chegadim.com.br`. Para atualizar o site:
+  [guia rápido de deploy](docs/runbooks/guia-deploy-cpanel.md).
 - **A definir:** domínio final, HTTPS e SMTP transacional.
 
 Os detalhes estão em [docs/02-stack.md](docs/02-stack.md).
