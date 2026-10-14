@@ -121,8 +121,14 @@ confirma no primeiro deploy, pelo navegador.
    `HOME/ceara-design/shared/storage/logs/install-SHA.log`:
    deve terminar em `== Deploy SHA ativo`, com a linha `current -> .../releases/SHA`.
    Se falhar, `current` continua na release anterior; o detalhe fica em `deploy-SHA.log`.
-6. Na primeira vez, ajuste o Document Root para `HOME/ceara-design/current/public`
-   (P68) e confirme que `admin-inicial.ini` foi apagado.
+6. Na primeira vez:
+   - ajuste o Document Root para `HOME/ceara-design/current/public` (aceito pelo cPanel em
+     13/10/2026, P68) e confirme que `admin-inicial.ini` foi apagado;
+   - **depois** de ajustar o Document Root, aplique **PHP 8.4 (ea-php84)** ao domínio no
+     MultiPHP Manager. O cPanel grava o handler no `.htaccess` da raiz
+     (`current/public/.htaccess`); se for aplicado antes, o bloco fica na raiz antiga e o
+     site roda o PHP padrão da conta (8.3: erro "Composer detected issues"). Nas releases
+     seguintes, `install-release.sh` copia esse bloco da release ativa para a nova.
 7. Rode `bash scripts/smoke-producao.sh https://DOMINIO` de uma máquina externa.
 
 ### 0.5 Rollback de código

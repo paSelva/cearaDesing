@@ -109,6 +109,17 @@ else
         "$STAGING/storage/framework/cache/data" "$STAGING/storage/framework/sessions" \
         "$STAGING/storage/framework/testing" "$STAGING/storage/framework/views" \
         "$STAGING/storage/logs"
+    # O MultiPHP Manager do cPanel define a versão do PHP do site com um bloco no .htaccess da
+    # raiz (current/public). Uma release nova traria o .htaccess limpo e o site voltaria ao
+    # PHP padrão da conta (8.3): o bloco da release ativa é levado para a nova.
+    if [ -f "$CURRENT/public/.htaccess" ] && ! grep -q 'BEGIN cPanel-generated handler' "$STAGING/public/.htaccess"; then
+        HANDLER="$(awk '/# php -- BEGIN cPanel-generated handler/,/# php -- END cPanel-generated handler/' "$CURRENT/public/.htaccess")"
+        if [ -n "$HANDLER" ]; then
+            printf '\n%s\n' "$HANDLER" >> "$STAGING/public/.htaccess"
+            printf 'Bloco de PHP do cPanel copiado da release ativa para public/.htaccess.\n'
+        fi
+    fi
+
     # O tar copia o modo da raiz do clone do cPanel (700), o que deixaria o Apache sem acesso
     # à release (403). Releases não têm segredos: pastas legíveis pelo servidor web.
     chmod 755 "$STAGING" "$STAGING/public"
