@@ -22,9 +22,16 @@ KEEP_RELEASES="${KEEP_RELEASES:-2}"
 
 fail() { printf 'ERRO: %s\n' "$1" >&2; exit 1; }
 
+# Log fixo e fácil de achar (Gerenciador de Arquivos → pasta pessoal), aberto antes de
+# qualquer verificação: o cPanel não mostra a saída das tarefas e a base pode nem existir.
+EARLY_LOG="${HOME:?HOME não definido}/ceara-design-install.log"
+touch "$EARLY_LOG" && chmod 600 "$EARLY_LOG"
+exec > >(tee -a "$EARLY_LOG") 2>&1
+printf '\n== %s %s %s\n' "$(date '+%Y-%m-%d %H:%M:%S %z')" "${1:-?}" "${4:-?}"
+
 [[ "$ACTION" =~ ^(install-dir|install-zip|rollback)$ ]] || fail "ação deve ser install-dir, install-zip ou rollback"
 [[ "$PHP_BIN" = /* && -x "$PHP_BIN" ]] || fail "informe o caminho absoluto e executável do PHP CLI: $PHP_BIN"
-[[ "$BASE_DIR" = /* && -d "$BASE_DIR" ]] || fail "informe o caminho absoluto existente da base (ex.: \$HOME/ceara-design)"
+[[ "$BASE_DIR" = /* && -d "$BASE_DIR" ]] || fail "pasta base não encontrada: $BASE_DIR (crie \$HOME/ceara-design/shared com o .env)"
 [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || fail "informe o SHA completo (40 caracteres)"
 [[ "$KEEP_RELEASES" =~ ^[0-9]+$ && "$KEEP_RELEASES" -ge 2 ]] || fail "KEEP_RELEASES deve ser 2 ou mais"
 
@@ -43,7 +50,6 @@ mkdir -p "$RELEASES_DIR" "$SHARED_DIR/storage/app" "$SHARED_DIR/storage/logs"
 INSTALL_LOG="$SHARED_DIR/storage/logs/install-$SHA.log"
 touch "$INSTALL_LOG" && chmod 600 "$INSTALL_LOG"
 exec > >(tee -a "$INSTALL_LOG") 2>&1
-printf '== %s %s %s\n' "$(date '+%Y-%m-%d %H:%M:%S %z')" "$ACTION" "$SHA"
 
 # Ativa só uma release concluída e ligada ao .env/storage compartilhados.
 # Troca atômica: link temporário renomeado sobre "current" (mv -T, GNU coreutils).

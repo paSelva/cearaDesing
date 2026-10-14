@@ -116,7 +116,9 @@ confirma no primeiro deploy, pelo navegador.
 3. Faça backup do banco pelo phpMyAdmin antes de releases com migrations novas.
 4. No cPanel: **Git Version Control → Manage → Pull or Deploy → Update from Remote →
    Deploy HEAD Commit**.
-5. Confira no Gerenciador de Arquivos `HOME/ceara-design/shared/storage/logs/install-SHA.log`:
+5. Confira no Gerenciador de Arquivos `HOME/ceara-design-install.log` (sempre gravado, mesmo
+   quando a falha acontece antes de existir `ceara-design/shared`) ou
+   `HOME/ceara-design/shared/storage/logs/install-SHA.log`:
    deve terminar em `== Deploy SHA ativo`, com a linha `current -> .../releases/SHA`.
    Se falhar, `current` continua na release anterior; o detalhe fica em `deploy-SHA.log`.
 6. Na primeira vez, ajuste o Document Root para `HOME/ceara-design/current/public`
