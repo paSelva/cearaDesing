@@ -11,7 +11,7 @@ As inscrições abrem em **28/09/2026** (§7). A documentação foi escrita em *
 - [x] SPEC-000: diagnóstico do repositório, matriz de aderência, CI mínimo e runbook sem SSH (prova remota pendente)
 - [ ] Atualizar para PHP 8.4 (T3) e instalar Composer ou Herd
 - [ ] Banco MySQL local na mesma versão do servidor (P33, P65)
-- [ ] Deploy pelo Git Version Control do cPanel (branch `producao` gerado no CI + `install-release.sh`), com Cron como alternativa — scripts prontos; faltam a sonda no servidor e o primeiro deploy real (P63) · ⚠️ P68
+- [ ] Deploy pelo Git Version Control do cPanel (branch `producao` gerado no CI + `install-release.sh`), com Cron como alternativa — scripts prontos e ambiente confirmado por sondas (13/10); falta o primeiro deploy real (P63) · ⚠️ P68
 - [ ] Fazer um deploy de teste ("hello world" Laravel 13 + PHP 8.4) na HostGator **antes** de desenvolver as funcionalidades
 - [x] Criar o repositório git
 - [x] Fundação Laravel 13 com Filament 5 no painel `/admin` (SPEC-001; validação local)

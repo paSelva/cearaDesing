@@ -77,10 +77,25 @@ se uma variável exportada numa tarefa chega à seguinte. Com isso define-se `PH
 Se o arquivo não aparecer, o deploy pelo Git não executa nesta conta: use o caminho pelo
 Cron (seção 11).
 
+**Resultado na conta `chega101` (13/10/2026, sondas 1 e 2):**
+
+- o deploy executa as tarefas como `chega101`, com pasta de trabalho no clone,
+  `HOME=/home1/chega101`, `umask 0022`, e variável exportada persiste entre tarefas;
+- GNU coreutils/findutils, `tar`, `realpath`, `unzip` e `git` disponíveis; kernel EL9;
+- **`PHP_CLI=/opt/cpanel/ea-php84/root/usr/bin/php`** (8.4.26, todas as extensões exigidas).
+  `/usr/local/bin/php` é 8.3 e `/usr/bin/php` é CGI: não use;
+- links simbólicos dentro do `HOME` e a troca atômica `ln -s` + `mv -T` funcionam;
+  **links que apontam para `/tmp` são removidos pelo servidor** (o instalador nunca cria);
+- o clone fica com pasta 700 e arquivos 644.
+
+Ainda não testado: se o Apache segue o link `current` no Document Root (P68), o que só se
+confirma no primeiro deploy, pelo navegador.
+
 ### 0.3 Preparação única
 
-1. **GitHub → Settings → Secrets and variables → Actions → Variables:** `PHP_CLI` com o
-   caminho confirmado pela sonda (não é segredo; vai escrito no `.cpanel.yml`).
+1. **GitHub → Settings → Secrets and variables → Actions → Variables:** `PHP_CLI` =
+   `/opt/cpanel/ea-php84/root/usr/bin/php` (confirmado pela sonda; não é segredo, vai
+   escrito no `.cpanel.yml`). Configurada em 13/10/2026.
 2. **Credencial do clone:** abra `HOME/repositories/cearaDesing/.git/config` no
    Gerenciador de Arquivos. Se a URL do `remote` tiver um token embutido, troque por uma
    deploy key **somente leitura** (GitHub → Settings → Deploy keys), pois o PHP da conta
