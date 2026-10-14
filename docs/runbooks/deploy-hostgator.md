@@ -1,5 +1,9 @@
 # Deploy no cPanel da HostGator — Ceará Tem Design 2026
 
+> **Atualizando um site que já está no ar?** Use o
+> [guia rápido de deploy](guia-deploy-cpanel.md). Este documento é o roteiro completo da
+> primeira instalação e a referência técnica.
+
 **Caminho principal: Git Version Control do cPanel + branch `producao`** (seção 0). A conta
 **não tem SSH** (confirmado em 13/10/2026). O workflow `.github/workflows/release-cpanel.yml`
 gera o pacote do SHA aprovado (com `vendor/` e `public/build/`) e o publica como commit no

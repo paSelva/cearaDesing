@@ -43,7 +43,7 @@ Pacotes que só entram se a funcionalidade for confirmada:
 ## Produção
 
 - **Domínio:** o valor final ainda deve ser confirmado e usado em `APP_URL`/Turnstile. Passo a passo: [deploy-hostgator.md](runbooks/deploy-hostgator.md).
-- **Hospedagem:** conta cPanel na HostGator (`chega101`, pasta pessoal `/home1/chega101`), **sem SSH** (P66). Deploy pelo Git Version Control do cPanel; Document Root ainda precisa de confirmação (P68).
+- **Hospedagem:** conta cPanel na HostGator (`chega101`, pasta pessoal `/home1/chega101`), **sem SSH** (P66). Deploy pelo Git Version Control do cPanel; Document Root em `current/public` confirmado (P68).
 - **Manutenção:** o sistema é só para a edição 2026 (P32).
 - **E-mail transacional:** 🟡 aguardando a organização (P31).
 
@@ -60,7 +60,7 @@ Nenhum caminho roda Composer/npm no servidor (a HostGator compartilhada não ofe
 1. **Build no GitHub Actions** (`release-cpanel.yml` → `scripts/build-release.sh SHA`), disparado manualmente na `main` com o SHA aprovado.
 2. **Branch `producao`:** o pacote (com `vendor/` e `public/build/`) vira um commit, junto de um `.cpanel.yml`. Só avança, nunca force-push.
 3. **No cPanel:** Update from Remote → Deploy HEAD Commit roda `deploy/install-release.sh install-dir`, que copia para `~/ceara-design/releases/SHA`, roda `deploy/cron-deploy.sh` (preflight, migrations, seeder) e troca o link `current` só após sucesso.
-4. **Raiz do subdomínio** em `/home1/chega101/ceara-design/current/public`. ⚠️ Confirmar no cPanel (P68).
+4. **Raiz do subdomínio** em `/home1/chega101/ceara-design/current/public` (P68, confirmado em 13/10).
 5. **Alternativa:** upload do ZIP pelo Gerenciador de Arquivos e o mesmo `cron-deploy.sh` por um **Cron temporário**. O workflow `deploy.yml` (SSH) fica dormente.
 
 Passo a passo: [deploy-hostgator.md](runbooks/deploy-hostgator.md).
