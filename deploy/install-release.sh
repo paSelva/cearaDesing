@@ -109,6 +109,9 @@ else
         "$STAGING/storage/framework/cache/data" "$STAGING/storage/framework/sessions" \
         "$STAGING/storage/framework/testing" "$STAGING/storage/framework/views" \
         "$STAGING/storage/logs"
+    # O tar copia o modo da raiz do clone do cPanel (700), o que deixaria o Apache sem acesso
+    # à release (403). Releases não têm segredos: pastas legíveis pelo servidor web.
+    chmod 755 "$STAGING" "$STAGING/public"
     mv "$STAGING" "$RELEASE"
     trap - EXIT
 
