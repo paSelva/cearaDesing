@@ -7,10 +7,13 @@ Sistema web do **1º Prêmio Ceará Tem Design 2026** (Associação Ceará Desig
 ## Stack
 
 - **Definido:** PHP + Laravel.
-- **Definido:** PHP 8.4 · MySQL · auth do participante e do eleitor em páginas próprias (Fortify).
+- **Definido:** PHP ≥ 8.4.1 · Percona Server 5.7.44-48 (validado) ou MySQL 8 (histórico local) · auth do participante e do eleitor em páginas próprias (Fortify).
 - **Recomendado:** Laravel 13 + Filament 5 (admin e jurado) + Blade/Livewire 4/Tailwind 4 + Pest.
-- **Hospedagem:** HostGator, plano compartilhado, em um subdomínio do domínio atual. **Sem SSH** (P66). ⚠️ Versão do MySQL (P65) a confirmar.
-- **A definir:** e-mail transacional e o nome do subdomínio.
+- **Hospedagem:** cPanel na HostGator; banco confirmado como Percona Server 5.7.44-48.
+  Sem SSH: deploy pelo Git Version Control do cPanel a partir do branch `producao`, gerado
+  por `.github/workflows/release-cpanel.yml`, com Cron como alternativa. PHP CLI e Document
+  Root ainda precisam ser confirmados na conta real.
+- **A definir:** domínio final, HTTPS e SMTP transacional.
 
 Os detalhes estão em [docs/02-stack.md](docs/02-stack.md).
 

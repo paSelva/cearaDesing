@@ -12,6 +12,7 @@ function adminIni(string $dir, array $data): string
         $lines[] = "{$key}=\"{$value}\"";
     }
     file_put_contents($path, implode("\n", $lines)."\n");
+    chmod($path, 0600);
 
     return $path;
 }
@@ -43,6 +44,20 @@ describe('app:create-admin --from-file (deploy sem SSH)', function () {
 
     it('recusa arquivo inexistente', function () {
         $this->artisan('app:create-admin', ['--from-file' => '/nao/existe.ini'])->assertFailed();
+    });
+
+    it('recusa arquivo com permissões abertas', function () {
+        $path = adminIni(sys_get_temp_dir(), ['name' => 'Admin', 'email' => 'aberto@example.test', 'password' => 'senha-de-deploy-segura']);
+        chmod($path, 0644);
+
+        try {
+            $this->artisan('app:create-admin', ['--from-file' => $path])
+                ->expectsOutputToContain('Permissões inseguras')
+                ->assertFailed();
+            expect(User::where('email', 'aberto@example.test')->exists())->toBeFalse();
+        } finally {
+            @unlink($path);
+        }
     });
 
     it('senha curta falha na validação e mantém o arquivo para correção', function () {

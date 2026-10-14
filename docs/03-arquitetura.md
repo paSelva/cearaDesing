@@ -118,7 +118,7 @@ A lista completa de Actions, com as regras de cada uma, está em [07-actions.md]
 | Regra (edital) | Garantia proposta |
 |---|---|
 | 1 projeto por categoria por participante (§4) | Índice único no banco + validação |
-| Nota de 1 a 5 (§5) | Validação na aplicação + `CHECK` no banco (só é aplicado no MySQL 8.0.16 ou superior, ⚠️ P65) |
+| Nota de 1 a 5 (§5) | Validação na aplicação; `CHECK` adicional somente no MySQL 8.0.16+. No Percona 5.7.44-48 confirmado em P65, a migration omite o `CHECK` e os testes comprovam a regra na aplicação. |
 | 3 jurados por projeto (§5) | Parâmetro da edição (padrão 3) + validação ao atribuir |
 | Nota final = soma dos 3 jurados (§5) | Calculada só quando os 3 tiverem avaliado |
 | Faixas de distinção (§6) | Parâmetros da edição (as datas e regras podem mudar, §7) |
