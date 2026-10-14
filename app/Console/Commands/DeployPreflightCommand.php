@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -25,7 +26,11 @@ final class DeployPreflightCommand extends Command
             'APP_URL deve usar HTTPS e o domínio final.',
             $errors,
         );
-        $this->require((string) config('app.key') !== '', 'APP_KEY não foi definida.', $errors);
+        $this->require(
+            $this->validAppKey(),
+            'APP_KEY ausente ou inválida: use "base64:" seguido de 32 bytes aleatórios em base64 (44 caracteres).',
+            $errors,
+        );
         $this->require(
             config('database.default') === 'mysql',
             'DB_CONNECTION deve ser mysql; MariaDB não foi validado para esta release.',
@@ -101,6 +106,18 @@ final class DeployPreflightCommand extends Command
         $this->line('Configuração: production, debug desativado, HTTPS, armazenamento privado e fila síncrona.');
 
         return self::SUCCESS;
+    }
+
+    // Mesma leitura do EncryptionServiceProvider: sem isso, uma chave mal colada só aparece
+    // como erro 500 no site, depois das migrations.
+    private function validAppKey(): bool
+    {
+        $key = (string) config('app.key');
+        if (str_starts_with($key, 'base64:')) {
+            $key = (string) base64_decode(substr($key, 7), true);
+        }
+
+        return $key !== '' && Encrypter::supported($key, (string) config('app.cipher'));
     }
 
     /** @param list<string> $errors */

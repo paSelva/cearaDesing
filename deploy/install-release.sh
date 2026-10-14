@@ -22,9 +22,16 @@ KEEP_RELEASES="${KEEP_RELEASES:-2}"
 
 fail() { printf 'ERRO: %s\n' "$1" >&2; exit 1; }
 
+# Log fixo e fácil de achar (Gerenciador de Arquivos → pasta pessoal), aberto antes de
+# qualquer verificação: o cPanel não mostra a saída das tarefas e a base pode nem existir.
+EARLY_LOG="${HOME:?HOME não definido}/ceara-design-install.log"
+touch "$EARLY_LOG" && chmod 600 "$EARLY_LOG"
+exec > >(tee -a "$EARLY_LOG") 2>&1
+printf '\n== %s %s %s\n' "$(date '+%Y-%m-%d %H:%M:%S %z')" "${1:-?}" "${4:-?}"
+
 [[ "$ACTION" =~ ^(install-dir|install-zip|rollback)$ ]] || fail "ação deve ser install-dir, install-zip ou rollback"
 [[ "$PHP_BIN" = /* && -x "$PHP_BIN" ]] || fail "informe o caminho absoluto e executável do PHP CLI: $PHP_BIN"
-[[ "$BASE_DIR" = /* && -d "$BASE_DIR" ]] || fail "informe o caminho absoluto existente da base (ex.: \$HOME/ceara-design)"
+[[ "$BASE_DIR" = /* && -d "$BASE_DIR" ]] || fail "pasta base não encontrada: $BASE_DIR (crie \$HOME/ceara-design/shared com o .env)"
 [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || fail "informe o SHA completo (40 caracteres)"
 [[ "$KEEP_RELEASES" =~ ^[0-9]+$ && "$KEEP_RELEASES" -ge 2 ]] || fail "KEEP_RELEASES deve ser 2 ou mais"
 
@@ -43,7 +50,6 @@ mkdir -p "$RELEASES_DIR" "$SHARED_DIR/storage/app" "$SHARED_DIR/storage/logs"
 INSTALL_LOG="$SHARED_DIR/storage/logs/install-$SHA.log"
 touch "$INSTALL_LOG" && chmod 600 "$INSTALL_LOG"
 exec > >(tee -a "$INSTALL_LOG") 2>&1
-printf '== %s %s %s\n' "$(date '+%Y-%m-%d %H:%M:%S %z')" "$ACTION" "$SHA"
 
 # Ativa só uma release concluída e ligada ao .env/storage compartilhados.
 # Troca atômica: link temporário renomeado sobre "current" (mv -T, GNU coreutils).
@@ -103,6 +109,20 @@ else
         "$STAGING/storage/framework/cache/data" "$STAGING/storage/framework/sessions" \
         "$STAGING/storage/framework/testing" "$STAGING/storage/framework/views" \
         "$STAGING/storage/logs"
+    # O MultiPHP Manager do cPanel define a versão do PHP do site com um bloco no .htaccess da
+    # raiz (current/public). Uma release nova traria o .htaccess limpo e o site voltaria ao
+    # PHP padrão da conta (8.3): o bloco da release ativa é levado para a nova.
+    if [ -f "$CURRENT/public/.htaccess" ] && ! grep -q 'BEGIN cPanel-generated handler' "$STAGING/public/.htaccess"; then
+        HANDLER="$(awk '/# php -- BEGIN cPanel-generated handler/,/# php -- END cPanel-generated handler/' "$CURRENT/public/.htaccess")"
+        if [ -n "$HANDLER" ]; then
+            printf '\n%s\n' "$HANDLER" >> "$STAGING/public/.htaccess"
+            printf 'Bloco de PHP do cPanel copiado da release ativa para public/.htaccess.\n'
+        fi
+    fi
+
+    # O tar copia o modo da raiz do clone do cPanel (700), o que deixaria o Apache sem acesso
+    # à release (403). Releases não têm segredos: pastas legíveis pelo servidor web.
+    chmod 755 "$STAGING" "$STAGING/public"
     mv "$STAGING" "$RELEASE"
     trap - EXIT
 
