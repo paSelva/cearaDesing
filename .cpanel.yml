@@ -1,8 +1,5 @@
 ---
-# Sonda do deploy pelo Git Version Control (sem SSH). Só grava um relatório em
-# $HOME/ceara-design-probe.txt; não altera site, banco nem arquivos da aplicação.
-# Será substituída pelo primeiro commit de release gerado por release-cpanel.yml.
+# Gerado por .github/workflows/release-cpanel.yml para o commit ca2507489abcfc2a728241f677dbd49a201b82c1. Não editar.
 deployment:
   tasks:
-    - export CEARA_PROBE_EXPORT=persistiu
-    - /bin/bash deploy-probe.sh
+    - /bin/bash deploy/install-release.sh install-dir /opt/cpanel/ea-php84/root/usr/bin/php "$HOME/ceara-design" "$(cat VERSION)" "$PWD"

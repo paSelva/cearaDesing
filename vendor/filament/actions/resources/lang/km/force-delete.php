@@ -1,0 +1,72 @@
+<?php
+
+return [
+
+    'single' => [
+
+        'label' => 'បង្ខំ​លុប',
+
+        'modal' => [
+
+            'heading' => 'បង្ខំ​លុប :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'លុប',
+                ],
+
+            ],
+
+        ],
+
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'បានលុប',
+            ],
+
+        ],
+
+    ],
+
+    'multiple' => [
+
+        'label' => 'បង្ខំលុបអ្វីដែលបានជ្រើសរើស',
+
+        'modal' => [
+
+            'heading' => 'បង្ខំលុប :label ដែលបានជ្រើសរើស',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'លុប',
+                ],
+
+            ],
+
+        ],
+
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'បានលុប',
+            ],
+
+            'deleted_partial' => [
+                'title' => 'បានលុប :count នៃ :total',
+                'missing_authorization_failure_message' => 'អ្នកមិនមានសិទ្ធិលុប :count ទេ។',
+                'missing_processing_failure_message' => ':count មិនអាចលុបបានទេ។',
+            ],
+
+            'deleted_none' => [
+                'title' => 'បរាជ័យក្នុងការលុប',
+                'missing_authorization_failure_message' => 'អ្នកមិនមានសិទ្ធិលុប :count ទេ។',
+                'missing_processing_failure_message' => ':count មិនអាចលុបបានទេ។',
+            ],
+        ],
+
+    ],
+
+];

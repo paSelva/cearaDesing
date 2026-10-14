@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\Role;
+use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+#[Fillable(['name', 'email', 'password'])]
+#[Hidden(['password', 'remember_token'])]
+class User extends Authenticatable implements FilamentUser
+{
+    /** @use HasFactory<UserFactory> */
+    use HasFactory, Notifiable;
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'role' => Role::class,
+        ];
+    }
+
+    /** @return HasMany<Entry, $this> */
+    public function entries(): HasMany
+    {
+        return $this->hasMany(Entry::class);
+    }
+
+    /** @return HasOne<VoterProfile, $this> */
+    public function voterProfile(): HasOne
+    {
+        return $this->hasOne(VoterProfile::class);
+    }
+
+    /** @return HasOne<ParticipantProfile, $this> */
+    public function participantProfile(): HasOne
+    {
+        return $this->hasOne(ParticipantProfile::class);
+    }
+
+    /**
+     * A recuperação de senha pública só atende papéis do site (Role::siteAuth()).
+     * Para admin/jurado nada é enviado; a resposta da tela é a mesma (neutra).
+     */
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        if (! $this->role->usesSiteAuth()) {
+            return;
+        }
+
+        parent::sendPasswordResetNotification($token);
+    }
+
+    public function hasRole(Role $role): bool
+    {
+        return $this->role === $role;
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return match ($panel->getId()) {
+            'admin' => $this->role === Role::Admin,
+            'jurado' => $this->role === Role::Jurado,
+            default => false,
+        };
+    }
+}

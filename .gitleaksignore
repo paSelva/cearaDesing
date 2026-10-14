@@ -1,0 +1,5 @@
+# Falsos positivos revisados (exemplos de documentação, não segredos reais).
+# Exemplo de senha no passo a passo de deploy, trocado por marcador em commit seguinte.
+0df5f70b911887810e1f493dbc76baa2fd002d4c:docs/runbooks/deploy-hostgator.md:generic-api-key:73
+# Mesmo exemplo de admin-inicial.ini no roteiro cPanel (marcador, não senha real).
+dafc970253308bcd43387c23ae32732548bb68ec:docs/runbooks/deploy-hostgator.md:generic-api-key:169
