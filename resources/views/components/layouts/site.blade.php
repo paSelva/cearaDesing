@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ isset($title) ? $title.' · ' : '' }}Prêmio Ceará Tem Design</title>
         <link rel="icon" href="{{ asset('images/associacao-ceara-design.png') }}">
+        @fonts(['roboto-condensed', 'source-sans-3'])
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="site flex min-h-screen flex-col bg-white font-texto text-grafite antialiased">
