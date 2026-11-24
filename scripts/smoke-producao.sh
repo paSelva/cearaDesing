@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Teste de fumaça depois do deploy. Só faz requisições GET/HEAD públicas; não envia dados.
-# Uso: bash scripts/smoke-producao.sh [https://acdesign.chegadim.com.br]
+# Uso: bash scripts/smoke-producao.sh [https://premiocearatemdesign.com.br]
 set -uo pipefail
 
-BASE="${1:-https://acdesign.chegadim.com.br}"
+BASE="${1:-https://premiocearatemdesign.com.br}"
 HOST="${BASE#https://}"
 FAIL=0
 
@@ -16,12 +16,16 @@ check() { # caminho, códigos aceitos
 echo "== Páginas que devem abrir"
 for p in /up / /login /register /eleitor/cadastro /galeria /premiados /admin/login /jurado/login; do check "$p" "200"; done
 
-echo "== Arquivos que NÃO podem ser públicos (406 = bloqueado pelo Mod_Security da hospedagem)"
-for p in /.env /composer.json /composer.lock /.git/HEAD /storage/logs/laravel.log /vendor/autoload.php /artisan /VERSION /deploy/cron-deploy.sh /deploy/install-release.sh /.cpanel.yml; do check "$p" "403 404 406"; done
+echo "== Arquivos que NÃO podem ser públicos (406 = Mod_Security, na HostGator)"
+for p in /.env /composer.json /composer.lock /.git/HEAD /storage/logs/laravel.log /vendor/autoload.php /artisan /VERSION /.htaccess /index.php.bak /deploy/cron-deploy.sh /deploy/install-release.sh /.cpanel.yml; do check "$p" "403 404 406"; done
 
 echo "== HTTP redireciona para HTTPS"
 code=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' --max-time 20 "http://$HOST/")
 [[ "$code" == 30[178]\ https://* ]] && echo "ok   $code" || { echo "FALHA $code"; FAIL=1; }
+
+echo "== www redireciona para o domínio principal"
+code=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' --max-time 20 "https://www.$HOST/galeria")
+[[ "$code" == 30[178]\ "$BASE/galeria" ]] && echo "ok   $code" || { echo "FALHA $code"; FAIL=1; }
 
 echo "== Cabeçalhos de segurança"
 headers=$(curl -sI --max-time 20 "$BASE/")

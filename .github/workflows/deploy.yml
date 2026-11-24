@@ -1,7 +1,7 @@
 name: Deploy produção (SSH)
 
-# DORMENTE: a conta HostGator atual não tem SSH (13/10/2026). O caminho em uso é
-# release-cpanel.yml (Git Version Control do cPanel). Mantido para quando houver SSH.
+# Deploy na VPS (docs/runbooks/deploy-vps.md), depois do provisionamento e da primeira
+# instalação manual. O repositório é público: os logs desta execução também são.
 # Disparo manual, a partir da main, com o SHA aprovado. Se o plano do GitHub permitir,
 # o environment "production" exige aprovação (Settings → Environments → Required reviewers).
 on:
@@ -76,6 +76,10 @@ jobs:
             IdentitiesOnly yes
             StrictHostKeyChecking yes
             ServerAliveInterval 30
+            # Uma conexão só: rajadas de SSH podem acionar o fail2ban do servidor.
+            ControlMaster auto
+            ControlPath ~/.ssh/cm-%C
+            ControlPersist 60
           EOF
           chmod 600 ~/.ssh/config
           ssh producao 'echo conexão ok'
@@ -110,4 +114,6 @@ jobs:
 
       - name: Remove SSH key
         if: always()
-        run: rm -rf ~/.ssh
+        run: |
+          ssh -O exit producao 2>/dev/null || true
+          rm -rf ~/.ssh

@@ -3,8 +3,8 @@
 #   install-dir PHP_CLI BASE SHA ORIGEM  cópia de um diretório já com vendor/build, usado pelo
 #                                        Git Version Control do cPanel (.cpanel.yml do branch
 #                                        "producao"; ORIGEM = clone em ~/repositories/...)
-#   install-zip PHP_CLI BASE SHA         ZIP + .sha256 enviados para BASE/incoming (via SSH,
-#                                        workflow deploy.yml; dormente enquanto não houver SSH)
+#   install-zip PHP_CLI BASE SHA         ZIP + .sha256 enviados para BASE/incoming via SSH
+#                                        (VPS: docs/runbooks/deploy-vps.md e deploy.yml)
 #   rollback    PHP_CLI BASE SHA         aponta "current" para uma release já instalada
 # BASE é a pasta da aplicação, ex.: $HOME/ceara-design (com shared/.env criado à mão).
 # A instalação extrai/copia em releases/SHA, roda cron-deploy.sh (preflight, migrations,

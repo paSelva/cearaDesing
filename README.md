@@ -7,13 +7,13 @@ Sistema web do **1º Prêmio Ceará Tem Design 2026** (Associação Ceará Desig
 ## Stack
 
 - **Definido:** PHP + Laravel.
-- **Definido:** PHP ≥ 8.4.1 · Percona Server 5.7.44-48 (validado) ou MySQL 8 (histórico local) · auth do participante e do eleitor em páginas próprias (Fortify).
+- **Definido:** PHP ≥ 8.4.1 · MariaDB 10.11 (produção, validado), Percona Server 5.7.44-48 (validado) ou MySQL 8 · auth do participante e do eleitor em páginas próprias (Fortify).
 - **Recomendado:** Laravel 13 + Filament 5 (admin e jurado) + Blade/Livewire 4/Tailwind 4 + Pest.
-- **Hospedagem:** cPanel na HostGator; banco confirmado como Percona Server 5.7.44-48.
-  Sem SSH: deploy pelo Git Version Control do cPanel a partir do branch `producao`, gerado
-  por `.github/workflows/release-cpanel.yml`, com Cron como alternativa. PHP CLI e Document
-  Root ainda precisam ser confirmados na conta real.
-- **A definir:** domínio final, HTTPS e SMTP transacional.
+- **Hospedagem:** VPS Ubuntu 24.04 (nginx, PHP-FPM 8.4, MariaDB 10.11), domínio
+  `premiocearatemdesign.com.br`: [roteiro de deploy](docs/runbooks/deploy-vps.md). O caminho
+  anterior, por cPanel na HostGator, fica documentado em
+  [deploy-hostgator.md](docs/runbooks/deploy-hostgator.md).
+- **A definir:** SMTP transacional (P31).
 
 Os detalhes estão em [docs/02-stack.md](docs/02-stack.md).
 
