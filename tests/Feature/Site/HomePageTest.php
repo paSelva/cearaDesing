@@ -37,6 +37,19 @@ describe('site público (P26)', function () {
         $this->get($path)->assertOk()->assertSee('<header class="site-header">', false);
     })->with(['/', '/login', '/galeria', '/premiados']);
 
+    // Sem a diretiva @fonts, os arquivos são gerados no build mas nenhuma página os usa.
+    it('carrega as fontes da identidade, servidas pelo próprio site', function (string $path) {
+        openEdition();
+
+        $html = $this->get($path)->assertOk()->getContent();
+
+        foreach (['Roboto Condensed' => 'roboto-condensed', 'Source Sans 3' => 'source-sans-3'] as $family => $file) {
+            expect($html)->toMatch('/@font-face\s*\{[^}]*font-family:\s*"'.preg_quote($family, '/').'"/')
+                ->toMatch('#<link rel="preload"[^>]*/build/assets/'.$file.'-[^"]+\.woff2"#');
+        }
+        expect($html)->not->toContain('fonts.bunny.net')->not->toContain('fonts.googleapis.com');
+    })->with(['/', '/login', '/galeria', '/premiados']);
+
     it('botão de inscrição só aparece com as inscrições abertas', function () {
         openEdition();
         $this->get('/')->assertSee('Inscrever projeto');

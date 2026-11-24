@@ -24,6 +24,7 @@
         <meta name="description" content="1º Prêmio Ceará Tem Design 2026, da Associação Ceará Design: reconhecer, valorizar e dar visibilidade ao design feito no Ceará. Inscrições gratuitas.">
         <title>1º Prêmio Ceará Tem Design 2026</title>
         <link rel="icon" href="{{ asset('images/associacao-ceara-design.png') }}">
+        @fonts(['roboto-condensed', 'source-sans-3'])
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="site bg-white font-texto text-grafite antialiased">
@@ -64,7 +65,7 @@
                 <div class="mx-auto grid max-w-6xl gap-10 px-6 pb-20 pt-16 md:grid-cols-[1fr_auto] md:items-end md:pb-28 md:pt-24">
                     <div class="relative z-10 max-w-3xl">
                         <p class="font-display text-xl font-medium text-tinta">1ª edição, 2026</p>
-                        <h1 id="titulo" class="mt-4 font-display text-[3.4rem] font-bold uppercase leading-[0.88] tracking-tight text-tinta sm:text-7xl lg:text-[7.5rem]">
+                        <h1 id="titulo" class="mt-4 font-display text-[3.4rem] font-bold uppercase leading-[0.98] tracking-tight text-tinta sm:text-7xl lg:text-[7.5rem]">
                             Prêmio<br>Ceará tem<br>design
                         </h1>
                         <p class="mt-8 max-w-xl text-xl leading-8 text-tinta">
