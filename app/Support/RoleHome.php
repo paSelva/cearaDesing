@@ -17,7 +17,6 @@ final class RoleHome
         return match ($role) {
             Role::Admin => route('filament.admin.pages.dashboard'),
             Role::Jurado => route('filament.jurado.home'),
-            Role::Eleitor => route('voter.home'),
             Role::Participante => route('participant.dashboard'),
             null => route('home'),
         };
@@ -56,7 +55,6 @@ final class RoleHome
         return match (Str::before(ltrim($path, '/'), '/')) {
             'admin', 'organizacao' => Role::Admin,
             'jurado', 'avaliacao' => Role::Jurado,
-            'eleitor' => Role::Eleitor,
             'participante' => Role::Participante,
             default => null,
         };

@@ -1,5 +1,7 @@
 # 07 — Actions (casos de uso)
 
+> **24/11/2026: não haverá voto popular (P1 revista).** Cadastro de eleitor, votação, apuração, Turnstile e HMAC de CPF foram removidos do sistema. A galeria abre com a publicação do resultado (P55). Trechos abaixo sobre voto e eleitor são histórico.
+
 Cada **Action** é uma classe em `app/Actions/<Área>/` com um único método público `handle(...)`. Ela concentra **toda** a regra de negócio daquele caso de uso. Controllers, componentes Livewire e Resources do Filament só validam o formato da entrada e chamam a Action (Recomendação, ver [03-arquitetura](03-arquitetura.md)).
 
 **Convenções (Recomendação):**

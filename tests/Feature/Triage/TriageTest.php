@@ -208,7 +208,7 @@ describe('painel /admin/inscricoes', function () {
         $this->actingAs(User::factory()->create(['role' => $role]))
             ->get('/admin/inscricoes')
             ->assertForbidden();
-    })->with([Role::Jurado, Role::Participante, Role::Eleitor]);
+    })->with([Role::Jurado, Role::Participante]);
 
     it('admin não ganha edição de conteúdo (update continua só do dono)', function () {
         $admin = User::factory()->admin()->create();
@@ -239,12 +239,12 @@ describe('arquivos para a triagem', function () {
         $this->get("/organizacao/inscricoes/{$entry->id}/arquivos/{$foreign->id}")->assertNotFound();
     });
 
-    it('jurado, participante (até o dono) e eleitor não usam a rota da organização', function () {
+    it('jurado e participante (até o dono) não usam a rota da organização', function () {
         $owner = participant();
         $entry = entryFor($owner, regularCategory(openEdition()), 'enviada');
         $image = app(AddEntryImage::class)->handle($entry, fakeImage());
 
-        foreach ([User::factory()->jurado()->create(), $owner, User::factory()->eleitor()->create()] as $user) {
+        foreach ([User::factory()->jurado()->create(), $owner] as $user) {
             $this->actingAs($user)->get("/organizacao/inscricoes/{$entry->id}/arquivos/{$image->id}")->assertForbidden();
         }
     });

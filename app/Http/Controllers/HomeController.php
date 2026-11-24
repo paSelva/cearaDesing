@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\Entries\EntryGuard;
-use App\Actions\Voting\VotingWindow;
 use App\Models\Category;
 use App\Models\Edition;
+use App\Support\PublicResults;
 use Illuminate\View\View;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\View\View;
  */
 final class HomeController extends Controller
 {
-    public function __invoke(EntryGuard $guard, VotingWindow $window): View
+    public function __invoke(EntryGuard $guard, PublicResults $results): View
     {
         $edition = Edition::query()->where('year', Edition::YEAR)->first();
 
@@ -28,9 +28,7 @@ final class HomeController extends Controller
         return view('welcome', [
             'edition' => $edition,
             'registrationOpen' => $edition !== null && $guard->isRegistrationOpen($edition),
-            'galleryOpen' => $window->galleryOpen($edition),
-            'votingOpen' => $window->votingOpen($edition),
-            'resultsPublished' => $window->resultsPublished($edition),
+            'resultsPublished' => $results->published($edition),
             'categories' => $categories,
             'defaultCriteria' => $categories->first(fn (Category $c) => $c->code === '3.1')?->criteria ?? collect(),
             'exportCategory' => $categories->first(fn (Category $c) => $c->code === '3.9'),

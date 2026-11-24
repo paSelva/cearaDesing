@@ -15,7 +15,7 @@ final class DatabaseCompatibility
     {
         // MariaDB precisa ser decidido antes do MySQL: "10.x" passaria na comparação ">= 8.0".
         // Só a série 10.11: a partir da 11.6 o innodb_snapshot_isolation vem ligado e muda o
-        // comportamento dos bloqueios (lockForUpdate) usados no voto e na avaliação.
+        // comportamento dos bloqueios (lockForUpdate) usados na inscrição e na avaliação.
         if (str_contains(strtolower($version.' '.$versionComment), 'mariadb')) {
             return preg_match('/^10\.11\.\d+-MariaDB/i', $version) === 1 ? 'MariaDB' : null;
         }

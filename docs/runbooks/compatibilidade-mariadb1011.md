@@ -18,7 +18,7 @@ MariaDB 10.11 é a série do Ubuntu 24.04 e a única aceita pelo preflight
 - O `CHECK` de `scores` é omitido, como no Percona 5.7; a regra "nota de 1 a 5" é da aplicação
   e está coberta por testes.
 - **Só a série 10.11.** A partir da 11.6, `innodb_snapshot_isolation` vem ligado e muda o
-  comportamento dos `lockForUpdate` do voto, da avaliação e da apuração. No ensaio estava
+  comportamento dos `lockForUpdate` da inscrição, do júri e da avaliação. No ensaio estava
   desligado. Outra série exige repetir este ensaio.
 - A suíte não exercita concorrência real entre conexões.
 

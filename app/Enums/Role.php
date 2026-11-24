@@ -9,7 +9,6 @@ enum Role: string
     case Admin = 'admin';
     case Jurado = 'jurado';
     case Participante = 'participante';
-    case Eleitor = 'eleitor';
 
     /**
      * Papéis que usam a autenticação do site (Fortify): login e recuperação de senha.
@@ -19,7 +18,7 @@ enum Role: string
      */
     public static function siteAuth(): array
     {
-        return [self::Participante, self::Eleitor];
+        return [self::Participante];
     }
 
     public function usesSiteAuth(): bool

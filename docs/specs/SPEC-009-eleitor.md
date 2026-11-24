@@ -1,5 +1,7 @@
 # SPEC-009 — Cadastro de eleitor (voto popular)
 
+> **24/11/2026: não haverá voto popular (P1 revista).** Cadastro de eleitor, votação, apuração, Turnstile e HMAC de CPF foram removidos do sistema. SPEC sem efeito, mantida como histórico.
+
 Status: implementação DEV concluída, aguardando revisão. Base: `feature/site-publico`. Branch: `feature/spec-009-eleitor`.
 
 ## Objetivo e escopo

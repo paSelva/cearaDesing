@@ -2,12 +2,12 @@
 
 Sistema web do **1º Prêmio Ceará Tem Design 2026** (Associação Ceará Design).
 
-> **Escopo:** o edital (`anexos/EDITAL FINAL_PREMIO CEARA TEM DESIGN.pdf`) prevê **avaliação por jurados**: 3 jurados por projeto, 4 critérios, notas de 1 a 5, máximo de 60 pontos (§5). Além disso, haverá **voto popular** (confirmado em 26/09, P1). Ele não está no edital, e as regras dele ainda estão em aberto (P34–P41).
+> **Escopo:** o edital (`anexos/EDITAL FINAL_PREMIO CEARA TEM DESIGN.pdf`) prevê **avaliação por jurados**: 3 jurados por projeto, 4 critérios, notas de 1 a 5, máximo de 60 pontos (§5). Não haverá voto popular (decisão de 24/11/2026, P1).
 
 ## Stack
 
 - **Definido:** PHP + Laravel.
-- **Definido:** PHP ≥ 8.4.1 · MariaDB 10.11 (produção, validado), Percona Server 5.7.44-48 (validado) ou MySQL 8 · auth do participante e do eleitor em páginas próprias (Fortify).
+- **Definido:** PHP ≥ 8.4.1 · MariaDB 10.11 (produção, validado), Percona Server 5.7.44-48 (validado) ou MySQL 8 · auth do participante em páginas próprias (Fortify).
 - **Recomendado:** Laravel 13 + Filament 5 (admin e jurado) + Blade/Livewire 4/Tailwind 4 + Pest.
 - **Hospedagem:** VPS Ubuntu 24.04 (nginx, PHP-FPM 8.4, MariaDB 10.11), domínio
   `premiocearatemdesign.com.br`: [roteiro de deploy](docs/runbooks/deploy-vps.md). O caminho
@@ -91,8 +91,8 @@ segredos em `VITE_*` nem versione `.env`.
 14. [SPEC-006 — júri: jurados da categoria, atribuição e substituição](docs/specs/SPEC-006-juri.md) · [handoff QA](docs/qa/SPEC-006-handoff.md)
 15. [SPEC-007 — avaliação: painel do jurado, notas, resultado e correção](docs/specs/SPEC-007-avaliacao.md) · [handoff QA](docs/qa/SPEC-007-handoff.md)
 16. [SPEC-008 — site público com o conteúdo do edital](docs/specs/SPEC-008-site-publico.md)
-17. [SPEC-009 — cadastro de eleitor](docs/specs/SPEC-009-eleitor.md) · [handoff QA](docs/qa/SPEC-009-handoff.md)
-18. [SPEC-010 — galeria, voto popular, parcial e apuração](docs/specs/SPEC-010-votacao.md)
+17. [SPEC-009 — cadastro de eleitor (sem efeito)](docs/specs/SPEC-009-eleitor.md) · [handoff QA](docs/qa/SPEC-009-handoff.md)
+18. [SPEC-010 — galeria (voto popular sem efeito)](docs/specs/SPEC-010-votacao.md)
 19. [SPEC-011 — publicação do resultado](docs/specs/SPEC-011-resultado.md)
 
 Convenção: **(§x)** = regra do edital · **(P#, confirmado)** = decisão do responsável que não está no edital · **Recomendação** = proposta técnica · **⚠️ A definir (P#)** = pergunta em aberto.

@@ -41,10 +41,8 @@
                         <li><a href="#avaliacao" class="site-link">Avaliação</a></li>
                         <li><a href="#datas" class="site-link">Datas</a></li>
                         <li><a href="#como-participar" class="site-link">Como participar</a></li>
-                        @if ($galleryOpen)
-                            <li><a href="{{ route('gallery.index') }}" class="site-link">Galeria</a></li>
-                        @endif
                         @if ($resultsPublished)
+                            <li><a href="{{ route('gallery.index') }}" class="site-link">Galeria</a></li>
                             <li><a href="{{ route('results.index') }}" class="site-link">Premiados</a></li>
                         @endif
                     </ul>
@@ -87,8 +85,6 @@
                             @endif
                             @if ($resultsPublished)
                                 <a href="{{ route('results.index') }}" class="site-button site-button--grande">Ver os premiados</a>
-                            @elseif ($votingOpen)
-                                <a href="{{ route('gallery.index') }}" class="site-button site-button--grande">Ver a galeria e votar</a>
                             @endif
                             <a href="#categorias" class="site-link text-lg font-semibold text-tinta">Conhecer as categorias</a>
                         </div>

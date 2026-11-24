@@ -70,7 +70,6 @@ describe('login', function () {
         $this->assertGuest();
     });
 
-    // SPEC-009: o eleitor passou a entrar pelo login do site (vai para a área dele).
     it('recusa admin e jurado com a mesma mensagem genérica', function (Role $role) {
         $user = User::factory()->create(['role' => $role]);
 
@@ -183,7 +182,7 @@ describe('área do participante', function () {
         $this->actingAs(User::factory()->create(['role' => $role]))
             ->get('/participante')
             ->assertForbidden();
-    })->with([Role::Admin, Role::Jurado, Role::Eleitor]);
+    })->with([Role::Admin, Role::Jurado]);
 
     it('não mostra documento nem telefone na página', function () {
         $profile = ParticipantProfile::factory()->create(['document' => '52998224725', 'phone' => '85988887777']);

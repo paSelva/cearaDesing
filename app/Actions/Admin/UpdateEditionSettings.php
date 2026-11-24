@@ -29,8 +29,6 @@ final class UpdateEditionSettings
             'registration_ends_at' => ['required', 'date', 'after_or_equal:registration_starts_at'],
             'judging_starts_at' => ['required', 'date'],
             'judging_ends_at' => ['required', 'date', 'after_or_equal:judging_starts_at'],
-            'voting_starts_at' => ['required', 'date'],
-            'voting_ends_at' => ['required', 'date', 'after_or_equal:voting_starts_at'],
             'results_announce_on' => ['required', 'date'],
             'ceremony_on' => ['required', 'date'],
             'project_period_starts_on' => ['required', 'date'],

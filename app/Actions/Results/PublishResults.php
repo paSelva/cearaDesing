@@ -7,8 +7,6 @@ namespace App\Actions\Results;
 use App\Enums\EntryStatus;
 use App\Enums\Role;
 use App\Models\Edition;
-use App\Models\PopularVote;
-use App\Models\PopularVoteWinner;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -36,25 +34,6 @@ final class PublishResults
             ->count();
         if ($withoutResult > 0) {
             $pending[] = "{$withoutResult} inscrição(ões) aprovada(s) ainda sem as avaliações dos jurados.";
-        }
-
-        $hasVotes = PopularVote::query()
-            ->whereIn('category_id', $edition->categories()->pluck('id'))
-            ->exists();
-        $tallied = PopularVoteWinner::query()
-            ->whereIn('category_id', $edition->categories()->pluck('id'))
-            ->exists();
-        if ($hasVotes && ! $tallied) {
-            $pending[] = 'O voto popular ainda não foi apurado.';
-        }
-
-        $undecided = PopularVoteWinner::query()
-            ->whereIn('category_id', $edition->categories()->pluck('id'))
-            ->where('was_tie', true)
-            ->whereNull('entry_id')
-            ->count();
-        if ($undecided > 0) {
-            $pending[] = "{$undecided} empate(s) do voto popular aguardando decisão da organização (P49).";
         }
 
         return $pending;

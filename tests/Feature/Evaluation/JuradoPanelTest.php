@@ -25,13 +25,13 @@ function asJudge(User $judge): void
 }
 
 describe('acesso aos painéis', function () {
-    it('jurado entra em /jurado e não em /admin; admin, participante e eleitor não entram em /jurado', function () {
+    it('jurado entra em /jurado e não em /admin; admin e participante não entram em /jurado', function () {
         $judge = User::factory()->jurado()->create();
 
         $this->actingAs($judge)->get('/jurado/avaliacoes')->assertOk();
         $this->actingAs($judge)->get('/admin')->assertForbidden();
 
-        foreach ([Role::Admin, Role::Participante, Role::Eleitor] as $role) {
+        foreach ([Role::Admin, Role::Participante] as $role) {
             $this->actingAs(User::factory()->create(['role' => $role]))->get('/jurado/avaliacoes')->assertForbidden();
         }
     });

@@ -1,5 +1,7 @@
 # SPEC-011 — Publicação do resultado
 
+> **24/11/2026: não haverá voto popular (P1 revista).** Cadastro de eleitor, votação, apuração, Turnstile e HMAC de CPF foram removidos do sistema. Permanece o restante desta SPEC.
+
 Status: implementação DEV concluída, aguardando revisão. Base: `feature/spec-010-votacao`. Branch: `feature/spec-011-resultado`.
 
 ## Objetivo e escopo

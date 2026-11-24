@@ -1,5 +1,7 @@
 # 05 — Roadmap
 
+> **24/11/2026: não haverá voto popular (P1 revista).** Cadastro de eleitor, votação, apuração, Turnstile e HMAC de CPF foram removidos do sistema. A galeria abre com a publicação do resultado (P55). Trechos abaixo sobre voto e eleitor são histórico.
+
 > As fases seguem as **datas do edital (§7)**. O escopo de cada fase depende das perguntas de [06](06-perguntas-em-aberto.md). Ainda não há estimativa de esforço.
 
 ## ⚠️ Prazo crítico

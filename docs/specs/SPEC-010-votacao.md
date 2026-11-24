@@ -1,5 +1,7 @@
 # SPEC-010 — Galeria, voto popular, parcial e apuração
 
+> **24/11/2026: não haverá voto popular (P1 revista).** Cadastro de eleitor, votação, apuração, Turnstile e HMAC de CPF foram removidos do sistema. Desta SPEC, permanece só a galeria, aberta com a publicação do resultado.
+
 Status: implementação DEV concluída, aguardando revisão. Base: `feature/spec-009-eleitor`. Branch: `feature/spec-010-votacao`.
 
 ## Escopo

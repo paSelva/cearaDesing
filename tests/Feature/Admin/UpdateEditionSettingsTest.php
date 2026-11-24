@@ -12,8 +12,6 @@ function validEditionSettings(): array
         'registration_ends_at' => '2026-10-28 23:59:59',
         'judging_starts_at' => '2026-10-29 00:00:00',
         'judging_ends_at' => '2026-11-20 23:59:59',
-        'voting_starts_at' => '2026-10-29 00:00:00',
-        'voting_ends_at' => '2026-11-20 23:59:59',
         'results_announce_on' => '2026-11-21',
         'ceremony_on' => '2026-11-26',
         'project_period_starts_on' => '2022-01-01',
@@ -49,7 +47,6 @@ it('rejeita períodos invertidos e quantidade de jurados não positiva', functio
 })->with([
     'inscrição encerra antes de começar' => ['registration_ends_at', '2026-09-27 23:59:59'],
     'avaliação termina antes de começar' => ['judging_ends_at', '2026-10-28 23:59:59'],
-    'votação termina antes de começar' => ['voting_ends_at', '2026-10-28 23:59:59'],
     'elegibilidade termina antes de começar' => ['project_period_ends_on', '2021-12-31'],
     'zero jurados' => ['judges_per_entry', 0],
 ]);

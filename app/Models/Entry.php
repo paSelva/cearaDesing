@@ -103,12 +103,6 @@ class Entry extends Model implements HasMedia
         return $this->hasMany(JudgeAssignment::class);
     }
 
-    /** @return HasMany<PopularVote, $this> */
-    public function popularVotes(): HasMany
-    {
-        return $this->hasMany(PopularVote::class);
-    }
-
     /** @return HasMany<ProofRequest, $this> */
     public function proofRequests(): HasMany
     {

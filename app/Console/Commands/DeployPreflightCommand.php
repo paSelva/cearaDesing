@@ -41,9 +41,6 @@ final class DeployPreflightCommand extends Command
         $this->require(config('cache.default') === 'database', 'CACHE_STORE deve ser database.', $errors);
         $this->require(config('queue.default') === 'sync', 'QUEUE_CONNECTION deve ser sync (não há worker nesta release).', $errors);
         $this->require(config('filesystems.default') === 'local', 'FILESYSTEM_DISK deve ser local (privado).', $errors);
-        $this->require((string) config('services.cpf_hmac.key') !== '', 'CPF_HMAC_KEY não foi definida.', $errors);
-        $this->require((string) config('services.turnstile.site_key') !== '', 'TURNSTILE_SITE_KEY não foi definida.', $errors);
-        $this->require((string) config('services.turnstile.secret_key') !== '', 'TURNSTILE_SECRET_KEY não foi definida.', $errors);
 
         if ($errors !== []) {
             foreach ($errors as $error) {

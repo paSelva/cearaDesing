@@ -1,5 +1,7 @@
 # Deploy no cPanel da HostGator — Ceará Tem Design 2026
 
+> **24/11/2026: não haverá voto popular (P1 revista).** Cadastro de eleitor, votação, apuração, Turnstile e HMAC de CPF foram removidos do sistema. Ignore `TURNSTILE_*` e `CPF_HMAC_KEY` abaixo.
+
 **Caminho principal: Git Version Control do cPanel + branch `producao`** (seção 0). A conta
 **não tem SSH** (confirmado em 13/10/2026). O workflow `.github/workflows/release-cpanel.yml`
 gera o pacote do SHA aprovado (com `vendor/` e `public/build/`) e o publica como commit no
