@@ -2,7 +2,7 @@
 
 **Banco:** o cPanel informou Percona Server 5.7.44-48/InnoDB (P65), validado localmente
 com a imagem oficial `percona:5.7.44`. MySQL 8.0.46 também tem histórico de validação;
-MariaDB não foi validado para esta release.
+MariaDB 10.11 foi validado em 24/11/2026 ([ensaio](runbooks/compatibilidade-mariadb1011.md)); lá o `CHECK` também é omitido.
 
 **Convenção:**
 - **(§x)**: regra do edital.

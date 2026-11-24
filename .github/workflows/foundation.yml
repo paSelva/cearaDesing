@@ -34,11 +34,22 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   application:
-    name: Laravel application
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Laravel application
+            image: mysql:8.0
+            admin: mysqladmin
+          # Produção (VPS): MariaDB 10.11, a única série aceita pelo preflight.
+          - name: Laravel application (MariaDB 10.11)
+            image: mariadb:10.11
+            admin: mariadb-admin
     services:
       mysql:
-        image: mysql:8.0
+        image: ${{ matrix.image }}
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: ceara_spec000_testing
@@ -47,7 +58,7 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-cmd="${{ matrix.admin }} ping -h 127.0.0.1 -uroot -proot"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10

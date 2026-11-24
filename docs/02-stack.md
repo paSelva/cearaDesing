@@ -13,7 +13,7 @@ O resto deste documento é **recomendação**. As versões e a compatibilidade e
 | **Filament** | 5.x (atual: 5.9.0) | Recomendação | Painéis de **admin e jurado** (T1). `filament/support` 5.9.0 aceita `illuminate/contracts ^11.28\|^12.0\|^13.0`. |
 | **Livewire** | 4.x | Dependência do Filament 5 | `filament/support` exige `livewire/livewire ^4.4.2`. |
 | **Tailwind CSS** | 4.x | Recomendação | Padrão atual do Laravel e do Filament. |
-| **Banco** | Percona Server 5.7.44-48 (produção) e MySQL 8 | Definido e validado localmente | O cPanel informou Percona Server 5.7.44-48. Migrations, seeder e testes relevantes passaram na imagem oficial `percona:5.7.44`; MySQL 8.0.46 também tem histórico de validação. MariaDB não foi validado. |
+| **Banco** | Percona Server 5.7.44-48 (produção) e MySQL 8 | Definido e validado localmente | O cPanel informou Percona Server 5.7.44-48. Migrations, seeder e testes relevantes passaram na imagem oficial `percona:5.7.44`; MySQL 8.0.46 também tem histórico de validação. **MariaDB 10.11** (VPS) validado em 24/11/2026: [ensaio](runbooks/compatibilidade-mariadb1011.md). |
 | **Testes** | Pest | Recomendação | Versão instalada pelo `laravel new`. |
 
 ## Pacotes candidatos (compatibilidade com Laravel 13 conferida)
@@ -41,6 +41,8 @@ Pacotes que só entram se a funcionalidade for confirmada:
 - **Recomendação:** instalar o **Laravel Herd** (traz PHP, Composer e o instalador do Laravel) ou `brew install composer`.
 
 ## Produção
+
+> **24/11/2026:** produção passa a ser uma **VPS** com SSH (Ubuntu 24.04, nginx, PHP-FPM 8.4, MariaDB 10.11), no domínio `premiocearatemdesign.com.br`, com instalação limpa. Passo a passo: [deploy-vps.md](runbooks/deploy-vps.md). O que segue sobre cPanel/HostGator fica como alternativa.
 
 - **Domínio:** o valor final ainda deve ser confirmado e usado em `APP_URL`/Turnstile. Passo a passo: [deploy-hostgator.md](runbooks/deploy-hostgator.md).
 - **Hospedagem:** conta cPanel na HostGator (`chega101`, pasta pessoal `/home1/chega101`), **sem SSH** (P66). Deploy pelo Git Version Control do cPanel; Document Root ainda precisa de confirmação (P68).
