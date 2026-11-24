@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AddSecurityHeaders;
 use App\Http\Middleware\EnsureUserHasRole;
+use App\Support\RoleHome;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,6 +17,13 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(AddSecurityHeaders::class);
+        // Só o domínio de APP_URL: outro Host recebe 400 (não vale em local nem nos testes).
+        $middleware->trustHosts(
+            at: fn () => ['^'.preg_quote((string) parse_url((string) config('app.url'), PHP_URL_HOST)).'$'],
+            subdomains: false,
+        );
+        $middleware->redirectGuestsTo(fn (Request $request) => RoleHome::loginFor($request));
+        $middleware->redirectUsersTo(fn (Request $request) => RoleHome::for($request->user()?->role));
         $middleware->alias(['role' => EnsureUserHasRole::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -5,10 +5,14 @@ namespace App\Providers;
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Http\Responses\NeutralPasswordResetLinkResponse;
+use App\Http\Responses\PanelLoginResponse;
 use App\Http\Responses\RoleHomeLoginResponse;
 use App\Models\User;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse as FilamentLoginResponse;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -23,6 +27,7 @@ class FortifyServiceProvider extends ServiceProvider
     {
         $this->app->bind(FailedPasswordResetLinkRequestResponse::class, NeutralPasswordResetLinkResponse::class);
         $this->app->singleton(LoginResponse::class, RoleHomeLoginResponse::class);
+        $this->app->bind(FilamentLoginResponse::class, PanelLoginResponse::class);
     }
 
     public function boot(): void
@@ -52,9 +57,29 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
+            // Roda antes da validação: o e-mail pode vir como lista.
+            $email = $request->input(Fortify::username());
+            $throttleKey = Str::transliterate(Str::lower(is_string($email) ? $email : '').'|'.$request->ip());
 
-            return Limit::perMinute(5)->by($throttleKey);
+            // Por IP, contra a mesma senha testada em muitos e-mails. Folgado: uma universidade
+            // ou empresa inteira pode sair por um IP só.
+            return [
+                Limit::perMinute(5)->by($throttleKey),
+                Limit::perMinute(30)->by('ip|'.$request->ip()),
+            ];
         });
+
+        // Demais formulários de conta, por IP (config/fortify.php → middleware).
+        RateLimiter::for('conta', fn (Request $request) => match ($request->route()?->getName()) {
+            'password.email' => Limit::perHour(10)->by('reset-pedido|'.$request->ip()),
+            'password.update' => Limit::perHour(10)->by('reset-envio|'.$request->ip()),
+            // Só cadastro concluído conta: erro de preenchimento não gasta a cota de uma rede compartilhada.
+            'register.store' => Limit::perHour(20)->by('cadastro|'.$request->ip())->after(fn () => Auth::check()),
+            default => Limit::none(),
+        });
+
+        // O link do e-mail usa sempre o domínio configurado, nunca o Host informado por quem pediu.
+        ResetPassword::createUrlUsing(fn (User $user, string $token) => rtrim((string) config('app.url'), '/')
+            .route('password.reset', ['token' => $token, 'email' => $user->getEmailForPasswordReset()], false));
     }
 }
