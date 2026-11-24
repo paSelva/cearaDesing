@@ -155,7 +155,7 @@ class EntryResource extends Resource
             ->authorize(fn (Entry $record): bool => auth()->user()?->can('approve', $record) ?? false)
             ->requiresConfirmation()
             ->modalHeading('Aprovar inscrição')
-            ->modalDescription('A inscrição fica travada para edição pelo participante (P70) e passa a valer para a galeria, a votação popular e os jurados.')
+            ->modalDescription('A inscrição fica travada para edição pelo participante (P70) e passa a valer para os jurados e a galeria.')
             ->action(function (Entry $record, Action $action): void {
                 static::runTriage($action, fn () => app(ApproveEntry::class)->handle($record, auth()->user()), 'Inscrição aprovada.');
             });

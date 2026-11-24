@@ -148,5 +148,5 @@ describe('acesso (IDOR)', function () {
         $this->actingAs(User::factory()->create(['role' => $role]))
             ->get("/participante/inscricoes/{$entry->id}")
             ->assertForbidden();
-    })->with([Role::Admin, Role::Jurado, Role::Eleitor]);
+    })->with([Role::Admin, Role::Jurado]);
 });

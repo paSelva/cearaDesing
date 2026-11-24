@@ -122,7 +122,7 @@ PIN
 }
 
 criar_env() {
-    local env="$BASE/shared/.env" template="$HERE/../env.producao.example" app_key cpf_key db_pass line host
+    local env="$BASE/shared/.env" template="$HERE/../env.producao.example" app_key db_pass line host
     if [ -f "$env" ]; then
         printf '%s já existe; mantido sem alterações.\n' "$env"
         return
@@ -134,7 +134,6 @@ criar_env() {
         || fail "banco $DB já existe sem $env; resolva à mão (nada foi alterado)"
 
     app_key="$(openssl rand -base64 32)"
-    cpf_key="$(openssl rand -hex 32)"
     db_pass="$(openssl rand -hex 24)"
 
     # O .env é gravado antes do banco: se algo falhar no meio, a senha não se perde.
@@ -144,7 +143,6 @@ criar_env() {
         case "$line" in
             APP_KEY=*) printf 'APP_KEY=base64:%s\n' "$app_key" ;;
             APP_URL=*) printf 'APP_URL=https://%s\n' "$DOMAIN" ;;
-            CPF_HMAC_KEY=*) printf 'CPF_HMAC_KEY=%s\n' "$cpf_key" ;;
             DB_HOST=*) printf 'DB_HOST=127.0.0.1\n' ;;
             DB_DATABASE=*) printf 'DB_DATABASE=%s\n' "$DB" ;;
             DB_USERNAME=*) printf 'DB_USERNAME=%s\n' "$DB" ;;
@@ -162,7 +160,7 @@ criar_env() {
             printf "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES ON \`%s\`.* TO '%s'@'%s';\n" "$DB" "$DB" "$host"
         done
     } | mariadb
-    printf 'Criado %s (600). Preencha TURNSTILE_* e MAIL_* e guarde APP_KEY e CPF_HMAC_KEY no cofre.\n' "$env"
+    printf 'Criado %s (600). Preencha MAIL_* e guarde APP_KEY no cofre.\n' "$env"
 }
 
 base() {

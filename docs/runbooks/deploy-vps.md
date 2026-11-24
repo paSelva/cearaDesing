@@ -31,11 +31,9 @@ outros sites).
 
 1. **DNS** (Registro.br → domínio → DNS): registro `A` do domínio e de `www` para o IPv4 da
    VPS. Não crie `AAAA` sem confirmar IPv6 na VPS. Confira: `dig +short premiocearatemdesign.com.br`.
-2. **Turnstile** (painel da Cloudflare): widget com os hosts `premiocearatemdesign.com.br` e
-   `www.premiocearatemdesign.com.br`; guarde as duas chaves no cofre. Sem elas o preflight recusa o deploy.
-3. **SMTP** (P31): sem provedor, o sistema sobe com `MAIL_MAILER=log` e a **recuperação de
-   senha não funciona**. Não abra inscrições nem votação assim.
-4. Código aprovado na `main`, com CI verde. Anote o SHA completo.
+2. **SMTP** (P31): sem provedor, o sistema sobe com `MAIL_MAILER=log` e a **recuperação de
+   senha não funciona**. Não abra inscrições assim.
+3. Código aprovado na `main`, com CI verde. Anote o SHA completo.
 
 ## 2. Provisionamento (uma vez, como root)
 
@@ -63,7 +61,7 @@ memória/disco, ou `AllowUsers`/`AllowGroups` no SSH. Guarde a saída da seção
   tiver PHP, é esperado parar em `php-common` (pacote compartilhado entre versões). Avalie e,
   se aceitar, `ACEITO_ATUALIZACOES=sim ./provisionar.sh php`. Se o PPA antigo estiver ativo,
   outro site pode depender dele: siga a migração descrita pelo mantenedor, fora deste roteiro.
-- **base** gera `APP_KEY`, `CPF_HMAC_KEY` e a senha do banco direto no `.env`, sem exibir.
+- **base** gera `APP_KEY` e a senha do banco direto no `.env`, sem exibir.
   Repetir não altera o `.env`.
 - **http** e **https** fazem backup de `/etc/nginx` em `/root`, validam, recarregam e desfazem
   sozinhos se algum vizinho mudar de resposta.
@@ -72,9 +70,9 @@ memória/disco, ou `AllowUsers`/`AllowGroups` no SSH. Guarde a saída da seção
 
 Depois, no servidor:
 
-1. Edite `/var/www/premio-ceara/shared/.env` e preencha `TURNSTILE_*` e, se houver, `MAIL_*`.
-2. Copie `APP_KEY` e `CPF_HMAC_KEY` para o cofre de senhas. **Nunca troque nenhuma das duas**:
-   a primeira invalida sessões e dados cifrados; a segunda quebra o bloqueio de CPF duplicado.
+1. Se houver SMTP, edite `/var/www/premio-ceara/shared/.env` e preencha `MAIL_*`.
+2. Copie `APP_KEY` para o cofre de senhas e **nunca a troque**: invalidaria sessões e dados cifrados.
+3. Não altere `APP_URL`: a aplicação só aceita o host dela; qualquer outro recebe 400.
 
 ## 3. Chave de deploy
 
@@ -122,8 +120,11 @@ bash scripts/smoke-producao.sh https://premiocearatemdesign.com.br
 ```
 
 Abra também cada site da lista "Vizinhos" no navegador. Depois, sem dados reais: login do
-admin, upload de imagem (até 5 MB) e PDF (até 10 MB), cadastro de eleitor com Turnstile,
+admin, upload de imagem (até 5 MB) e PDF (até 10 MB), cadastro de participante,
 recuperação de senha (com SMTP) e `certbot renew --dry-run --cert-name premiocearatemdesign.com.br`.
+
+**Calendário:** a edição é criada com as datas do edital, que já passaram (inscrições até
+28/10/2026). Ajuste em **/admin → Configuração da edição** antes de divulgar o site.
 
 ## 6. Próximos deploys
 
@@ -162,14 +163,14 @@ Tirar o site do ar sem afetar os outros, como root: remova só o link
 - **PHP:** pacotes de `packages.sury.org` podem não entrar no `unattended-upgrades`. Planeje
   `apt-get install --only-upgrade 'php8.4-*'`.
 - **Capacidade:** `pm.max_children = 10` é inicial. Reavalie com a memória livre da VPS e a
-  carga esperada na votação.
+  carga esperada no fim das inscrições.
 - **HostGator:** a instalação antiga não é migrada. Desative-a para não haver dois sistemas no ar.
 
 ## Ensaio e o que falta comprovar
 
 Em 24/11/2026 o roteiro rodou num container Ubuntu 24.04 (nginx 1.24, MariaDB 10.11.14, PHP
-8.4.28, um site vizinho fictício): todas as etapas, smoke, recusa sem Turnstile/DNS/release,
+8.4.28, um site vizinho fictício): todas as etapas, smoke, recusa com configuração inválida e sem DNS/release,
 limites de upload, retorno automático ao quebrar o vizinho, segunda release, rollback e restauração do backup.
 
 **Não** foi exercitado: emissão real do certificado (usou autoassinado), systemd real, SSH,
-firewall, Turnstile e SMTP reais, e o estado real da VPS.
+firewall e SMTP reais, e o estado real da VPS.

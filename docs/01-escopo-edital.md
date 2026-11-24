@@ -1,5 +1,7 @@
 # 01 — Escopo e regras do edital
 
+> **24/11/2026: não haverá voto popular (P1 revista).** Cadastro de eleitor, votação, apuração, Turnstile e HMAC de CPF foram removidos do sistema. A galeria abre com a publicação do resultado (P55). Trechos abaixo sobre voto e eleitor são histórico.
+
 Fonte: *Edital 1º Prêmio Ceará Tem Design 2026*, Associação Ceará Design (`anexos/EDITAL FINAL_PREMIO CEARA TEM DESIGN.pdf`).
 
 **Convenção usada em toda a documentação:**

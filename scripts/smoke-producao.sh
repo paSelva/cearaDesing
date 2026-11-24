@@ -14,7 +14,7 @@ check() { # caminho, códigos aceitos
 }
 
 echo "== Páginas que devem abrir"
-for p in /up / /login /register /eleitor/cadastro /galeria /premiados /admin/login /jurado/login; do check "$p" "200"; done
+for p in /up / /login /register /galeria /premiados /admin/login /jurado/login; do check "$p" "200"; done
 
 echo "== Arquivos que NÃO podem ser públicos (406 = Mod_Security, na HostGator)"
 for p in /.env /composer.json /composer.lock /.git/HEAD /storage/logs/laravel.log /vendor/autoload.php /artisan /VERSION /.htaccess /index.php.bak /deploy/cron-deploy.sh /deploy/install-release.sh /.cpanel.yml; do check "$p" "403 404 406"; done

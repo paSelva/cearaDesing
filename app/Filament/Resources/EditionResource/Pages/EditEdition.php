@@ -26,8 +26,6 @@ class EditEdition extends EditRecord
             'registration_ends_at',
             'judging_starts_at',
             'judging_ends_at',
-            'voting_starts_at',
-            'voting_ends_at',
             'results_announce_on',
             'ceremony_on',
             'project_period_starts_on',

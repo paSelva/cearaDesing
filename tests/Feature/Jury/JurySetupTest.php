@@ -248,7 +248,7 @@ describe('painel', function () {
         expect($entry->judgeAssignments()->count())->toBe(3);
     });
 
-    it('jurado, participante e eleitor não gerenciam o júri', function () {
+    it('jurado não gerencia o júri', function () {
         $judge = User::factory()->jurado()->create();
         $assignment = JudgeAssignment::factory()->create();
 

@@ -59,9 +59,4 @@ class UserFactory extends Factory
     {
         return $this->afterMaking(fn (User $user) => $user->forceFill(['role' => Role::Participante]));
     }
-
-    public function eleitor(): static
-    {
-        return $this->afterMaking(fn (User $user) => $user->forceFill(['role' => Role::Eleitor]));
-    }
 }

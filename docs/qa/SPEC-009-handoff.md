@@ -1,5 +1,7 @@
 # Handoff QA — SPEC-009
 
+> **24/11/2026: não haverá voto popular (P1 revista).** Cadastro de eleitor, votação, apuração, Turnstile e HMAC de CPF foram removidos do sistema. SPEC sem efeito, mantida como histórico.
+
 **Branch:** `feature/spec-009-eleitor` (parte de `feature/site-publico`).
 
 ## Ambiente

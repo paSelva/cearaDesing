@@ -1,5 +1,7 @@
 # 02 — Stack e tecnologias
 
+> **24/11/2026: não haverá voto popular (P1 revista).** Cadastro de eleitor, votação, apuração, Turnstile e HMAC de CPF foram removidos do sistema. A galeria abre com a publicação do resultado (P55). Trechos abaixo sobre voto e eleitor são histórico.
+
 **Definido pelo responsável do projeto:** PHP + Laravel · PHP 8.4 (T3) · MySQL (P33) ·
 hospedagem administrada por cPanel · auth do participante e do eleitor via Fortify (T1).
 O resto deste documento é **recomendação**. As versões e a compatibilidade entre elas foram conferidas no Packagist e nas release notes em **26/09/2026**.

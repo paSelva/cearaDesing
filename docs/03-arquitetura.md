@@ -1,5 +1,7 @@
 # 03 — Arquitetura
 
+> **24/11/2026: não haverá voto popular (P1 revista).** Cadastro de eleitor, votação, apuração, Turnstile e HMAC de CPF foram removidos do sistema. A galeria abre com a publicação do resultado (P55). Trechos abaixo sobre voto e eleitor são histórico.
+
 > Este documento é uma **recomendação técnica**. Tudo que depende de uma regra de negócio ainda não confirmada está marcado com ⚠️ A definir (P#).
 
 ## Estilo arquitetural (Recomendação)

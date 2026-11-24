@@ -40,11 +40,9 @@ class EditionResource extends Resource
                 DatePicker::make('project_period_starts_on')->label('Início da elegibilidade dos projetos')->required(),
                 DatePicker::make('project_period_ends_on')->label('Fim da elegibilidade dos projetos')->required(),
             ])->columns(2),
-            Section::make('Avaliação e votação')->schema([
+            Section::make('Avaliação')->schema([
                 DateTimePicker::make('judging_starts_at')->label('Início da avaliação')->required()->seconds(true)->timezone('America/Fortaleza'),
                 DateTimePicker::make('judging_ends_at')->label('Fim da avaliação')->required()->seconds(true)->timezone('America/Fortaleza'),
-                DateTimePicker::make('voting_starts_at')->label('Início da votação')->required()->seconds(true)->timezone('America/Fortaleza'),
-                DateTimePicker::make('voting_ends_at')->label('Fim da votação')->required()->seconds(true)->timezone('America/Fortaleza'),
                 TextInput::make('judges_per_entry')->label('Jurados por inscrição')->required()->numeric()->integer()->minValue(1)->maxValue(255),
             ])->columns(2),
             Section::make('Resultado e cerimônia')->schema([

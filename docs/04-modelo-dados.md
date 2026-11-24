@@ -1,5 +1,7 @@
 # 04 — Modelo de dados
 
+> **24/11/2026: não haverá voto popular (P1 revista).** Cadastro de eleitor, votação, apuração, Turnstile e HMAC de CPF foram removidos do sistema. A galeria abre com a publicação do resultado (P55). Trechos abaixo sobre voto e eleitor são histórico.
+
 **Banco:** o cPanel informou Percona Server 5.7.44-48/InnoDB (P65), validado localmente
 com a imagem oficial `percona:5.7.44`. MySQL 8.0.46 também tem histórico de validação;
 MariaDB 10.11 foi validado em 24/11/2026 ([ensaio](runbooks/compatibilidade-mariadb1011.md)); lá o `CHECK` também é omitido.

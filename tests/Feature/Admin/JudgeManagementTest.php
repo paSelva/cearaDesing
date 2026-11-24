@@ -61,7 +61,7 @@ describe('SetJudgePassword (P82)', function () {
             'password' => 'nova-senha-do-jurado',
             'password_confirmation' => 'nova-senha-do-jurado',
         ]))->toThrow(ValidationException::class);
-    })->with([Role::Admin, Role::Participante, Role::Eleitor]);
+    })->with([Role::Admin, Role::Participante]);
 
     it('exige 12 caracteres e confirmação', function () {
         $judge = User::factory()->jurado()->create();
@@ -89,7 +89,7 @@ describe('painel /admin/jurados', function () {
         $this->actingAs(User::factory()->create(['role' => $role]))
             ->get('/admin/jurados')
             ->assertForbidden();
-    })->with([Role::Jurado, Role::Participante, Role::Eleitor]);
+    })->with([Role::Jurado, Role::Participante]);
 
     it('admin cria jurado pelo painel', function () {
         $this->actingAs(User::factory()->admin()->create());

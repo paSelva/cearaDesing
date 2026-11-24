@@ -14,7 +14,7 @@ use Livewire\Livewire;
 it('redirects visitors to the panel login and restricts the panel to admins', function () {
     $this->get('/admin')->assertRedirect('/admin/login');
 
-    foreach ([Role::Jurado, Role::Participante, Role::Eleitor] as $role) {
+    foreach ([Role::Jurado, Role::Participante] as $role) {
         $this->actingAs(User::factory()->create(['role' => $role]))
             ->get('/admin')
             ->assertForbidden();

@@ -1,5 +1,7 @@
 # 06 — Perguntas em aberto
 
+> **24/11/2026:** com a revisão da P1 (**não haverá voto popular**), ficam **sem efeito** P34 a P43, P48 a P52, P58, P60, P71 e o que tratar de voto ou eleitor nas demais.
+
 Tudo o que **não está no edital** e ainda **não foi confirmado** pelo responsável do projeto aparece aqui. Nos outros documentos, esses pontos estão marcados como `⚠️ A definir (P#)`.
 
 **Legenda de status:** 🔴 aberta (ainda não perguntada ou sem resposta) · 🟡 aguardando confirmação da organização · 🟢 respondida (resposta registrada ao lado)
@@ -8,7 +10,7 @@ Tudo o que **não está no edital** e ainda **não foi confirmado** pelo respons
 
 | # | Pergunta | Status |
 |---|---|---|
-| P1 | Haverá **voto popular**, além da avaliação dos jurados? O edital não prevê. | 🟢 **Sim, haverá voto popular** (26/09). Os detalhes estão em P34–P41. |
+| P1 | Haverá **voto popular**, além da avaliação dos jurados? O edital não prevê. | 🟢 ~~Sim (26/09)~~ → **Não haverá voto popular** (24/11). Removido do sistema. |
 | P2 | As inscrições abrem em **28/09/2026** e o sistema não fica pronto até lá. O que fazer: formulário provisório com importação depois, adiar as inscrições, ou a organização já tem outra ferramenta? | 🟡 Aguardando a organização (o responsável vai confirmar, 26/09). Enquanto isso, a importação de um formulário provisório fica documentada **como possibilidade** no roadmap. |
 
 ## Voto popular (a partir de P1 = sim)
@@ -25,7 +27,7 @@ Tudo o que **não está no edital** e ainda **não foi confirmado** pelo respons
 | P48 | A **organização** pode ver a parcial dos votos durante a votação, no painel admin? | 🟢 **Sim**: a organização vê a parcial no painel durante a votação (26/09). |
 | P49 | Em caso de **empate** no voto popular de uma categoria, o que acontece: todos os empatados levam, ou existe um critério de desempate? | 🟢 **A organização decide** o desempate, como caso omisso (§8) (26/09). |
 | P50 | **Risco do voto popular:** o dígito verificador só confirma que o CPF é matematicamente válido. Existem geradores de CPF válidos na internet, então uma pessoa pode votar várias vezes. Aceitar esse risco ou adicionar alguma proteção (captcha, limite de votos por IP, confirmação de e-mail)? | 🟢 Adicionar **captcha** e **limite por IP** (26/09). Qual captcha e quais números: ver P52. |
-| P51 | O **resultado do voto popular** aparece na mesma página pública de premiados? | 🟢 **Sim**: o mais votado de cada categoria aparece **na mesma página** dos premiados pelo júri (26/09). |
+| P51 | O **resultado do voto popular** aparece na mesma página pública de premiados? | 🟢 **Sem efeito** (P1, 24/11). |
 | P52 | **Antifraude (P50):** qual serviço de captcha usar (ex.: Cloudflare Turnstile, que é gratuito; Google reCAPTCHA; hCaptcha)? E qual limite por IP (quantos cadastros ou votos por IP em quanto tempo)? Lembrete: redes compartilhadas, como universidade ou empresa, usam um mesmo IP para muitas pessoas. | 🟢 **Cloudflare Turnstile** e limite de **5 cadastros de eleitor por IP por hora** (26/09). |
 | P42 | Como validar o **CPF** do eleitor: só o dígito verificador, ou também consulta externa (serviço pago)? O eleitor precisa confirmar o e-mail? E o celular (SMS)? | 🟢 **Só o dígito verificador do CPF**, sem consulta externa, sem confirmação de e-mail e sem SMS (26/09). ⚠️ Risco: ver P50. |
 | P43 | Como funciona a **aprovação** do projeto pela organização (P37): é a mesma triagem da inscrição ou uma etapa própria para a votação? | 🟢 **É a mesma triagem da inscrição**: a inscrição aprovada entra na votação popular (26/09). |
@@ -73,8 +75,8 @@ Tudo o que **não está no edital** e ainda **não foi confirmado** pelo respons
 | P22 | As **notas finais** e as individuais podem ser mostradas ao participante ou ao público? | 🟢 O **participante vê a nota final** (0–60) na área logada e o **público vê a nota final** na página de premiados. As notas de cada jurado e de cada critério **não são exibidas** (26/09). |
 | P23 | Os **certificados** (§6) são gerados pelo sistema ou produzidos pela organização por fora? | 🟢 **Não.** Os certificados são produzidos pela organização fora do sistema (26/09). |
 | P44 | O que a **página pública de resultados** mostra de cada premiado: nome do projeto, autores/créditos, categoria, distinção, imagens? Mostra também a nota? | 🟢 A página mostra: **nome do projeto, categoria, distinção, nota final, autoria e créditos, imagens e os textos da inscrição** (apresentação, contexto/solução, resultados) (26/09). |
-| P24 | Haverá uma **galeria pública** dos projetos premiados ou inscritos (memória institucional, §8)? | 🟢 **Sim**: galeria pública com **todos os projetos aprovados** na triagem, que também serve para o voto popular (26/09). O que ela mostra e desde quando: ver P55. |
-| P55 | **Galeria (P24):** a partir de quando ela fica visível (início da votação em 29/10, ou antes)? E o que mostra de cada projeto (os mesmos dados da página de premiados, P44)? A nota e a distinção só aparecem depois de 21/11? | 🟢 A galeria fica visível a partir de **29/10**, no início da votação, e mostra só **nome, categoria e imagens** de cada projeto (26/09). Ver P57. |
+| P24 | Haverá uma **galeria pública** dos projetos premiados ou inscritos (memória institucional, §8)? | 🟢 **Sim**: galeria pública com todos os projetos aprovados na triagem (26/09), sem voto popular (24/11). Abertura: ver P55. |
+| P55 | **Galeria (P24):** a partir de quando ela fica visível (início da votação em 29/10, ou antes)? E o que mostra de cada projeto (os mesmos dados da página de premiados, P44)? A nota e a distinção só aparecem depois de 21/11? | 🟢 ~~A partir de 29/10~~ → abre **junto com a publicação do resultado** pelo admin (24/11, P69), com nome, categoria, imagens, distinção e nota. Ver P57. |
 | P57 | Depois da divulgação (21/11), a **galeria** continua no ar? Ela passa a mostrar a distinção e a nota, ou isso fica só na página de premiados? | 🟢 **A galeria continua no ar** depois de 21/11 e passa a mostrar também a **distinção e a nota final** de cada projeto (26/09). |
 | P58 | Um **participante** (ou jurado) pode votar no voto popular usando a mesma conta? Um participante pode votar no **próprio projeto**? | 🟢 **Qualquer CPF vota**, sem restrição: participantes, jurados e o próprio autor podem votar, 1 vez por categoria (26/09). Ver P60. |
 | P60 | Quem já tem conta (participante PF ou jurado) vota **com a mesma conta**, ou precisa de um cadastro de eleitor separado? E um participante **PJ** (que tem CNPJ, não CPF) precisa de um cadastro de eleitor com CPF? | 🟢 **Cadastro de eleitor separado**: quem quiser votar, inclusive participante ou jurado, cria um cadastro de eleitor próprio com CPF (26/09). |

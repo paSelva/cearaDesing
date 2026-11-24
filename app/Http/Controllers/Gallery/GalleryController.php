@@ -4,35 +4,28 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Gallery;
 
-use App\Actions\Voting\CastPopularVote;
-use App\Actions\Voting\VotingWindow;
 use App\Enums\EntryStatus;
-use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Edition;
 use App\Models\Entry;
-use App\Models\PopularVote;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
+use App\Support\PublicResults;
 use Illuminate\View\View;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
- * Galeria pública dos projetos aprovados (P24), onde acontece o voto popular (P55).
- * Mostra só nome, categoria e imagens (P55); distinção e nota só depois da publicação (P57, P69).
- * A contagem de votos nunca aparece ao público (P39).
+ * Galeria pública dos projetos aprovados (P24), aberta com a publicação do resultado (P55, P69).
+ * Mostra nome, categoria, imagens, distinção e nota final (P57).
  */
 final class GalleryController extends Controller
 {
-    public function __construct(private readonly VotingWindow $window) {}
+    public function __construct(private readonly PublicResults $results) {}
 
-    public function index(Request $request): View
+    public function index(): View
     {
-        $edition = $this->window->current();
-        $open = $this->window->galleryOpen($edition);
+        $edition = $this->results->edition();
+        $open = $this->results->published($edition);
 
         $categories = ! $open ? collect() : Category::query()
             ->where('edition_id', $edition->id)
@@ -45,43 +38,22 @@ final class GalleryController extends Controller
             ->get()
             ->filter(fn (Category $category) => $category->entries->isNotEmpty());
 
-        return view('gallery.index', [
-            'edition' => $edition,
-            'open' => $open,
-            'votingOpen' => $this->window->votingOpen($edition),
-            'showResults' => $this->window->resultsPublished($edition),
-            'categories' => $categories,
-            'myVotes' => $this->myVotes($request),
-        ]);
+        return view('gallery.index', ['open' => $open, 'categories' => $categories]);
     }
 
-    public function show(Request $request, Entry $entry): View
+    public function show(Entry $entry): View
     {
-        $edition = $this->window->current();
-        abort_unless($this->window->galleryOpen($edition) && $this->isPublic($entry), 404);
+        abort_unless($this->isPublic($entry), 404);
 
         $entry->load(['category', 'media']);
 
-        return view('gallery.show', [
-            'entry' => $entry,
-            'images' => $entry->getMedia('images'),
-            'votingOpen' => $this->window->votingOpen($edition),
-            'showResults' => $this->window->resultsPublished($edition),
-            'myVotes' => $this->myVotes($request),
-        ]);
-    }
-
-    public function vote(Request $request, Entry $entry, CastPopularVote $action): RedirectResponse
-    {
-        $action->handle($request->user(), $entry, (string) $request->ip());
-
-        return redirect()->route('gallery.show', $entry)->with('status', 'Voto registrado. Obrigado por participar!');
+        return view('gallery.show', ['entry' => $entry, 'images' => $entry->getMedia('images')]);
     }
 
     /** Imagem pública só de inscrição aprovada, com a galeria aberta; cache curto (P78). */
     public function image(Entry $entry, Media $media): StreamedResponse
     {
-        abort_unless($this->window->galleryOpen($this->window->current()) && $this->isPublic($entry), 404);
+        abort_unless($this->isPublic($entry), 404);
         abort_unless(
             $media->collection_name === 'images'
                 && $media->model_type === $entry->getMorphClass()
@@ -102,17 +74,8 @@ final class GalleryController extends Controller
 
     private function isPublic(Entry $entry): bool
     {
-        return $entry->status === EntryStatus::Aprovada && $entry->edition->year === Edition::YEAR;
-    }
-
-    /** @return Collection<int, int> category_id => entry_id votados pelo eleitor logado */
-    private function myVotes(Request $request): Collection
-    {
-        $user = $request->user();
-        if ($user?->role !== Role::Eleitor) {
-            return collect();
-        }
-
-        return PopularVote::query()->where('voter_id', $user->id)->pluck('entry_id', 'category_id');
+        return $this->results->published($this->results->edition())
+            && $entry->status === EntryStatus::Aprovada
+            && $entry->edition->year === Edition::YEAR;
     }
 }

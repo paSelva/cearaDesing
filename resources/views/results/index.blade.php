@@ -16,8 +16,7 @@
     </section>
 
     @foreach ($categories as $category)
-        @php($winner = $popularWinners->get($category->id))
-        @continue($category->entries->isEmpty() && ! $winner)
+        @continue($category->entries->isEmpty())
 
         <section class="mt-16" aria-labelledby="cat-{{ $category->id }}">
             <h2 id="cat-{{ $category->id }}" class="border-b-2 border-tinta pb-3 font-display text-3xl font-bold text-tinta">
@@ -52,13 +51,6 @@
                     @endforeach
                 </div>
             @endforeach
-
-            @if ($winner)
-                <div class="mt-10 border-l-4 border-laranja pl-4">
-                    <h3 class="font-display text-xl font-bold text-tinta">Voto popular</h3>
-                    <p class="mt-1">Mais votado pelo público: <a href="{{ route('gallery.show', $winner->entry) }}" class="site-link font-semibold text-tinta">{{ $winner->entry->title }}</a></p>
-                </div>
-            @endif
         </section>
     @endforeach
 </x-layouts.site>
