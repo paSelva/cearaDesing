@@ -22,6 +22,31 @@
 
 /* Site público (identidade da Associação Ceará Design) */
 @layer components {
+    .site-header {
+        border-bottom: 1px solid color-mix(in srgb, var(--color-tinta) 10%, transparent);
+        background: #fff;
+    }
+
+    /* Menu fixo no topo; em telas muito baixas (celular deitado) ele rolaria por cima do texto. */
+    @media (min-height: 30rem) {
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        /* As âncoras e o foco por teclado param abaixo do menu. */
+        html:has(> body.site) {
+            scroll-padding-top: 6.25rem;
+        }
+
+        @media (min-width: 64rem) {
+            html:has(> body.site) {
+                scroll-padding-top: 5.5rem;
+            }
+        }
+    }
+
     .site-section {
         padding-block: 5rem;
     }

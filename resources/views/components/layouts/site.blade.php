@@ -10,7 +10,7 @@
     <body class="site flex min-h-screen flex-col bg-white font-texto text-grafite antialiased">
         <a href="#conteudo" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-tinta focus:px-4 focus:py-2 focus:text-white">Ir para o conteúdo</a>
 
-        <header class="border-b border-tinta/10 bg-white">
+        <header class="site-header">
             <nav class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-4" aria-label="Principal">
                 <a href="{{ url('/') }}" aria-label="Prêmio Ceará Tem Design — início">
                     <img src="{{ asset('images/associacao-ceara-design.png') }}" alt="Associação Ceará Design" width="122" height="52" class="h-12 w-auto">
