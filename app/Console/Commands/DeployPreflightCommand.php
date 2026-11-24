@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Support\DatabaseCompatibility;
 use Illuminate\Console\Command;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +34,7 @@ final class DeployPreflightCommand extends Command
         );
         $this->require(
             config('database.default') === 'mysql',
-            'DB_CONNECTION deve ser mysql; MariaDB não foi validado para esta release.',
+            'DB_CONNECTION deve ser mysql (inclusive em MariaDB 10.11, ensaiado com este driver).',
             $errors,
         );
         $this->require(config('session.driver') === 'database', 'SESSION_DRIVER deve ser database.', $errors);
@@ -69,20 +70,11 @@ final class DeployPreflightCommand extends Command
         $engine = (string) ($server->storage_engine ?? '');
         $configuredDatabase = (string) config('database.connections.mysql.database');
 
-        if (str_contains(strtolower($version.' '.$versionComment), 'mariadb')) {
-            $this->error('O servidor informou MariaDB; esta release ainda não foi validada nesse produto.');
+        $databaseProduct = DatabaseCompatibility::validatedProduct($version, $versionComment);
 
-            return self::FAILURE;
-        }
-
-        $numericVersion = preg_replace('/[^0-9.].*$/', '', $version) ?: '0';
-        $isValidatedPercona57 = str_contains(strtolower($versionComment), 'percona server')
-            && preg_match('/^5\.7\.44-48(?:\D|$)/', $version) === 1;
-        $isValidatedMysql8 = version_compare($numericVersion, '8.0.0', '>=');
-
-        if (! $isValidatedPercona57 && ! $isValidatedMysql8) {
+        if ($databaseProduct === null) {
             $this->error(
-                'Banco não validado: use Percona Server 5.7.44-48 ou MySQL/Percona 8.0+; MariaDB e outras versões exigem validação específica.',
+                'Banco não validado: use MariaDB 10.11, Percona Server 5.7.44-48 ou MySQL/Percona 8.0+; outras versões exigem ensaio específico.',
             );
 
             return self::FAILURE;
@@ -101,7 +93,6 @@ final class DeployPreflightCommand extends Command
         }
 
         $this->info('Preflight da aplicação concluído.');
-        $databaseProduct = $isValidatedPercona57 ? 'Percona Server' : 'MySQL/Percona';
         $this->line("Banco: {$databaseProduct} {$version}; schema selecionado; InnoDB.");
         $this->line('Configuração: production, debug desativado, HTTPS, armazenamento privado e fila síncrona.');
 
