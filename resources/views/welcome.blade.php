@@ -29,13 +29,13 @@
     <body class="site bg-white font-texto text-grafite antialiased">
         <a href="#conteudo" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-tinta focus:px-4 focus:py-2 focus:text-white">Ir para o conteúdo</a>
 
-        <header class="border-b border-tinta/10 bg-white">
-            <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-4 px-6 py-5">
+        <header class="site-header">
+            <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 px-6 pt-2 lg:gap-x-8 lg:py-4">
                 <a href="{{ route('home') }}" class="flex items-center gap-4" aria-label="Prêmio Ceará Tem Design — início">
-                    <img src="{{ asset('images/associacao-ceara-design.png') }}" alt="Associação Ceará Design" width="122" height="52" class="h-14 w-auto">
+                    <img src="{{ asset('images/associacao-ceara-design.png') }}" alt="Associação Ceará Design" width="122" height="52" class="h-9 w-auto lg:h-14">
                 </a>
-                <nav aria-label="Seções" class="order-3 w-full md:order-none md:w-auto">
-                    <ul class="flex flex-wrap gap-x-6 gap-y-2 text-[0.95rem] font-semibold text-tinta">
+                <nav aria-label="Seções" class="order-3 -mx-6 w-[calc(100%+3rem)] lg:order-none lg:mx-0 lg:w-auto">
+                    <ul class="flex gap-x-6 overflow-x-auto whitespace-nowrap px-6 py-3 text-[0.95rem] font-semibold text-tinta lg:px-0">
                         <li><a href="#sobre" class="site-link">Sobre</a></li>
                         <li><a href="#categorias" class="site-link">Categorias</a></li>
                         <li><a href="#avaliacao" class="site-link">Avaliação</a></li>
@@ -47,7 +47,7 @@
                         @endif
                     </ul>
                 </nav>
-                <div class="flex items-center gap-5 text-[0.95rem] font-semibold">
+                <div class="flex items-center gap-3 text-[0.95rem] font-semibold lg:gap-5">
                     @auth
                         <a href="{{ route('participant.dashboard') }}" class="site-button">Área do participante</a>
                     @else

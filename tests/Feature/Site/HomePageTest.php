@@ -31,6 +31,12 @@ describe('site público (P26)', function () {
         $this->get('/')->assertSee('55 a 60 pontos')->assertSee('48 a 54 pontos');
     });
 
+    it('menu fixo no topo na capa e nas demais páginas do site', function (string $path) {
+        openEdition();
+
+        $this->get($path)->assertOk()->assertSee('<header class="site-header">', false);
+    })->with(['/', '/login', '/galeria', '/premiados']);
+
     it('botão de inscrição só aparece com as inscrições abertas', function () {
         openEdition();
         $this->get('/')->assertSee('Inscrever projeto');
