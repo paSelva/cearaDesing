@@ -15,7 +15,7 @@ export default defineConfig({
                 // Site público: identidade da Associação Ceará Design (cearadesign.org.br):
                 // títulos em Roboto (condensada, como o logo) e texto em Source Sans.
                 bunny('Roboto Condensed', {
-                    weights: [500, 700],
+                    weights: [500, 700, 800],
                 }),
                 bunny('Source Sans 3', {
                     weights: [400, 600],
