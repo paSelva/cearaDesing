@@ -159,11 +159,13 @@ return [
     |
     */
 
-    'features' => [
+    'features' => array_values(array_filter([
         // SPEC-002: só cadastro/login do participante e recuperação de senha.
         // Sem confirmação de e-mail (P73); 2FA, passkeys e edição de perfil fora do escopo.
         Features::registration(),
-        Features::resetPasswords(),
-    ],
+        // Sem provedor de e-mail (MAIL_MAILER=log) o link nunca chegaria: a recuperação sai do
+        // ar e o login mostra o contato da organização. Volta sozinha quando houver SMTP.
+        env('MAIL_MAILER', 'log') !== 'log' ? Features::resetPasswords() : null,
+    ])),
 
 ];

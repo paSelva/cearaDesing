@@ -31,8 +31,9 @@ outros sites).
 
 1. **DNS** (Registro.br → domínio → DNS): registro `A` do domínio e de `www` para o IPv4 da
    VPS. Não crie `AAAA` sem confirmar IPv6 na VPS. Confira: `dig +short premiocearatemdesign.com.br`.
-2. **SMTP** (P31): sem provedor, o sistema sobe com `MAIL_MAILER=log` e a **recuperação de
-   senha não funciona**. Não abra inscrições assim.
+2. **SMTP** (P31): sem provedor, o sistema sobe com `MAIL_MAILER=log`, a **recuperação de
+   senha sai do ar** e o login mostra o contato da organização (Instagram). Senha esquecida é
+   redefinida por quem administra o servidor. Com SMTP em `MAIL_*`, o link volta após o deploy.
 3. Código aprovado na `main`, com CI verde. Anote o SHA completo.
 
 ## 2. Provisionamento (uma vez, como root)

@@ -20,9 +20,16 @@
             <x-form.button>Entrar</x-form.button>
         </form>
 
-        <div class="mt-6 flex justify-between text-sm">
-            <a href="{{ route('password.request') }}" class="text-laranja-escuro hover:underline">Esqueci minha senha</a>
-            <a href="{{ route('register') }}" class="text-laranja-escuro hover:underline">Criar conta</a>
+        <div class="mt-6 flex justify-between gap-6 text-sm">
+            @if (Route::has('password.request'))
+                <a href="{{ route('password.request') }}" class="text-laranja-escuro hover:underline">Esqueci minha senha</a>
+            @else
+                <p class="text-grafite/80">
+                    Esqueceu a senha? Fale com a organização pelo Instagram
+                    <a href="https://www.instagram.com/cearatemdesign" class="font-semibold text-laranja-escuro hover:underline" rel="noopener">@cearatemdesign</a>.
+                </p>
+            @endif
+            <a href="{{ route('register') }}" class="shrink-0 text-laranja-escuro hover:underline">Criar conta</a>
         </div>
     </section>
 </x-layouts.site>
