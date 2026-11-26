@@ -27,6 +27,28 @@ final class PublishResults
     {
         $pending = [];
 
+        // A publicação não tem volta pelo sistema: só depois de encerrada a avaliação.
+        if (now()->lessThanOrEqualTo($edition->judging_ends_at)) {
+            $pending[] = 'A avaliação vai até '.$edition->judging_ends_at->format('d/m/Y H:i').'; o resultado só pode ser publicado depois.';
+        }
+
+        $untriaged = $edition->categories()
+            ->join('entries', 'entries.category_id', '=', 'categories.id')
+            ->where('entries.status', EntryStatus::Enviada->value)
+            ->count();
+        if ($untriaged > 0) {
+            $pending[] = "{$untriaged} inscrição(ões) enviada(s) ainda sem triagem (aprovar ou desclassificar).";
+        }
+
+        $withResult = $edition->categories()
+            ->join('entries', 'entries.category_id', '=', 'categories.id')
+            ->where('entries.status', EntryStatus::Aprovada->value)
+            ->whereNotNull('entries.final_score')
+            ->count();
+        if ($withResult === 0) {
+            $pending[] = 'Nenhuma inscrição aprovada tem resultado ainda.';
+        }
+
         $withoutResult = $edition->categories()
             ->join('entries', 'entries.category_id', '=', 'categories.id')
             ->where('entries.status', EntryStatus::Aprovada->value)
