@@ -12,7 +12,8 @@ describe('site público (P26)', function () {
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('Prêmio<br>Ceará tem<br>design', false)
+            ->assertSee('prêmio<br>ceará tem<br>design', false)
+            ->assertSee('Inscrições gratuitas de 28 de setembro a 28 de outubro de 2026.')
             ->assertSee('A Associação Ceará Design realiza a primeira edição')
             ->assertSee('Design Gráfico e Comunicação Visual')
             ->assertSee('Identidades visuais e marcas.')
@@ -22,6 +23,28 @@ describe('site público (P26)', function () {
             ->assertSee('28 de setembro a 28 de outubro')
             ->assertSee('29 de outubro a 20 de novembro')
             ->assertSee('A inscrição não transfere para a Associação Ceará Design os direitos autorais do projeto.');
+    });
+
+    it('inscrições que atravessam o ano mostram o ano nas duas pontas', function () {
+        $edition = openEdition();
+        $edition->forceFill([
+            'registration_starts_at' => '2026-11-26 00:00:00',
+            'registration_ends_at' => '2027-01-31 23:59:59',
+            'judging_starts_at' => '2027-02-01 00:00:00',
+            'judging_ends_at' => '2027-03-01 23:59:59',
+            'results_announce_on' => '2027-03-04',
+            'ceremony_on' => '2027-03-24',
+        ])->save();
+
+        $this->get('/')
+            ->assertSee('Inscrições gratuitas de 26 de novembro de 2026 a 31 de janeiro de 2027.')
+            ->assertSeeInOrder([
+                '26 de novembro de 2026', 'Lançamento do edital',
+                '26 de novembro de 2026 a 31 de janeiro de 2027', 'Inscrições',
+                '1º de fevereiro a 1º de março de 2027', 'Avaliação dos projetos',
+                '4 de março de 2027', 'Divulgação do resultado',
+                '24 de março de 2027', 'Cerimônia de premiação',
+            ]);
     });
 
     it('faixas e máximo acompanham a configuração da edição', function () {

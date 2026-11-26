@@ -3,7 +3,29 @@
      | Site público do 1º Prêmio Ceará Tem Design (P26). Textos do edital (§1–§8); datas,
      | categorias e faixas vêm do banco. Identidade visual da Associação Ceará Design.
      */
-    $date = fn ($value, string $format = 'j \d\e F') => $value?->locale('pt_BR')->translatedFormat($format);
+    // Dia 1 em ordinal, como no edital: "1º de fevereiro".
+    $date = fn ($value, string $format = 'j \d\e F') => $value === null ? null
+        : preg_replace('/^1 de /', '1º de ', $value->locale('pt_BR')->translatedFormat($format));
+    $withYear = 'j \d\e F \d\e Y';
+    $baseYear = $edition?->registration_starts_at?->year;
+
+    // Data isolada: o ano só aparece fora do ano das inscrições.
+    $day = fn ($value) => $value === null ? null
+        : $date($value, $value->year === $baseYear ? 'j \d\e F' : $withYear);
+
+    // Período: se atravessa o ano, as duas pontas levam o ano ("26 de novembro de 2026 a 31 de janeiro de 2027");
+    // dentro de um ano diferente do das inscrições, o ano vai no fim.
+    $period = function ($start, $end, bool $endYear = false) use ($date, $withYear, $baseYear) {
+        if ($start === null || $end === null) {
+            return null;
+        }
+
+        if ($start->year !== $end->year) {
+            return $date($start, $withYear).' a '.$date($end, $withYear);
+        }
+
+        return $date($start).' a '.$date($end, $endYear || $end->year !== $baseYear ? $withYear : 'j \d\e F');
+    };
 
     // Descrições dos critérios (§5).
     $criteriaText = [
@@ -65,8 +87,8 @@
                 <div class="mx-auto grid max-w-6xl gap-10 px-6 pb-20 pt-16 md:grid-cols-[1fr_auto] md:items-end md:pb-28 md:pt-24">
                     <div class="relative z-10 max-w-3xl">
                         <p class="font-display text-xl font-medium text-tinta">1ª edição, 2026</p>
-                        <h1 id="titulo" class="mt-4 font-display text-[3.4rem] font-bold uppercase leading-[0.98] tracking-tight text-tinta sm:text-7xl lg:text-[7.5rem]">
-                            Prêmio<br>Ceará tem<br>design
+                        <h1 id="titulo" class="mt-4 font-display text-[3.4rem] font-extrabold leading-[0.98] tracking-tight text-tinta sm:text-7xl lg:text-[7.5rem]">
+                            prêmio<br>ceará tem<br>design
                         </h1>
                         <p class="mt-8 max-w-xl text-xl leading-8 text-tinta">
                             Para reconhecer, valorizar e dar visibilidade ao design feito no Ceará.
@@ -75,8 +97,7 @@
 
                         @if ($edition)
                             <p class="mt-8 text-lg text-tinta">
-                                Inscrições gratuitas de {{ $date($edition->registration_starts_at) }}
-                                a {{ $date($edition->registration_ends_at, 'j \d\e F \d\e Y') }}.
+                                Inscrições gratuitas de {{ $period($edition->registration_starts_at, $edition->registration_ends_at, endYear: true) }}.
                             </p>
                         @endif
 
@@ -91,8 +112,9 @@
                         </div>
                     </div>
 
-                    <svg class="pointer-events-none absolute -right-6 -top-4 h-40 w-auto text-laranja sm:-right-10 sm:top-6 sm:h-72 md:static md:h-[30rem] lg:h-[34rem]" viewBox="0 0 120 200" aria-hidden="true" focusable="false">
-                        <path fill="currentColor" d="M86 6c18 0 30 13 26 33L53 184c-4 10-15 14-24 10-9-4-13-14-10-24L62 26C66 13 74 6 86 6Z"/>
+                    <svg class="pointer-events-none absolute -right-6 -top-4 h-40 w-auto text-laranja sm:-right-10 sm:top-6 sm:h-72 md:static md:h-[30rem] lg:h-[34rem]" viewBox="0 0 130 200" aria-hidden="true" focusable="false">
+                        {{-- Redesenhado a partir do acento do logo: topo largo, afinando até a ponta. --}}
+                        <path fill="currentColor" d="M57 16C62 3 84 0 106 3C123 6 130 20 126 42L121 58L40 186Q30 196 18 192Q6 186 8 170Z"/>
                     </svg>
                 </div>
             </section>
@@ -219,11 +241,12 @@
                     @if ($edition)
                         @php
                             $timeline = [
-                                ['Lançamento do edital', '28 de setembro'],
-                                ['Inscrições', $date($edition->registration_starts_at).' a '.$date($edition->registration_ends_at)],
-                                ['Avaliação dos projetos', $date($edition->judging_starts_at).' a '.$date($edition->judging_ends_at)],
-                                ['Divulgação do resultado', $date($edition->results_announce_on)],
-                                ['Cerimônia de premiação', $date($edition->ceremony_on)],
+                                // O edital é lançado no dia em que as inscrições abrem.
+                                ['Lançamento do edital', $date($edition->registration_starts_at, $withYear)],
+                                ['Inscrições', $period($edition->registration_starts_at, $edition->registration_ends_at)],
+                                ['Avaliação dos projetos', $period($edition->judging_starts_at, $edition->judging_ends_at)],
+                                ['Divulgação do resultado', $day($edition->results_announce_on)],
+                                ['Cerimônia de premiação', $day($edition->ceremony_on)],
                             ];
                         @endphp
                         <ol class="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
