@@ -62,6 +62,55 @@ describe('PublishResults (P69)', function () {
         expect($edition->fresh()->results_published_at)->not->toBeNull();
     });
 
+    it('bloqueia enquanto a avaliação não termina', function () {
+        [$edition] = publishableSetup();
+        $admin = User::factory()->admin()->create();
+        $this->travelTo(Carbon::parse('2026-11-20 23:59:00', 'America/Fortaleza'));
+
+        expect(expectPublishError(fn () => app(PublishResults::class)->handle($admin)))
+            ->toContain('A avaliação vai até 20/11/2026 23:59; o resultado só pode ser publicado depois.')
+            ->and($edition->fresh()->results_published_at)->toBeNull();
+
+        $this->travelTo(Carbon::parse('2026-11-21 00:00:00', 'America/Fortaleza'));
+        app(PublishResults::class)->handle($admin);
+        expect($edition->fresh()->results_published_at)->not->toBeNull();
+    });
+
+    it('bloqueia com inscrição enviada sem triagem; rascunho não bloqueia', function () {
+        [$edition, $category] = publishableSetup();
+        $admin = User::factory()->admin()->create();
+        entryFor(participant(), $category, 'rascunho');
+        $sent = entryFor(participant(), $category, 'enviada');
+
+        expect(expectPublishError(fn () => app(PublishResults::class)->handle($admin)))
+            ->toBe(['1 inscrição(ões) enviada(s) ainda sem triagem (aprovar ou desclassificar).']);
+
+        $sent->forceFill(['status' => 'desclassificada'])->save();
+        app(PublishResults::class)->handle($admin);
+        expect($edition->fresh()->results_published_at)->not->toBeNull();
+    });
+
+    it('bloqueia sem nenhuma aprovada com resultado', function () {
+        $edition = openEdition();
+        entryFor(participant(), regularCategory($edition), 'desclassificada');
+        $this->travelTo(Carbon::parse('2026-11-21 10:00:00', 'America/Fortaleza'));
+
+        expect(expectPublishError(fn () => app(PublishResults::class)->handle(User::factory()->admin()->create())))
+            ->toBe(['Nenhuma inscrição aprovada tem resultado ainda.'])
+            ->and($edition->fresh()->results_published_at)->toBeNull();
+    });
+
+    it('botão no painel avisa o bloqueio e não publica', function () {
+        $edition = openEdition();
+        $this->actingAs(User::factory()->admin()->create());
+
+        Livewire::test(EditEdition::class, ['record' => $edition->getRouteKey()])
+            ->callAction('publishResults')
+            ->assertNotified('Não publicado');
+
+        expect($edition->fresh()->results_published_at)->toBeNull();
+    });
+
     it('só admin publica', function () {
         [$edition] = publishableSetup();
 
